@@ -45,7 +45,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     'id' => $this->id,
                     'label' => $this->title,
                     'cost' => $this->Rate(),
-                    'taxes' => '',
+                    'taxes' => '10%',
                     'calc_tax' => 'per_order'
                 );
 
@@ -53,37 +53,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
             }
 
-            // add taxes to shipping
-            public function get_taxes() {
-                global $woocommerce;
-
-                $taxes = array();
-
-                if ( 'yes' == $this->enabled ) {
-
-                    $tax_rates = array();
-
-                    if ( $this->tax_status == 'taxable' ) {
-
-                        $tax_rates = WC_Tax::get_shipping_tax_rates();
-
-                    }
-
-                    foreach ( $tax_rates as $key => $rate ) {
-
-                        $taxes[ $key ] = array(
-                            'rate' => $rate,
-                            'label' => WC_Tax::get_rate_label( $rate ),
-                            'compound' => WC_Tax::is_compound( $rate ),
-                            'shipping' => true
-                        );
-
-                    }
-
-                }
-
-                return $taxes;
-            }
 
             // update caculate shipping
             public function update_rates( $package = array() ) {
@@ -129,6 +98,26 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
         return $label; 
     }
     add_filter( 'woocommerce_cart_shipping_method_full_label', 'filter_woocommerce_cart_shipping_method_full_label', 10, 2 ); 
+
+
+
+
+
+// Auto Add Tax Depending On Room Per Night Price
+/* add_action( 'woocommerce_cart_calculate_fees','auto_add_tax_for_room', 10, 1 );
+function auto_add_tax_for_room( $cart ) {
+    if ( is_admin() && ! defined('DOING_AJAX') ) return;
+  
+    $percent = 18;
+
+    // Calculation
+    $surcharge = ( $cart->cart_contents_total + $cart->shipping_total ) * $percent / 100;
+
+    // Add the fee (tax third argument disabled: false)
+    $cart->add_fee( __( 'TAX', 'woocommerce')." ($percent%)", $surcharge, false );
+} */
+
+
 
 
 
