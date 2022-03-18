@@ -11,7 +11,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
         if ( ! class_exists( 'WC_METHOD_FEDEX_SHIPPING' ) ) {
 
             class WC_METHOD_FEDEX_SHIPPING extends WC_Shipping_Method {
-
+  
 
                 public function __construct() {
                     $this->id = 'method_fedex_shipping';
@@ -51,6 +51,38 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 $this->add_rate( $rate );
 
+            }
+
+            // add taxes to shipping
+            public function get_taxes() {
+                global $woocommerce;
+
+                $taxes = array();
+
+                if ( 'yes' == $this->enabled ) {
+
+                    $tax_rates = array();
+
+                    if ( $this->tax_status == 'taxable' ) {
+
+                        $tax_rates = WC_Tax::get_shipping_tax_rates();
+
+                    }
+
+                    foreach ( $tax_rates as $key => $rate ) {
+
+                        $taxes[ $key ] = array(
+                            'rate' => $rate,
+                            'label' => WC_Tax::get_rate_label( $rate ),
+                            'compound' => WC_Tax::is_compound( $rate ),
+                            'shipping' => true
+                        );
+
+                    }
+
+                }
+
+                return $taxes;
             }
 
             // update caculate shipping
