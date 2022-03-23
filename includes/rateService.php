@@ -7,7 +7,6 @@ class rateService
     public function getRateService()
     {
 
-
       // Servicio de cotizador de tarifas
       $curl = curl_init();
 
@@ -73,6 +72,7 @@ class rateService
 
 
     }
+
 
 
 

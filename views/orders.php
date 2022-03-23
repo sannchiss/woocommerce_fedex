@@ -14,10 +14,6 @@ $args = array(
 $orders = wc_get_orders( $args ); 
 
 
-// call method get_post_meta
-// $order_id = $order->get_id();
-
-
 
 
 include PLUGIN_DIR_PATH . 'views/modal/orderShipping.php';
@@ -66,6 +62,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                             <th>Ciudad</th>
                                             <th>Cod.Estado</th>
                                             <th>Orden</th>
+                                            <th>Flete FedEx</th>
                                             <th>Items</th>
                                             <th>Estatus</th>
                                             <th>Acciones</th>
@@ -92,6 +89,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                             </td>
                                             <td><?php echo '<span class="badge bg-light text-dark">'.$order->get_order_number(). '</span>' ?>
                                             </td>
+                                            <td><?php echo '<span class="badge bg-light text-dark">'.get_post_meta($order->get_order_number(), '_order_shipping', true). ' $</span>' ?>
                                             <td>
                                                 <div class="btn-group btn-group-sm" role="group" aria-label="...">
 
