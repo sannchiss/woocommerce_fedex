@@ -27,124 +27,119 @@ class confirmShippingController {
         $meterNumber = $params['meterNumber'];
         $wskeyUserCredential = $params['wskeyUserCredential'];
         $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
+        $endPointConfirmation = $params['endPointConfirmation'];
 
-        if($params['environment'] == 'PRODUCTION'){
-
-            $url = 'https://gtstnt.tntchile.cl/gtstnt/seam/resource/restv1/auth/entregaRecogedorService/entregaRecogida';
-
-        }else{
-
-            $url = 'https://gtstntpre.alertran.net/gts/seam/resource/restv1/auth/entregaRecogedorService/entregaRecogida';
-        } 
+        
         
         $confirmation = array();
 
         foreach ($orderIds as $key => $orderNumber) {
 
-            $ot = $this->wpdb->get_row("SELECT masterTrackingNumber FROM " . $this->table_name_ordersend . " WHERE orderNumber = " . $orderNumber);
-
-            $masterTrackingNumber = $ot->masterTrackingNumber;
-
-            //var_dump("Esta es la masterTrackingNumber: ".$masterTrackingNumber);
-
-       
-            $confirmation[$key] = array(
-                
-                'ENTREGAS' => (
-                    array(
-                        'ENTREGA' => array(
-                            array(
-
-                            "CLIENTE" => $accountNumber,
-                            "CENTRO" => "01",
-                            "EXPEDICION" => $masterTrackingNumber,
-                            "ENVIO_CON_RECOGIDA" => "S",
-                            "MANIFIESTO" => "S"
-                                
-                                )
-                            )
-                        )
-                    )
+            $getRow = $this->wpdb->get_row("
+            SELECT orderNumber,masterTrackingNumber 
+                FROM " . $this->table_name_ordersend . " 
+                    WHERE orderNumber = " . $orderNumber
                 );
 
-            $confirmation[$key] = json_encode($confirmation[$key]);
+            try {
+
+                if(!empty($getRow)){
+
+                    $orderNumber = $getRow->orderNumber;
+                    $masterTrackingNumber = $getRow->masterTrackingNumber;
 
 
-            $curl = curl_init();
+                    $listMasterTrackingNumber[$key] = array(
 
-            curl_setopt_array($curl, array(
-            CURLOPT_URL => $url,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 10,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'POST',
-            CURLOPT_POSTFIELDS => $confirmation[$key],
-            CURLOPT_HTTPHEADER => array(
-                'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA==',
-                'Content-Type: application/json',
-                'Cookie: JSESSIONID=tA-6PAWthKuiGn76LioJvwQQ8fKDe-xXp2bmei2S.master:backend2'
-            ),
-            ));
+                        "trackingNumber"=> $masterTrackingNumber,
+        
+                    );
 
-            $response = curl_exec($curl);
+                    // update status order 
 
-            curl_close($curl);
-
-            $arrayResponse[] = json_decode($response, true);
+                    $this->wpdb->update(
+                        $this->table_name_posts,
+                        array(
+                            'post_status' => 'wc-fedex'
+                        ),
+                        array(
+                            'id' => $orderNumber
+                        )
+                    );
 
 
-            foreach ($arrayResponse as $key => $value) {
+                }else{
 
-                $arrayLevel1 = $value;
-
-                foreach($arrayLevel1 as $key => $value2){
-
-                    $arrayLevel2 = $value2;
-
-                    foreach($arrayLevel2 as $key => $value3){
-
-                        $result = $value3;
-
-                        if($result['resultado'] == 'OK'){
-                            
-                            //Edito el estado de la orden a Enviado con FedEx
-                            $post_status = "wc-fedex";
-
-                            $this->wpdb->update(
-                                $this->table_name_posts,
-                                array(
-                                    'post_status' => $post_status,
-                                ),
-                                array(
-
-                                    'id' => $orderNumber
-
-                                )
-                            );
-
-                        }
-
-
-                    }
+                    throw new Exception('No se encontró el número de orden de transporte');
 
                 }
+           
 
-            }
+
+        }
+        catch (Exception $e) {
+
+            echo 'Ha habido una excepción: ' . $e->getMessage() . "<br>";
+            
+
+        }
+
+
 
 
         }
 
 
-     if($result['resultado'] == 'ERROR'){
+
+        // Request Shipping Confirmation
+        $request = '
+        {
+            "credential": {
+                "accountNumber": "'.$accountNumber.'",
+                "wskeyUserCredential": "' . $wskeyUserCredential . '",
+                "wspasswordUserCredential": "' . $wskeyPasswordCredential . '"
+            },
+            "pickupConfiguration": {
+                "shippingPickup": "S",
+                "manifest": "S"
+            },
+            "shippingOrders": 
+                ' . json_encode($listMasterTrackingNumber) . '
+            
+        }';
+
+
+
+  
+        // Cabecera de la petición
+        $headers = array(
+            'Accept' => 'application/json', 
+            'Content-Type' => 'application/json'
+        );
+        $options = array(
+            'auth' => array(
+                $params['wskeyUserCredential'],
+                $params['wskeyPasswordCredential']
+            ),
+        );
+
+
+        $ws_response = RestClient::post($endPointConfirmation, $headers, $request, $options);
+
+
+        // tour array $ws_response->body
+        $response = json_decode($ws_response->body, true);
+
+
+
+
+     if($response['result'] == 'ERROR'){
 
        //Mensaje de error
         echo json_encode(
             array(
-                'status' => $result['resultado'],
-                'message' => 'Error en la solicitud: '.$result['mensaje'],
+                'status' => $response['result'],
+                'message' => 'Error en la solicitud: '.$response['message'],
             ), 
             true
         );
@@ -153,15 +148,18 @@ class confirmShippingController {
         }
         else{
 
-            $select = $this->wpdb->get_results("SELECT * FROM " . $this->table_name_confirmationshipping . " WHERE manifestNumber = " . $result['recogida']);
+            $select = $this->wpdb->get_results("
+            SELECT * FROM " . $this->table_name_confirmationshipping . " 
+            WHERE manifestNumber = " . $response['recogida']
+        );
 
             if(count($select) == 0){
 
                 $this->wpdb->insert(
                     $this->table_name_confirmationshipping,
                     array(
-                        'manifestNumber' => $result['recogida'],
-                        'manifestBase64PDF' => $result['manifiesto'],
+                        'manifestNumber' => $response['pickupNumber'],
+                        'manifestBase64PDF' => $response['manifest'],
                         'manifestDate' => date('Y-m-d H:i:s')
                     )
                 );
@@ -173,13 +171,13 @@ class confirmShippingController {
                     $this->table_name_confirmationshipping,
                     array(
 
-                        'manifestBase64PDF' => $result['manifiesto'],
+                        'manifestBase64PDF' => $response['manifest'],
                         'manifestDate' => date('Y-m-d H:i:s')
 
                     ),
                     array(
                         
-                        'manifestNumber' => $result['recogida']
+                        'manifestNumber' => $response['pickupNumber']
                     )
                 );
 
@@ -189,9 +187,9 @@ class confirmShippingController {
         //Mensaje de exito
         echo json_encode(
             array(
-                'status' => $result['resultado'],
-                'message' => 'Se generó la confirmacion de entrega #'.$result['recogida'],
-                'manifestBase64' => $result['manifiesto'],
+                'status' => $response['result'],
+                'message' => 'Se generó la confirmacion de entrega #'.$response['pickupNumber'],
+                'manifestBase64' => $response['manifest'],
             ), 
             true
         );

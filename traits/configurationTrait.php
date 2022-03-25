@@ -34,6 +34,7 @@ trait configurationTrait {
             $params['endPointShip'] = $value->endPointShip;
             $params['endPointConfirmation'] = $value->endPointConfirmation;
             $params['endPointPrintLabel'] = $value->endPointPrintLabel;
+            $params['endPointCancel'] = $value->endPointCancel;
             $params['endPointPrintManifestPdf'] = $value->endPointPrintManifestPdf;
 
         }

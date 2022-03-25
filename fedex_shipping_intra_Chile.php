@@ -88,6 +88,8 @@ public function required() {
     require_once PLUGIN_DIR_PATH . 'traits/configurationTrait.php';
     require_once PLUGIN_DIR_PATH . 'traits/clearStringTrait.php';
 
+    require_once PLUGIN_DIR_PATH . 'lib/RestClient.php';
+
     require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
     require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'includes/checkOut.php';
@@ -359,7 +361,7 @@ public function add_action_mark_wc_procesado_fedex(){
         }
  
         // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-         $location = add_query_arg( array(
+          $location = add_query_arg( array(
             'post_type' => 'shop_order',
             $slug => 1, // We'll use this as confirmation
             'changed' => count( $post_ids ), // number of changed orders
@@ -367,7 +369,7 @@ public function add_action_mark_wc_procesado_fedex(){
             'post_status' => 'all'
         ), 'edit.php' ); 
  
-        wp_redirect( admin_url( $location ) );
+        wp_redirect( admin_url( $location ) ); 
         exit; 
     }
  
@@ -447,6 +449,9 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         $order_status = $order->get_status();
 
         $params  = configurationTrait::account();
+        $wskeyUserCredential = $params['wskeyUserCredential'];
+        $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
+        $endPointShip = $params['endPointShip'];
 
 
      if ( $order_status == 'procesado-fedex' ) {
@@ -466,7 +471,10 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         
             // select like ciudad and code postal sql
-            $cityAndCodeSql = $this->wpdb->get_results( "SELECT * FROM ".$this->table_name_locations." WHERE ciudad LIKE '%".$comunaClear."%'", ARRAY_A );
+            $cityAndCodeSql = $this->wpdb->get_results( "
+            SELECT * FROM ".$this->table_name_locations." 
+                WHERE ciudad LIKE '%".$comunaClear."%'", ARRAY_A 
+            );
 
 
             $city = $cityAndCodeSql[0]['ciudad'];
@@ -482,21 +490,11 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         $volume = $order_features['width'] * $order_features['height'] * $order_features['length'];
 
         //Peso Volumetrico
-        $weightVolumetric = $order_features['weight'] / 250;       
+        $weightVolumetric = $order_features['weight'] / 250;   
+        
 
 
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-          CURLOPT_URL => $params['endPointShip'],
-          CURLOPT_RETURNTRANSFER => true,
-          CURLOPT_ENCODING => '',
-          CURLOPT_MAXREDIRS => 10,
-          CURLOPT_TIMEOUT => 0,
-          CURLOPT_FOLLOWLOCATION => true,
-          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-          CURLOPT_CUSTOMREQUEST => 'POST',
-          CURLOPT_POSTFIELDS =>'{
+        $request = '{
             "credential": {
                 "accountNumber": "' . $params['accountNumber'] . '",
                 "wskeyUserCredential": "' . $params['wskeyUserCredential'] . '",
@@ -547,28 +545,32 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             "referencesShip": "' . $order . '",
             "insuranceShipValue": "0",
             "additionalReferences": "' . $order_details['customer_note'] . '"
-        }',
-          CURLOPT_HTTPHEADER => array(
-            'Content-Type: application/json',
-            'Cookie: _abck=8B703E59AB8F068FFC03F46AD1F9FC51~-1~YAAQHIkKuqM9F1N8AQAASkcwnwaeb5C2xCWK/aeeZP/QkpNcXGV1kNZx9886ivLLOJieyavy6mNGfwwVOz8fG9oEIXO8jQgMyaD5av5yyHaRnwIBqEfcA7ji8Q6ZA/UYsfw9i4890BvYr8mewLJJGf4Iw5WVg9mjvX4adSnXtkHr6xh0w0SrD175t8HPx6ihyv1SlMQAJArB2pqH6E0kSb5V9FXMlZRiA0uhoUR6sf/c8h6R9FKlWciNXcYrUxp4SROH3C4Gd7/6Gj8bcluBZe0RLoA+C3GVrCa7ragFMqDsjF6TShSvsUYm1f/vSs/SncnIxSEMgk9IkSXthF0UkDt1tSCja4pXZ9Zxt1yHFW16j++EvOrBGw==~-1~-1~-1; fdx_cbid=10880496071634758313009000438201; siteDC=wtc'
-          ),
-        ));
-        
-        $response = curl_exec($curl);
-        
-        curl_close($curl);
-
-        $arrayResponse[] = json_decode($response, true);
-
-        
-        foreach ($arrayResponse as $key => $value) {
-
-            $result = $value;
-
-        }
+        }';
 
 
-        if( $result['comments'] == "OK" ) {
+
+        // Cabecera de la petición
+        $headers = array(
+            'Accept' => 'application/json', 
+            'Content-Type' => 'application/json'
+        );
+        $options = array(
+            'auth' => array(
+                $wskeyUserCredential,
+                $wskeyPasswordCredential
+            ),
+        );
+
+
+        $ws_response = RestClient::post($endPointShip, $headers, $request, $options);
+
+
+        // tour array $ws_response->body
+        $response = json_decode($ws_response->body, true);
+
+
+
+        if( $response['comments'] == "OK" ) {
 
 
             //inserto en la tabla de envios
@@ -577,7 +579,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             array(        
 
             'orderNumber' =>  $order,
-            'masterTrackingNumber' => $result['masterTrackingNumber'],
+            'masterTrackingNumber' => $response['masterTrackingNumber'],
             'orderDate' =>  $order_details['date_created']->date('Y-m-d H:i:s'),
             'totalOrderAmount' =>  $order_details['total'],
             'personNameRecipient' =>  $order_details['billing']['first_name'] . ' ' . $order_details['billing']['last_name'], 
@@ -619,7 +621,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             'addressLine2Shipper' =>  $order_details['shipping']['address_2'], 
             'taxIdShipper' => '123456789',
             'ieShipper' =>  '123456789',
-            'status' => $result['status'],
+            'status' => $response['status'],
             'error' =>  '', 
 
         ) );
@@ -664,23 +666,21 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                     
             'orderNumber' => $order,
             'orderDate' => $order_details['date_created']->date('Y-m-d H:i:s'),
-            'masterTrackingNumber' => $result['masterTrackingNumber'],
-            'status' => $result['status'],
+            'masterTrackingNumber' => $response['masterTrackingNumber'],
+            'status' => $response['status'],
             'labelType' => $params['labelType'],
-            'labelBase64IMG' => $labelType == 'PNG' ? $result['labelResp'] : '',
-            'labelBase64PDF' => $labelType == 'PDF' ? $result['labelResp'] : '',
-            'labelBase64PDF2' => $labelType =='PDF2'? $result['labelResp'] : '',
-            'labelBase64ZPL' => $labelType == 'ZPL' ? $result['labelResp'] : '',
-            'labelBase64EPL' => $labelType == 'EPL' ? $result['labelResp'] : '',
+            'labelBase64IMG' => $labelType == 'PNG' ? $response['labelResp'] : '',
+            'labelBase64PDF' => $labelType == 'PDF' ? $response['labelResp'] : '',
+            'labelBase64PDF2' => $labelType =='PDF2'? $response['labelResp'] : '',
+            'labelBase64ZPL' => $labelType == 'ZPL' ? $response['labelResp'] : '',
+            'labelBase64EPL' => $labelType == 'EPL' ? $response['labelResp'] : '',
 
         )); 
 
 
 
         }
-        elseif( $result['comments'] == "ERROR" ){
-
-            var_dump($result['comments']);
+        elseif( $response['comments'] == "ERROR" ){
 
            // $message = sprintf( _n( 'Estatus de la orden cambiando.', '%s estatus orden cambiado.', $_REQUEST['changed'] ), number_format_i18n( $_REQUEST['changed'] ) );
             echo "<div class=\"notice notice-success updated\"><p>Error en la transacción</p></div>";
@@ -689,7 +689,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             ?>
 
         <script>
-        alert("Error en la solcitud: ".<?php $result['comments'] ?>);
+        alert("Error en la solcitud: ".<?php $response['comments'] ?>);
         </script>
 
         <?php
@@ -975,8 +975,8 @@ public function load_configuration(){
 );
 
 
-$object = new createShippingController();
-$object->index($collection);
+        $object = new createShippingController();
+        $object->index($collection);
 
 
 
@@ -1009,7 +1009,11 @@ public function fedex_shipping_intra_Chile_print_manifest(){
 
     $manifest = $_POST['manifest'];
 
-    $select = $this->wpdb->get_results("SELECT manifestBase64PDF FROM ". $this->table_name_confirmationshipping." WHERE manifestNumber = '".$manifest."'");
+    $select = $this->wpdb->get_results("
+    SELECT manifestBase64PDF 
+        FROM ". $this->table_name_confirmationshipping." 
+            WHERE manifestNumber = '".$manifest."'"
+        );
 
     foreach($select as $row){
 
@@ -1046,7 +1050,10 @@ public function fedex_shipping_intra_Chile_track_shipment(){
     $orderId = $_POST['orderId'];
 
 
-    $select = $this->wpdb->get_results("SELECT masterTrackingNumber FROM ". $this->table_name_responseShipping." WHERE orderNumber = '".$orderId."'", ARRAY_A);
+    $select = $this->wpdb->get_results("
+    SELECT masterTrackingNumber FROM ". $this->table_name_responseShipping."
+         WHERE orderNumber = '".$orderId."'", ARRAY_A
+        );
 
     $resultConfig = $this->wpdb->get_results("SELECT accountNumber FROM $this->table_name_configuration", ARRAY_A);
 
@@ -1081,11 +1088,17 @@ public function fedex_shipping_intra_Chile_track_shipment(){
 public function fedex_shipping_intra_Chile_delete_order(){
 
     $orderId = $_POST['orderId'];
-
     $params  = configurationTrait::account();
+    $wskeyUserCredential = $params['wskeyUserCredential'];
+    $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
+    $endPointCancel = $params['endPointCancel'];
 
 
-    $select = $this->wpdb->get_results("SELECT masterTrackingNumber FROM ". $this->table_name_responseShipping." WHERE orderNumber = '".$orderId."'", ARRAY_A);
+    $select = $this->wpdb->get_results("
+    SELECT masterTrackingNumber 
+        FROM ". $this->table_name_responseShipping." 
+            WHERE orderNumber = '".$orderId."'", ARRAY_A
+        );
 
 
     foreach($select as $row){
@@ -1094,49 +1107,45 @@ public function fedex_shipping_intra_Chile_delete_order(){
 
     }
 
-
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-    CURLOPT_URL => 'https://gtstnt.tntchile.cl/gtstnt/seam/resource/restv1/auth/anularWebExpediciones/anular',
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => '',
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => 'POST',
-    CURLOPT_POSTFIELDS =>'{
+    $request = '{
         "webExpediciones": {
             "numeroWebExpedicion": "' . $masterTrackingNumber . '",
             "clienteOrigen": "' . $params['accountNumber'] . '",
         }
-    }',
-    CURLOPT_HTTPHEADER => array(
-        'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA==',
-        'Content-Type: application/json'
-    ),
-    ));
+    }';
 
-    $response = curl_exec($curl);
 
-    curl_close($curl);
 
-    $array = explode("\n", $response);
+ 
+        // Cabecera de la petición
+        $headers = array(
+            'Accept' => 'application/json', 
+            'Content-Type' => 'application/json'
+        );
+        $options = array(
+            'auth' => array(
+                $wskeyUserCredential,
+                $wskeyPasswordCredential
+            ),
+        );
 
-    foreach($array as $row){
+        
 
-        $result = json_decode($row, true);
+        $ws_response = RestClient::post($endPointCancel, $headers, $request, $options);
 
-    }
 
-    echo json_encode($result, true);
+
+        // tour array $ws_response->body
+       //$response = json_decode($ws_response-, true);
+
+        echo $ws_response->body;
+
 
 
      
-    $this->wpdb->delete( $this->table_name_orderSend, array( 'orderNumber' => $orderId ) );
+        $this->wpdb->delete( $this->table_name_orderSend, array( 'orderNumber' => $orderId ) );
 
-    $this->wpdb->delete( $this->table_name_responseShipping, array( 'orderNumber' => $orderId ) );
+        $this->wpdb->delete( $this->table_name_responseShipping, array( 'orderNumber' => $orderId ) );
 
 
      //Edito el estado de la orden a Procesado con FedEx
@@ -1146,7 +1155,7 @@ public function fedex_shipping_intra_Chile_delete_order(){
         
     ), array(
         'id' => $orderId,
-    ));
+    )); 
 
 
     

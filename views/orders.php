@@ -62,7 +62,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                             <th>Ciudad</th>
                                             <th>Cod.Estado</th>
                                             <th>Orden</th>
-                                            <th>Flete FedEx</th>
+                                            <th>Flete</th>
                                             <th>Items</th>
                                             <th>Estatus</th>
                                             <th>Acciones</th>
