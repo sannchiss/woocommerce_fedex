@@ -20,7 +20,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                     // add image to shipping method
                     $this->enabled = isset( $this->settings['enabled'] ) ? $this->settings['enabled'] : 'yes';
-                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( 'Costo de envío', 'woocommerce' );
+                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( $this->method_title. " - imp. incl" , 'woocommerce');
                    
                     $this->init();
        
@@ -44,8 +44,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $rate = array(
                     'id' => $this->id,
                     'label' => $this->title,
-                    'cost' => $this->Rate(),
-                    'taxes' => '10%',
+                    'cost' => $this->Rate(),                    
                     'calc_tax' => 'per_order'
                 );
 
@@ -60,6 +59,22 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $this->calculate_shipping( $package );
 
             }
+
+
+            // update caculate shipping checkout
+            public function change_total_on_checking($order) {
+
+                // Get order total
+                $total = $order->get_total();
+
+                ## -- Make your checking and calculations -- ##
+                $new_total = $total; // <== Fake calculation
+
+                // Set the new calculated total
+                $order->set_total($new_total);
+
+            }
+
 
 
             public function Rate() {
@@ -92,7 +107,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
         
         // Use the condition here with $method to apply the image to a specific method.      
         if( $method->method_id === "method_fedex_shipping" ) {
-            $label = "<img src='https://w7.pngwing.com/pngs/443/269/png-transparent-logo-brand-fedex-product-desktop-hermes-staff-text-orange-logo.png' style='height: 30px; border-radius: 15px; margin-left: 5px; margin-right: 0px;' />" . $label;
+            $label = " <i class='fas fa-shipping-fast'></i>". " ".  $label;
+       
+            
+       
         } 
         
         return $label; 

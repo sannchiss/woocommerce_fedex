@@ -1,10 +1,9 @@
 <?php
 
+class credentialsAccount {
 
-trait configurationTrait {
-    
-    
-    public function account() {
+
+    public function getDataAccount(){
 
         global $wpdb;
         global $table_prefix;
@@ -41,7 +40,8 @@ trait configurationTrait {
 
         return $params;
 
-    
+
     }
+
 
 }

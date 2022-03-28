@@ -2,8 +2,6 @@
 
 class confirmShippingController {
 
-    use configurationTrait;
-
     public function __construct() {
 
         global $wpdb;
@@ -20,18 +18,6 @@ class confirmShippingController {
 
     public function index($orderIds) {
 
-        $params = configurationTrait::account();
-
-        /**Datos de la cuenta */
-        $accountNumber = $params['accountNumber'];
-        $meterNumber = $params['meterNumber'];
-        $wskeyUserCredential = $params['wskeyUserCredential'];
-        $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
-        $endPointConfirmation = $params['endPointConfirmation'];
-
-        
-        
-        $confirmation = array();
 
         foreach ($orderIds as $key => $orderNumber) {
 
@@ -95,9 +81,9 @@ class confirmShippingController {
         $request = '
         {
             "credential": {
-                "accountNumber": "'.$accountNumber.'",
-                "wskeyUserCredential": "' . $wskeyUserCredential . '",
-                "wspasswordUserCredential": "' . $wskeyPasswordCredential . '"
+                "accountNumber": "'. ACCOUNT_NUMBER .'",
+                "wskeyUserCredential": "' . WS_KEY_USER_CREDENTIAL . '",
+                "wspasswordUserCredential": "' . WS_KEY_PASSWORD_CREDENTIAL . '"
             },
             "pickupConfiguration": {
                 "shippingPickup": "S",
@@ -118,13 +104,13 @@ class confirmShippingController {
         );
         $options = array(
             'auth' => array(
-                $params['wskeyUserCredential'],
-                $params['wskeyPasswordCredential']
+                WS_KEY_USER_CREDENTIAL,
+                WS_KEY_PASSWORD_CREDENTIAL
             ),
         );
 
 
-        $ws_response = RestClient::post($endPointConfirmation, $headers, $request, $options);
+        $ws_response = RestClient::post(END_POINT_CONFIRMATION, $headers, $request, $options);
 
 
         // tour array $ws_response->body

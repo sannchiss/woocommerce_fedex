@@ -1,9 +1,6 @@
 <?php
 
-
 class printLabelShippingController {
-
-    use configurationTrait;
 
     public function __construct() {
 
@@ -20,23 +17,8 @@ class printLabelShippingController {
 
     public function index($orderId) {
 
-        $params = configurationTrait::account();
 
-        /**Datos de la cuenta */
-        $accountNumber = $params['accountNumber'];
-        $meterNumber = $params['meterNumber'];
-        $wskeyUserCredential = $params['wskeyUserCredential'];
-        $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
-
-        $labelType = $params['labelType'];
-
-        //var_dump("esta es la orden: ".$orderId);
-
-
-        $labelPrint = $params['labelType'];
-        $sql  = $this->wpdb->get_results("SELECT masterTrackingNumber, labelBase64".$labelPrint." FROM ".$this->table_name_responseshipping." WHERE orderNumber = ".$orderId."", ARRAY_A);
-
-       
+        $sql  = $this->wpdb->get_results("SELECT masterTrackingNumber, labelBase64".LABEL_TYPE." FROM ".$this->table_name_responseshipping." WHERE orderNumber = ".$orderId."", ARRAY_A);
 
          foreach ($sql as $key => $value) {
 
@@ -46,29 +28,15 @@ class printLabelShippingController {
         } 
 
 
-        // url de la peticion a la API
-        if($params['environment'] == 'PRODUCTION'){
-
-            $url = 'https://gtstnt.tntchile.cl/gtstnt/seam/resource/restv1/auth/etiquetarService/etiquetar';
-
-        }else{
-
-            $url = 'https://gtstntpre.alertran.net/gts/seam/resource/restv1/auth/etiquetarService/etiquetar';
-        } 
-
-
-
   // Selecciono el tipo de etiqueta de la configuración
 
-        if($params['labelType']== 'PDF' || $params['labelType']== 'PDF2'){
-
-            $labelType = $params['labelType'];
+        if( LABEL_TYPE == 'PDF' || LABEL_TYPE == 'PDF2' ){
 
 
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-            CURLOPT_URL => $url,
+            CURLOPT_URL => END_POINT_PRINT_LABEL,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 10,
@@ -80,11 +48,11 @@ class printLabelShippingController {
                 "ETIQUETAS" : {
                     "ETIQUETA" : [
                     { 
-                        "CLIENTE": "' . $accountNumber . '",
+                        "CLIENTE": "' . ACCOUNT_NUMBER . '",
                         "CENTRO": "01",
                         "EXPEDICION": "' . $labelBase64['masterTrackingNumber'] . '",
                         "BULTO": "1", 
-                        "FORMATO": "' . $labelType . '",
+                        "FORMATO": "' . LABEL_TYPE . '",
                         "POSICION": "",
                         "ETIQUETAR":"R"
                     }
@@ -100,22 +68,12 @@ class printLabelShippingController {
 
             $response = curl_exec($curl);
 
-           
 
-           /*  foreach (json_decode($response, true) as $key => $value) {
-
-                $labelBase64 = $value;
-
-                echo $labelBase64;
-
-            }
- */
             foreach ($response as $key => $value) {
 
                 $labelBase64 = $value;
                 
             }
-
 
 
              $label[] = array(
@@ -132,11 +90,11 @@ class printLabelShippingController {
 
 
 
-        }elseif($params['labelType']== 'PNG'){
+        }elseif( LABEL_TYPE == 'PNG' ){
 
             $labelType = 'PNG';
 
-        }elseif($params['labelType']== 'ZPL'){
+        }elseif( LABEL_TYPE == 'ZPL' ){
 
 
             $curl = curl_init();
@@ -171,8 +129,6 @@ class printLabelShippingController {
                    curl_close($curl);
 
                    echo json_encode($label, true);
-
-
 
 
 

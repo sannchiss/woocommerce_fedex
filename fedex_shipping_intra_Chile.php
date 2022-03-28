@@ -30,6 +30,7 @@ define('PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 class fedex_shipping_intra_Chile  {
 
 
+
 public function __construct() {
 
     global $wpdb;
@@ -46,29 +47,31 @@ public function __construct() {
     $this->table_name_posts = $table_prefix . 'posts';
     $this->table_name_confirmationshipping = $table_prefix . 'fedex_shipping_intra_CL_confirmationShipping';
     $this->table_name_locations = $table_prefix . 'fedex_shipping_intra_CL_localidades';
+    
 
 
+    add_action( 'admin_menu', array( $this, 'fedex_shipping_intra_Chile_menu' ));
+    add_action( 'init', array( $this, 'post_status_sent' )); 
+    add_filter( 'wc_order_statuses', array( $this, 'anadir_posventa_lista_sent' ));
 
-    add_action('admin_menu', array($this, 'fedex_shipping_intra_Chile_menu'));
-    add_action('init', array($this, 'post_status_sent')); 
-    add_filter('wc_order_statuses', array($this, 'anadir_posventa_lista_sent'));
+    add_action( 'admin_head', array( $this, 'styling_admin_order_list' ));
 
-    add_action('init', array($this, 'add_status_shipping_fedex'));
-    add_filter('wc_order_statuses', array($this, 'add_order_status_shipping_fedex'));
+    add_action( 'init', array( $this, 'add_status_shipping_fedex' ));
+    add_filter( 'wc_order_statuses', array ($this, 'add_order_status_shipping_fedex' ));
 
-    add_filter('bulk_actions-edit-shop_order', array($this, 'add_bulk_actions_edit_shop_order'));
-    add_action('admin_action_mark_wc-procesado-fedex', array($this, 'add_action_mark_wc_procesado_fedex'));
+    add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_actions_edit_shop_order' ));
+    add_action( 'admin_action_mark_wc-procesado-fedex', array( $this, 'add_action_mark_wc_procesado_fedex' ));
     add_action('admin_notices', array($this, 'add_action_admin_notices'));
 
     add_action( 'woocommerce_order_status_changed', array( $this, 'action_woocommerce_order_status_changed' ) );
 
-    add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
-    add_action('admin_enqueue_scripts', array($this, 'enqueue_styles'));
-    add_action('wp_ajax_load_configuration', array($this, 'load_configuration'));
-    add_action('wp_ajax_save_configuration', array($this, 'save_configuration'));
-    add_action('wp_ajax_save_originShipper', array($this, 'save_originShipper'));
+    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ));
+    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ));
+    add_action( 'wp_ajax_load_configuration', array( $this, 'load_configuration' ));
+    add_action( 'wp_ajax_save_configuration', array( $this, 'save_configuration' ));
+    add_action( 'wp_ajax_save_originShipper', array( $this, 'save_originShipper' ));
 
-    add_action('wp_ajax_fedex_shipping_intra_Chile_create_OrderShipper', array($this, 'fedex_shipping_intra_Chile_create_OrderShipper'));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_create_OrderShipper', array( $this, 'fedex_shipping_intra_Chile_create_OrderShipper' ));
     add_action('wp_ajax_fedex_shipping_intra_Chile_print_label', array($this, 'fedex_shipping_intra_Chile_print_label'));
     add_action('wp_ajax_fedex_shipping_intra_Chile_confirm_send', array($this, 'fedex_shipping_intra_Chile_confirm_send'));
     add_action('wp_ajax_fedex_shipping_intra_Chile_print_manifest', array($this, 'fedex_shipping_intra_Chile_print_manifest'));
@@ -78,29 +81,67 @@ public function __construct() {
     add_action('wp_ajax_fedex_get_select_options', array($this, 'fedex_get_select_options'));
 
     $this->required();
+    $this->constants();
     $this->init();
     
 }
 
+// define constantes variables
+
+
+
 public function required() {
 
 
-    require_once PLUGIN_DIR_PATH . 'traits/configurationTrait.php';
     require_once PLUGIN_DIR_PATH . 'traits/clearStringTrait.php';
 
     require_once PLUGIN_DIR_PATH . 'lib/RestClient.php';
+
+    require_once PLUGIN_DIR_PATH . 'required/credentialsAccount.php';
+
 
     require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
     require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'includes/checkOut.php';
     require_once PLUGIN_DIR_PATH . 'includes/shipping_method.php';
-    require_once PLUGIN_DIR_PATH . 'controllers/createShippingController.php';
     require_once PLUGIN_DIR_PATH . 'controllers/printLabelShippingController.php';
     require_once PLUGIN_DIR_PATH . 'controllers/confirmShippingController.php';
 
 }
 
+// define constantes
+public function constants() {
+
+    $credentialsAccount = new credentialsAccount;
+
+    define('ACCOUNT_NUMBER', $credentialsAccount->getDataAccount()['accountNumber']);
+    define('METER_NUMBER', $credentialsAccount->getDataAccount()['meterNumber']);
+    define('WS_KEY_USER_CREDENTIAL', $credentialsAccount->getDataAccount()['wskeyUserCredential']);
+    define('WS_KEY_PASSWORD_CREDENTIAL', $credentialsAccount->getDataAccount()['wskeyPasswordCredential']);
+    define('SERVICE_TYPE', $credentialsAccount->getDataAccount()['serviceType']);
+    define('PACKAGING_TYPE', $credentialsAccount->getDataAccount()['packagingType']);
+    define('PAYMENT_TYPE', $credentialsAccount->getDataAccount()['paymentType']);
+    define('LABEL_TYPE', $credentialsAccount->getDataAccount()['labelType']);
+    define('MEASUREMENT_UNITS', $credentialsAccount->getDataAccount()['measurementUnits']);
+    define('FLAG_INSURANCE', $credentialsAccount->getDataAccount()['flagInsurance']);
+    define('WIDTH', $credentialsAccount->getDataAccount()['width']);
+    define('HEIGHT', $credentialsAccount->getDataAccount()['height']);
+    define('LENGTH', $credentialsAccount->getDataAccount()['length']);
+    define('HEIGHT', $credentialsAccount->getDataAccount()['height']);
+    define('ENVIRONMENT', $credentialsAccount->getDataAccount()['environment']);
+    define('END_POINT_RATE', $credentialsAccount->getDataAccount()['endPointRate']);
+    define('END_POINT_SHIP', $credentialsAccount->getDataAccount()['endPointShip']);
+    define('END_POINT_CONFIRMATION', $credentialsAccount->getDataAccount()['endPointConfirmation']);
+    define('END_POINT_PRINT_LABEL', $credentialsAccount->getDataAccount()['endPointPrintLabel']);
+    define('END_POINT_CANCEL', $credentialsAccount->getDataAccount()['endPointCancel']);
+    define('END_POINT_PRINT_MANIFEST_PDF', $credentialsAccount->getDataAccount()['endPointPrintManifestPdf']);
+   
+}
+
+
+
 public function init(){
+
 
     $init = new createTables();
 
@@ -296,6 +337,7 @@ public function enqueue_scripts()
   }
 
 
+
  /******************************************************************************************************** */
 
  public function add_status_shipping_fedex(){
@@ -361,7 +403,7 @@ public function add_action_mark_wc_procesado_fedex(){
         }
  
         // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-          $location = add_query_arg( array(
+            $location = add_query_arg( array(
             'post_type' => 'shop_order',
             $slug => 1, // We'll use this as confirmation
             'changed' => count( $post_ids ), // number of changed orders
@@ -369,7 +411,7 @@ public function add_action_mark_wc_procesado_fedex(){
             'post_status' => 'all'
         ), 'edit.php' ); 
  
-        wp_redirect( admin_url( $location ) ); 
+        wp_redirect( admin_url( $location ) );     
         exit; 
     }
  
@@ -441,20 +483,42 @@ public function add_action_admin_notices(){
 /********************************************************************************************************** */
 
 
+/******************************************************************************************************** */
+
+public function styling_admin_order_list() {
+    global $pagenow;
+    if( $_GET['post_type'] == 'shop_order' && $pagenow == 'edit.php'):
+
+    // HERE below set your custom status
+    $order_status = 'En espera'; // <==== HERE
+    ?>
+    <style>
+        .order-status.status-<?php echo sanitize_title( $order_status ); ?> {
+            background: #cc0099;
+            color: #ffffff;
+        }
+    </style>
+    <?php
+    endif;
+}
+
+
+/************************************************************************************************************ */
+
 // define woocommerce_order_status_completed callback function
 public function action_woocommerce_order_status_changed( $order_id ) {
+
 
         //  obtains the status of the order according to the order ID
         $order = wc_get_order( $order_id );
         $order_status = $order->get_status();
 
-        $params  = configurationTrait::account();
-        $wskeyUserCredential = $params['wskeyUserCredential'];
-        $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
-        $endPointShip = $params['endPointShip'];
+
 
 
      if ( $order_status == 'procesado-fedex' ) {
+
+
 
         // get deatils of the order
         $order_details = $order->get_data();
@@ -484,21 +548,33 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         // get order details
-        $order_features = $this->fedex_shipping_intra_Chile_get_order_detail($order);
-
+        $order_features = $this->fedex_shipping_intra_Chile_get_order_detail( $order );
        
-        $volume = $order_features['width'] * $order_features['height'] * $order_features['length'];
+        //$volume = $order_features['width'] * $order_features['height'] * $order_features['length'];
 
-        //Peso Volumetrico
-        $weightVolumetric = $order_features['weight'] / 250;   
+        //Peso total de la orden
+        $weightOrder = $this->get_total_weight_order( $order );
+
+        // peso opcional
+        $weightOptional = $order_features['weight'] == 0 ? 0.5 : $order_features['weight'];
+
+        //Peso de la orden real
+        $weightTotal = $weightOrder == 0 ? $weightOptional : $weightOrder;     
+    
+
+
+        //Peso volumetrico real
+        $weightVolumetricTotal = ( $weightOrder == 0 ? $weightOptional : $weightOrder ) / 250;
         
+
+        //var_dump("Peso total de la orden: ".$weightTotal. " Peso volumetrico: ". $weightVolumetricTotal);
 
 
         $request = '{
             "credential": {
-                "accountNumber": "' . $params['accountNumber'] . '",
-                "wskeyUserCredential": "' . $params['wskeyUserCredential'] . '",
-                "wspasswordUserCredential": "' . $params['wskeyPasswordCredential'] . '"
+                "accountNumber": "' . ACCOUNT_NUMBER . '",
+                "wskeyUserCredential": "' . WS_KEY_USER_CREDENTIAL . '",
+                "wspasswordUserCredential": "' . WS_KEY_PASSWORD_CREDENTIAL . '"
             },
             "shipper": {
                 "contact": {
@@ -534,13 +610,13 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                 "accountNumber": "' . $params['accountNumber'] . '"
             },
             "servicesLabelPrint": {
-                "labelType": "' . $params['labelType'] . '",
+                "labelType": "' . LABEL_TYPE . '",
                 "printLabel": "N"
             },
             "requestedPackage": {
                 "numberOfPieces": "1",
-                "weight": "' . $order_features['weight'] . '",
-                "volume": "'. $weightVolumetric .'"
+                "weight": "' . $weightTotal . '",
+                "volume": "'. $weightVolumetricTotal .'"
             },
             "referencesShip": "' . $order . '",
             "insuranceShipValue": "0",
@@ -556,13 +632,13 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         );
         $options = array(
             'auth' => array(
-                $wskeyUserCredential,
-                $wskeyPasswordCredential
+                WS_KEY_USER_CREDENTIAL,
+                WS_KEY_PASSWORD_CREDENTIAL
             ),
         );
 
 
-        $ws_response = RestClient::post($endPointShip, $headers, $request, $options);
+        $ws_response = RestClient::post(END_POINT_SHIP, $headers, $request, $options);
 
 
         // tour array $ws_response->body
@@ -594,10 +670,10 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             'countryCodeRecipient' =>  $order_details['billing']['country'], 
             'streetLine1Recipient' =>  $order_details['billing']['address_1'], 
             'streetLine2Recipient' =>  $order_details['billing']['address_2'], 
-            'serviceType' =>  $params['serviceType'],
-            'packagingType' =>  $params['packagingType'],
-            'paymentType' =>  $params['paymentType'],
-            'measurementUnits' =>  $params['measurementUnits'],
+            'serviceType' =>  SERVICE_TYPE,
+            'packagingType' =>  PACKAGING_TYPE,
+            'paymentType' =>  PAYMENT_TYPE,
+            'measurementUnits' =>  MEASUREMENT_UNITS,
             'numberOfPieces' =>  $order_details['line_items_count'],
             'packages' =>  '1',
             'weight' =>  $order_features['weight'],
@@ -607,7 +683,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             'height' =>  $order_features['height'],
             'volume' =>  $weightVolumetric,
             'dimensionUnits' =>  $order_details['dimension_unit'],
-            'labelType' =>  $params['labelType'], 
+            'labelType' =>  LABEL_TYPE, 
             'personNameShipper' =>  $order_details['shipping']['first_name'] . ' ' . $order_details['shipping']['last_name'], 
             'phoneShipper' =>  $order_details['shipping']['phone'], 
             'companyNameShipper' =>  $order_details['shipping']['company'],
@@ -638,23 +714,23 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
          // Selecciono el tipo de etiqueta de la configuración
 
-       if($params['labelType']== 'PDF'){
+       if( LABEL_TYPE == 'PDF' ){
 
         $labelType = 'PDF';
 
-        }elseif($params['labelType']== 'PDF2'){
+        }elseif( LABEL_TYPE == 'PDF2'){
 
             $labelType = 'PDF2';
         
-        }elseif($params['labelType']== 'PNG'){
+        }elseif( LABEL_TYPE == 'PNG'){
 
             $labelType = 'PNG';
 
-        }elseif($params['labelType']== 'ZPL'){
+        }elseif( LABEL_TYPE == 'ZPL'){
 
             $labelType = 'ZPL';    
 
-        }elseif($params['labelType']== 'EPL'){             
+        }elseif( LABEL_TYPE == 'EPL'){             
 
             $labelType = 'EPL';
         }
@@ -764,11 +840,35 @@ public function action_woocommerce_order_status_changed( $order_id ) {
   } 
 
 
+public function get_total_weight_order( $order_id ) {
+
+    
+    $order        = wc_get_order( $order_id );
+	$order_items  = $order->get_items();
+	$total_qty    = 0;
+        $total_weight = 0;
+    
+	foreach ( $order_items as $item_id => $product_item ) {
+		$product         = $product_item->get_product();
+		if ( ! $product ) continue;
+                $product_weight  = $product->get_weight();        
+		$quantity        = $product_item->get_quantity();
+                $total_qty      += $quantity;
+                $total_weight   += floatval( $product_weight * $quantity );
+	}
+	
+    return $total_weight;
+
+
+}  
+
+
 
 
 public function load_configuration(){
 
     $nonce = sanitize_text_field($_POST['nonce']);
+
 
 
     /* if(!wp_verify_nonce($nonce, 'load_configuration')){
@@ -1088,11 +1188,6 @@ public function fedex_shipping_intra_Chile_track_shipment(){
 public function fedex_shipping_intra_Chile_delete_order(){
 
     $orderId = $_POST['orderId'];
-    $params  = configurationTrait::account();
-    $wskeyUserCredential = $params['wskeyUserCredential'];
-    $wskeyPasswordCredential = $params['wskeyPasswordCredential'];
-    $endPointCancel = $params['endPointCancel'];
-
 
     $select = $this->wpdb->get_results("
     SELECT masterTrackingNumber 
@@ -1110,7 +1205,7 @@ public function fedex_shipping_intra_Chile_delete_order(){
     $request = '{
         "webExpediciones": {
             "numeroWebExpedicion": "' . $masterTrackingNumber . '",
-            "clienteOrigen": "' . $params['accountNumber'] . '",
+            "clienteOrigen": "' . ACCOUNT_NUMBER . '",
         }
     }';
 
@@ -1124,38 +1219,64 @@ public function fedex_shipping_intra_Chile_delete_order(){
         );
         $options = array(
             'auth' => array(
-                $wskeyUserCredential,
-                $wskeyPasswordCredential
+                WS_KEY_USER_CREDENTIAL,
+                WS_KEY_PASSWORD_CREDENTIAL
             ),
         );
 
         
 
-        $ws_response = RestClient::post($endPointCancel, $headers, $request, $options);
+        $ws_response = RestClient::post(END_POINT_CANCEL, $headers, $request, $options);
 
-
-
-        // tour array $ws_response->body
-       //$response = json_decode($ws_response-, true);
 
         echo $ws_response->body;
+
+       
+        $response = json_decode($ws_response->body, true);
+
+        foreach($response as $key => $value){
+
+            $contenido = $value;
+
+        }
+
+
+
+        try {
+
+            if($contenido['respuestaAnularWebExpediciones']['resultado'] == "OK"){
+
+                $this->wpdb->delete( $this->table_name_orderSend, array( 'orderNumber' => $orderId ) );
+
+                $this->wpdb->delete( $this->table_name_responseShipping, array( 'orderNumber' => $orderId ) );
+        
+        
+             //Edito el estado de la orden a Procesado con FedEx
+            $post_status = "wc-on-hold";
+            $this->wpdb->update($this->table_name_posts, array(
+                'post_status' => $post_status,
+                
+            ), array(
+                'id' => $orderId,
+            )); 
+        
+    
+    
+            }else
+            {
+                throw new Exception("Error al eliminar la orden");
+            }
+
+        }
+        catch (Exception $e) {
+            echo 'Caught exception: ',  $e->getMessage(), "\n";
+        }
+
+
 
 
 
      
-        $this->wpdb->delete( $this->table_name_orderSend, array( 'orderNumber' => $orderId ) );
-
-        $this->wpdb->delete( $this->table_name_responseShipping, array( 'orderNumber' => $orderId ) );
-
-
-     //Edito el estado de la orden a Procesado con FedEx
-    $post_status = "wc-on-hold";
-    $this->wpdb->update($this->table_name_posts, array(
-        'post_status' => $post_status,
-        
-    ), array(
-        'id' => $orderId,
-    )); 
 
 
     

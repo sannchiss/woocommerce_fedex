@@ -7,36 +7,29 @@ class rateService
     public function getRateService()
     {
 
-      // Servicio de cotizador de tarifas
-      $curl = curl_init();
 
-      curl_setopt_array($curl, array(
-      CURLOPT_URL => 'http://api.trinit.cl/fedex/v1/tarifario/',
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_ENCODING => '',
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 0,
-      CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => 'POST',
-      CURLOPT_POSTFIELDS =>'{
-          "servicio": 1,
-          "origen": "' . $this->getCityShipper()  . '",
-          "destino": "' . WC()->customer->get_shipping_city() . '",
-          "peso": "' . $this->getTotalWeight() . '"
-      }',
-      CURLOPT_HTTPHEADER => array(
-          'Content-Type: application/json'
-      ),
-      ));
+      $request = '{
+        "servicio": 1,
+        "origen": "' . $this->getCityShipper()  . '",
+        "destino": "' . WC()->customer->get_shipping_city() . '",
+        "peso": "' . $this->getTotalWeight() . '"
+    }';
 
-      $response = curl_exec($curl);
 
-      curl_close($curl);
 
-      $response = json_decode($response, true);
+    // Cabecera de la petición
+    $headers = array(
+        'Accept' => 'application/json', 
+        'Content-Type' => 'application/json'
+    );
+   
 
-      return $response['flete'];
+    $ws_response = RestClient::post(END_POINT_RATE, $headers, $request, null);
+
+    $response = json_decode($ws_response->body, true);
+
+    return $response['flete'];
+
 
 
     }
@@ -50,7 +43,7 @@ class rateService
             $total_weight += $cart_item['data']->get_weight() * $cart_item['quantity'];
         }
 
-        return $total_weight;
+        return $total_weight == 0 ? 1 : $total_weight;
 
 
     } 

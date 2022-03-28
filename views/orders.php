@@ -22,7 +22,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 ?>
 
 
-<div class="container">
+<div class="container-xxl">
 
     <div class="row">
         <div class="col-md-12">
@@ -30,15 +30,13 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
+            <div class="panel">
                 <div class="panel-heading mb-3">
                     <h3 class="panel-title">Ordenes de compra</h3>
                 </div>
 
                 <div class="row">
-                    <div class="col-md-4 mb-5">
+                    <div class="col-md-12 mb-5">
                         <div class="form-group">
                             <button type="button" class="btn btn-secondary btn-sm confirmSend">Confirmar
                                 Entrega</button>
@@ -212,9 +210,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
             </div>
 
-        </div>
-
-    </div>
+   
 
 
 </div>
