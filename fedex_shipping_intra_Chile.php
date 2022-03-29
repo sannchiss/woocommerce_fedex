@@ -168,16 +168,15 @@ public function fedex_shipping_intra_Chile_menu() {
 
     $menus = [];
 
-    $menus[] = [
-        'pageTitle' => 'Fedex Shipping Chile',
-        'menuTitle' => 'Fedex Shipping Chile',
-        'capability' => 'manage_options',
-        'menuSlug' => 'fedex_shipping_intra_Chile',
-        'menu_slug'  =>  '',  //Ruta absoluta
-        'functionName' => '',
-        'iconUrl' => plugin_dir_url(__FILE__) . 'resources/img/Fedex-GroundIconWP.png',
-        'position' => 19
-    ];
+    $menu = add_menu_page(
+        'Fedex Shipping Intra Chile',
+        '',
+        'manage_options',
+        'fedex_shipping_intra_Chile',
+        array($this, 'fedex_shipping_intra_Chile_menu_page'),
+        plugin_dir_url(__FILE__) . 'resources/img/Fedex-GroundIconWP.png',
+        6
+    );
 
     $this->addMenusPanel($menus);
 
@@ -188,6 +187,7 @@ public function fedex_shipping_intra_Chile_menu() {
         'page_title' => 'Gestor de envios',
         'menu_title' => 'Gestor de envios',
         'capabality' => 'manage_options',
+        'icon_url' => 'dashicons-admin-site',
         'menu_slug' => plugin_dir_path(__FILE__) . 'views/orders.php',  //Ruta absoluta,
         'functionName' => ''
         
