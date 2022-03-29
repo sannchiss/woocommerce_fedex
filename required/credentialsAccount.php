@@ -8,8 +8,11 @@ class credentialsAccount {
         global $wpdb;
         global $table_prefix;
 
+
+        //select with join table
+        $sql = "SELECT * FROM ".$table_prefix."fedex_shipping_intra_CL_configuration 
+        a INNER JOIN ".$table_prefix."fedex_shipping_intra_CL_originShipper at ON a.id = at.id";
        
-        $sql = "SELECT * FROM " . $table_prefix . "fedex_shipping_intra_CL_configuration";
         $result = $wpdb->get_results($sql);
 
         foreach ($result as $key => $value) {
@@ -35,6 +38,19 @@ class credentialsAccount {
             $params['endPointPrintLabel'] = $value->endPointPrintLabel;
             $params['endPointCancel'] = $value->endPointCancel;
             $params['endPointPrintManifestPdf'] = $value->endPointPrintManifestPdf;
+            $params['personNameShipper'] = $value->personNameShipper;
+            $params['phoneShipper'] = $value->phoneShipper;
+            $params['companyNameShipper'] = $value->companyNameShipper;
+            $params['emailShipper'] = $value->emailShipper;
+            $params['vatNumberShipper'] = $value->vatNumberShipper;
+            $params['cityShipper'] = $value->cityShipper;
+            $params['stateOrProvinceCodeShipper'] = $value->stateOrProvinceCodeShipper;
+            $params['postalCodeShipper'] = $value->postalCodeShipper;
+            $params['countryCodeShipper'] = $value->countryCodeShipper;
+            $params['addressLine1Shipper'] = $value->addressLine1Shipper;
+            $params['addressLine2Shipper'] = $value->addressLine2Shipper;
+            $params['taxIdShipper'] = $value->taxIdShipper;
+            $params['ieShipper'] = $value->ieShipper;
 
         }
 

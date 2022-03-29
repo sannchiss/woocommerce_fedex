@@ -3,10 +3,10 @@
 /**
  * Plugin Name: FedEx envíos nacionales Chile
  * Plugin URI: https://fedex.com
- * Description: FedEx envíos nacionales Chile
+ * Description: FedEx envíos nacionales Chile / Conectados con el mañana
  * Version: 2.0
- * Author: Sannchiss Pérez
- * Author URI: https://fedex.com
+ * Author: Fedex Chile
+ * Author URI: https://www.fedex.com/es-cl/home.html
  * Text Domain: fedex_shipping_intra_Chile
  * Domain Path: /lenguages
  * Licence: GPL2
@@ -54,7 +54,6 @@ public function __construct() {
     add_action( 'init', array( $this, 'post_status_sent' )); 
     add_filter( 'wc_order_statuses', array( $this, 'anadir_posventa_lista_sent' ));
 
-    add_action( 'admin_head', array( $this, 'styling_admin_order_list' ));
 
     add_action( 'init', array( $this, 'add_status_shipping_fedex' ));
     add_filter( 'wc_order_statuses', array ($this, 'add_order_status_shipping_fedex' ));
@@ -67,7 +66,6 @@ public function __construct() {
 
     add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ));
     add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ));
-    add_action( 'wp_ajax_load_configuration', array( $this, 'load_configuration' ));
     add_action( 'wp_ajax_save_configuration', array( $this, 'save_configuration' ));
     add_action( 'wp_ajax_save_originShipper', array( $this, 'save_originShipper' ));
 
@@ -124,10 +122,6 @@ public function constants() {
     define('LABEL_TYPE', $credentialsAccount->getDataAccount()['labelType']);
     define('MEASUREMENT_UNITS', $credentialsAccount->getDataAccount()['measurementUnits']);
     define('FLAG_INSURANCE', $credentialsAccount->getDataAccount()['flagInsurance']);
-    define('WIDTH', $credentialsAccount->getDataAccount()['width']);
-    define('HEIGHT', $credentialsAccount->getDataAccount()['height']);
-    define('LENGTH', $credentialsAccount->getDataAccount()['length']);
-    define('HEIGHT', $credentialsAccount->getDataAccount()['height']);
     define('ENVIRONMENT', $credentialsAccount->getDataAccount()['environment']);
     define('END_POINT_RATE', $credentialsAccount->getDataAccount()['endPointRate']);
     define('END_POINT_SHIP', $credentialsAccount->getDataAccount()['endPointShip']);
@@ -135,6 +129,20 @@ public function constants() {
     define('END_POINT_PRINT_LABEL', $credentialsAccount->getDataAccount()['endPointPrintLabel']);
     define('END_POINT_CANCEL', $credentialsAccount->getDataAccount()['endPointCancel']);
     define('END_POINT_PRINT_MANIFEST_PDF', $credentialsAccount->getDataAccount()['endPointPrintManifestPdf']);
+    define('PERSON_NAME_SHIPPER', $credentialsAccount->getDataAccount()['personNameShipper']);
+    define('PHONE_SHIPPER', $credentialsAccount->getDataAccount()['phoneShipper']);
+    define('COMPANY_NAME_SHIPPER', $credentialsAccount->getDataAccount()['companyNameShipper']);
+    define('EMAIL_SHIPPER', $credentialsAccount->getDataAccount()['emailShipper']);
+    define('VAT_NUMBER_SHIPPER', $credentialsAccount->getDataAccount()['vatNumberShipper']);
+    define('CITY_SHIPPER', $credentialsAccount->getDataAccount()['cityShipper']);
+    define('STATE_OR_PROVINCE_CODE_SHIPPER', $credentialsAccount->getDataAccount()['stateOrProvinceCodeShipper']);
+    define('POSTAL_CODE_SHIPPER', $credentialsAccount->getDataAccount()['postalCodeShipper']);
+    define('COUNTRY_CODE_SHIPPER', $credentialsAccount->getDataAccount()['countryCodeShipper']);
+    define('ADDRESS_LINE1_SHIPPER', $credentialsAccount->getDataAccount()['addressLine1Shipper']);
+    define('ADDRESS_LINE2_SHIPPER', $credentialsAccount->getDataAccount()['addressLine2Shipper']);
+    define('TAX_ID_SHIPPER', $credentialsAccount->getDataAccount()['taxIdShipper']);
+    define('IE_SHIPPER', $credentialsAccount->getDataAccount()['ieShipper']);
+
    
 }
 
@@ -403,7 +411,7 @@ public function add_action_mark_wc_procesado_fedex(){
         }
  
         // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-            $location = add_query_arg( array(
+           $location = add_query_arg( array(
             'post_type' => 'shop_order',
             $slug => 1, // We'll use this as confirmation
             'changed' => count( $post_ids ), // number of changed orders
@@ -411,7 +419,7 @@ public function add_action_mark_wc_procesado_fedex(){
             'post_status' => 'all'
         ), 'edit.php' ); 
  
-        wp_redirect( admin_url( $location ) );     
+        wp_redirect( admin_url( $location ) );      
         exit; 
     }
  
@@ -482,28 +490,6 @@ public function add_action_admin_notices(){
 
 /********************************************************************************************************** */
 
-
-/******************************************************************************************************** */
-
-public function styling_admin_order_list() {
-    global $pagenow;
-    if( $_GET['post_type'] == 'shop_order' && $pagenow == 'edit.php'):
-
-    // HERE below set your custom status
-    $order_status = 'En espera'; // <==== HERE
-    ?>
-    <style>
-        .order-status.status-<?php echo sanitize_title( $order_status ); ?> {
-            background: #cc0099;
-            color: #ffffff;
-        }
-    </style>
-    <?php
-    endif;
-}
-
-
-/************************************************************************************************************ */
 
 // define woocommerce_order_status_completed callback function
 public function action_woocommerce_order_status_changed( $order_id ) {
@@ -643,7 +629,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         // tour array $ws_response->body
         $response = json_decode($ws_response->body, true);
-
 
 
         if( $response['comments'] == "OK" ) {
@@ -864,63 +849,6 @@ public function get_total_weight_order( $order_id ) {
 
 
 
-
-public function load_configuration(){
-
-    $nonce = sanitize_text_field($_POST['nonce']);
-
-
-
-    /* if(!wp_verify_nonce($nonce, 'load_configuration')){
-        wp_send_json_error('No tienes permisos para realizar esta acción');
-    } */
-
-    
-
-     $resultConfig = $this->wpdb->get_results("SELECT * FROM $this->table_name_configuration", ARRAY_A);
-     $resultShipper = $this->wpdb->get_results("SELECT * FROM $this->table_name_originShipper", ARRAY_A);
-
-     if(count($resultConfig) > 0){
-
-
-        foreach($resultConfig as $row){
-
-            $configuration['configuration'] = $row;
-
-        }
-
-     }else{
-
-        $configuration['configuration'] = [];
-
-     }
-
-
-     if(count($resultShipper) > 0){
-
-            
-            foreach($resultShipper as $row){
-
-                $shipper['shipper'] = $row;
-    
-            }
-
-        }else{
-
-                
-                $shipper['shipper'] = [];
-
-        }
-
-
-     $merged = array_merge( $configuration, $shipper );
-
-    echo json_encode($merged, true);
-    die();
-
-  }
-
-
   public function save_configuration(){
 
     
@@ -939,16 +867,13 @@ public function load_configuration(){
         'labelType' => $data['labelType'],
         'measurementUnits' => $data['measurementUnits'],
         'flagInsurance' => $data['flagInsurance'],
-        'width' => $data['width'],
-        'height' => $data['height'],
-        'length' => $data['length'],
         'environment' => $data['environment'],
-        'endPointRate' => $data['endPointRate'],
-        'endPointShip' => $data['endPointShip'],
-        'endPointConfirmation' => $data['endPointConfirmation'],
-        'endPointPrintLabel' => $data['endPointPrintLabel'],
-        'endPointCancel' => $data['endPointCancel'],
-        'endPointPrintManifestPdf' => $data['endPointPrintManifestPdf'],
+        'endPointRate' => END_POINT_RATE,
+        'endPointShip' => END_POINT_SHIP,
+        'endPointConfirmation' => END_POINT_CONFIRMATION,
+        'endPointPrintLabel' => END_POINT_PRINT_LABEL,
+        'endPointCancel' => END_POINT_CANCEL,
+        'endPointPrintManifestPdf' => END_POINT_PRINT_MANIFEST_PDF,
 
 
     );

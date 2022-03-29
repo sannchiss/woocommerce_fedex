@@ -32,9 +32,6 @@ class createTables{
             labelType VARCHAR(50),
             measurementUnits VARCHAR(100),
             flagInsurance INT(1),
-            width VARCHAR(20),
-            length VARCHAR(20),
-            height VARCHAR(20),
             environment VARCHAR(50),
             endPointRate VARCHAR(150),
             endPointShip VARCHAR(150),
@@ -53,6 +50,32 @@ class createTables{
         $sql = "TRUNCATE " . $tabla;
         $this->wpdb->query($this->wpdb->prepare($sql));
         /******************************************* */
+
+        // insert table
+        $this->wpdb->insert(
+            $tabla,
+            array(
+                'accountNumber' => '900063671',
+                'meterNumber' => '123465789',
+                'wskeyUserCredential' => 'SPEREZ',
+                'wskeyPasswordCredential' => 'Home.2020',
+                'serviceType' => 'Expreso',
+                'packagingType' => '',
+                'paymentType' => '',
+                'labelType' => 'PDF',
+                'measurementUnits' => 'KG/CM',
+                'flagInsurance' => '',
+                'environment' => 'PRODUCTION',
+                'endPointRate' => 'https://api.trinit.cl/fedex/v1/tarifario/',
+                'endPointShip' => 'https://wsbeta.fedex.com/LAC/ServicesAPI/connector/cl/documentShip',
+                'endPointConfirmation' => 'https://wsbeta.fedex.com/LAC/ServicesAPI/connector/cl/pickupManifest',
+                'endPointPrintLabel' => 'https://wsbeta.fedex.com/LAC/ServicesAPI/connector/cl/labelService',
+                'endPointCancel' => 'https://gtstnt.tntchile.cl/gtstnt/seam/resource/restv1/auth/anularWebExpediciones/anular',
+                'endPointPrintManifestPdf' => 'https://gtstnt.tntchile.cl/gtstnt/seam/resource/restv1/auth/imprimirManifiestoService/imprimir',
+            )
+        );
+
+
 
     }
 
@@ -88,6 +111,26 @@ class createTables{
         $sql = "TRUNCATE " . $tabla;
         $this->wpdb->query($this->wpdb->prepare($sql));
         /******************************************* */
+
+        // insert table
+        $this->wpdb->insert(
+            $tabla,
+            array(
+                'personNameShipper' => 'personNameShipper',
+                'phoneShipper' => 'phoneShipper',
+                'companyNameShipper' => 'companyNameShipper',
+                'emailShipper' => 'emailShipper',
+                'vatNumberShipper' => 'vatNumberShipper',
+                'cityShipper' => 'SANTIAGO',
+                'stateOrProvinceCodeShipper' => '8320000',
+                'postalCodeShipper' => 'postalCodeShipper',
+                'countryCodeShipper' => 'countryCodeShipper',
+                'addressLine1Shipper' => 'addressLine1Shipper',
+                'addressLine2Shipper' => 'addressLine2Shipper',
+                'taxIdShipper' => 'taxIdShipper',
+                'ieShipper' => 'ieShipper',
+            )
+        );
 
     }
 
