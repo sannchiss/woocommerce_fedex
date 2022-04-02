@@ -32,7 +32,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
             <div class="panel">
                 <div class="panel-heading mb-3">
-                    <h3 class="panel-title">Ordenes de compra</h3>
+                    <h3 class="panel-title">ORDENES DE ENVÍO</h3>
                 </div>
 
                 <div class="row">

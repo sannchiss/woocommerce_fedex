@@ -6,6 +6,12 @@ if (!defined('ABSPATH')) {
 
 
 
+
+
+
+
+
+
 //Cambio el Total del Envio en Order details
 add_action('woocommerce_checkout_create_order', 'change_total_on_checking', 20, 1);
 function change_total_on_checking($order)
@@ -19,6 +25,8 @@ function change_total_on_checking($order)
     // Set the new calculated total
     $order->set_total($new_total);
 }
+
+
 
 
 
@@ -80,6 +88,9 @@ function action_checkout_order_processed($order_id)
     $wpdb->insert($table, $data, null);
 
 
-
-
 }
+
+
+
+
+

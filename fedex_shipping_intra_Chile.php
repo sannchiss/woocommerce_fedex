@@ -69,14 +69,17 @@ public function __construct() {
     add_action( 'wp_ajax_save_configuration', array( $this, 'save_configuration' ));
     add_action( 'wp_ajax_save_originShipper', array( $this, 'save_originShipper' ));
 
+    
+
+    add_action( 'wp_ajax_get_order_detail', array( $this, 'get_order_detail' ));
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_create_OrderShipper', array( $this, 'fedex_shipping_intra_Chile_create_OrderShipper' ));
-    add_action('wp_ajax_fedex_shipping_intra_Chile_print_label', array($this, 'fedex_shipping_intra_Chile_print_label'));
-    add_action('wp_ajax_fedex_shipping_intra_Chile_confirm_send', array($this, 'fedex_shipping_intra_Chile_confirm_send'));
-    add_action('wp_ajax_fedex_shipping_intra_Chile_print_manifest', array($this, 'fedex_shipping_intra_Chile_print_manifest'));
-    add_action('wp_ajax_fedex_shipping_intra_Chile_get_locations', array($this, 'fedex_shipping_intra_Chile_get_locations'));
-    add_action('wp_ajax_fedex_shipping_intra_Chile_track_shipment', array($this, 'fedex_shipping_intra_Chile_track_shipment'));
-    add_action('wp_ajax_fedex_shipping_intra_Chile_delete_order', array($this, 'fedex_shipping_intra_Chile_delete_order'));
-    add_action('wp_ajax_fedex_get_select_options', array($this, 'fedex_get_select_options'));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_print_label', array($this, 'fedex_shipping_intra_Chile_print_label' ));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_confirm_send', array($this, 'fedex_shipping_intra_Chile_confirm_send' ));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_print_manifest', array($this, 'fedex_shipping_intra_Chile_print_manifest' ));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_get_locations', array($this, 'fedex_shipping_intra_Chile_get_locations' ));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_track_shipment', array($this, 'fedex_shipping_intra_Chile_track_shipment' ));
+    add_action( 'wp_ajax_fedex_shipping_intra_Chile_delete_order', array($this, 'fedex_shipping_intra_Chile_delete_order' ));
+    add_action( 'wp_ajax_fedex_get_select_options', array($this, 'fedex_get_select_options' ));
 
     $this->required();
     $this->constants();
@@ -97,7 +100,7 @@ public function required() {
 
     require_once PLUGIN_DIR_PATH . 'required/credentialsAccount.php';
 
-
+    require_once PLUGIN_DIR_PATH . 'includes/admin_order.php';
     require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
     require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'includes/checkOut.php';
@@ -122,6 +125,7 @@ public function constants() {
     define('LABEL_TYPE', $credentialsAccount->getDataAccount()['labelType']);
     define('MEASUREMENT_UNITS', $credentialsAccount->getDataAccount()['measurementUnits']);
     define('FLAG_INSURANCE', $credentialsAccount->getDataAccount()['flagInsurance']);
+    define('DISCOUNT', $credentialsAccount->getDataAccount()['discount']);
     define('ENVIRONMENT', $credentialsAccount->getDataAccount()['environment']);
     define('END_POINT_RATE', $credentialsAccount->getDataAccount()['endPointRate']);
     define('END_POINT_SHIP', $credentialsAccount->getDataAccount()['endPointShip']);
@@ -168,15 +172,17 @@ public function fedex_shipping_intra_Chile_menu() {
 
     $menus = [];
 
-    $menu = add_menu_page(
-        'Fedex Shipping Intra Chile',
-        '',
-        'manage_options',
-        'fedex_shipping_intra_Chile',
-        array($this, 'fedex_shipping_intra_Chile_menu_page'),
-        plugin_dir_url(__FILE__) . 'resources/img/Fedex-GroundIconWP.png',
-        6
-    );
+    $menus[] = [
+        'pageTitle' => 'Fedex Shipping Intra Chile',
+        'menuTitle' => 'FedEx Express',
+        'capability' => 'manage_options',
+        'menuSlug' => 'fedex_shipping_intra_Chile',
+        'callback' => array($this, 'fedex_shipping_intra_Chile_page'),
+        'functionName' => array($this, 'fedex_shipping_intra_Chile_menu_page'),
+        'iconUrl' => 'dashicons-cart',
+        'position' => 36
+    ];
+
 
     $this->addMenusPanel($menus);
 
@@ -184,8 +190,8 @@ public function fedex_shipping_intra_Chile_menu() {
 
     $submenu[] = [
         'parent_slug' => 'fedex_shipping_intra_Chile',
-        'page_title' => 'Gestor de envios',
-        'menu_title' => 'Gestor de envios',
+        'page_title' => 'Ordenes de envío',
+        'menu_title' => 'Ordenes de envío',
         'capabality' => 'manage_options',
         'icon_url' => 'dashicons-admin-site',
         'menu_slug' => plugin_dir_path(__FILE__) . 'views/orders.php',  //Ruta absoluta,
@@ -219,6 +225,29 @@ public function fedex_shipping_intra_Chile_menu() {
 
 
 }
+
+public function fedex_shipping_intra_Chile_menu_page() {
+
+
+    // open page in new tab
+    echo '<script>window.open("https://www.fedex.com/es-cl/home.html", "_blank");</script>';
+
+  
+
+}
+
+// function open external page in new tab
+public function fedex_shipping_intra_Chile_page() {
+
+    // open page in new tab
+    echo '<script>window.open("' . admin_url('https://www.fedex.com/es-cl/home.html') . '", "_blank");</script>';
+
+    // redirect panel wordpress
+    wp_redirect(admin_url('admin.php?page=fedex_shipping_intra_Chile'));
+
+}
+
+
 
 public function addmenusPanel($menus) {
 
@@ -285,6 +314,9 @@ public function enqueue_scripts()
     wp_enqueue_script('typeahead');
 
 
+  
+
+
     wp_enqueue_script(
         'loadConfiguration',
         plugins_url('resources/js/Load-injection.js', __FILE__),
@@ -319,7 +351,7 @@ public function enqueue_scripts()
 
   }
 
- public function enqueue_styles()
+public function enqueue_styles()
  {
 
     /**Libreria para iconos Fontawesome */
@@ -348,7 +380,7 @@ public function enqueue_scripts()
 
  /******************************************************************************************************** */
 
- public function add_status_shipping_fedex(){
+public function add_status_shipping_fedex(){
 
     $slug = 'wc-procesado-fedex';
     $label = 'Procesado con FedEx';
@@ -366,7 +398,7 @@ public function enqueue_scripts()
 
 
 
- public function add_order_status_shipping_fedex( $order_statuses ) {
+public function add_order_status_shipping_fedex( $order_statuses ) {
 
     $slug = 'wc-procesado-fedex';
     $label = 'Procesado con FedEx';
@@ -405,13 +437,13 @@ public function add_action_mark_wc_procesado_fedex(){
         foreach( $_REQUEST['post'] as $order_id ) {
  
             $order = new WC_Order( $order_id );
-            $order_note = 'This orders status was changed by bulk edit:';
+            $order_note = 'El estado de este pedido fue cambiado por una edición masiva:';
             $order->update_status( $slug, $order_note, true );
  
         }
  
         // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-           $location = add_query_arg( array(
+            $location = add_query_arg( array(
             'post_type' => 'shop_order',
             $slug => 1, // We'll use this as confirmation
             'changed' => count( $post_ids ), // number of changed orders
@@ -461,8 +493,8 @@ public function add_action_admin_notices(){
 // Añado status Enviado con Fedex a la lista de estados de orden
 
       //Registro del nuevo estado Enviado FedEx
-      public function post_status_sent()
-      {
+public function post_status_sent(){
+
           register_post_status('wc-fedex', array(
               'label'                     => 'Enviado con Fedex', //Nombre público
               'public'                    => true,
@@ -474,8 +506,8 @@ public function add_action_admin_notices(){
       }
   
       //Añade estado 'Fedex' al lisatdo disponible de Woocomerce wc_order_statuses
-     public function anadir_posventa_lista_sent($order_statuses) 
-      {
+public function anadir_posventa_lista_sent($order_statuses){
+
           $new_order_statuses = array();
           // lo ponemos despues de Completado
           foreach ($order_statuses as $key => $status) {
@@ -490,16 +522,13 @@ public function add_action_admin_notices(){
 
 /********************************************************************************************************** */
 
-
-// define woocommerce_order_status_completed callback function
+// Define woocommerce_order_status_completed callback function
 public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         //  obtains the status of the order according to the order ID
         $order = wc_get_order( $order_id );
         $order_status = $order->get_status();
-
-
 
 
      if ( $order_status == 'procesado-fedex' ) {
@@ -530,31 +559,21 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             $city = $cityAndCodeSql[0]['ciudad'];
             $codePostal = $cityAndCodeSql[0]['codigo'];
 
-
-
-
         // get order details
         $order_features = $this->fedex_shipping_intra_Chile_get_order_detail( $order );
        
-        //$volume = $order_features['width'] * $order_features['height'] * $order_features['length'];
-
         //Peso total de la orden
         $weightOrder = $this->get_total_weight_order( $order );
 
         // peso opcional
-        $weightOptional = $order_features['weight'] == 0 ? 0.5 : $order_features['weight'];
+        $weightOptional = $order_features['weight'] == 0 ? 1 : $order_features['weight'];
 
         //Peso de la orden real
         $weightTotal = $weightOrder == 0 ? $weightOptional : $weightOrder;     
     
-
-
         //Peso volumetrico real
         $weightVolumetricTotal = ( $weightOrder == 0 ? $weightOptional : $weightOrder ) / 250;
         
-
-        //var_dump("Peso total de la orden: ".$weightTotal. " Peso volumetrico: ". $weightVolumetricTotal);
-
 
         $request = '{
             "credential": {
@@ -623,12 +642,42 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             ),
         );
 
+        // try in response web service
+        try {
+            $ws_response = RestClient::post(
+                END_POINT_SHIP,
+                $headers,
+                $request,
+                $options
+            );
 
-        $ws_response = RestClient::post(END_POINT_SHIP, $headers, $request, $options);
 
+        } catch (Requests_Exception $e) {
+
+                // open page in new tab
+    echo '<script>window.open("' . admin_url('https://www.fedex.com/es-cl/home.html') . '", "_blank");</script>';
+
+
+            // if error, show error message
+            echo '<div class="error">
+                    <p>' . $e->getMessage() . '</p>
+                </div>';
+
+                echo "<div class=\"notice notice-success updated\"><p>{$e->getMessage()}</p></div>";
+
+          
+
+        }
+
+        // if response is ok
+      /*   if ( $ws_response->success ) {
+
+        } */
 
         // tour array $ws_response->body
         $response = json_decode($ws_response->body, true);
+
+        var_dump($response);
 
 
         if( $response['comments'] == "OK" ) {
@@ -770,7 +819,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
  //Obtiene campos de la orden
-  public function fedex_shipping_intra_Chile_get_order_detail($order_id)  {
+public function fedex_shipping_intra_Chile_get_order_detail($order_id)  {
 
     //$order_id = sanitize_text_field($order_id);
 
@@ -849,11 +898,9 @@ public function get_total_weight_order( $order_id ) {
 
 
 
-  public function save_configuration(){
+public function save_configuration(){
 
-    
     $data = $this->unserializeForm($_POST['inputs']);
-
 
     $collection = array(
 
@@ -867,6 +914,7 @@ public function get_total_weight_order( $order_id ) {
         'labelType' => $data['labelType'],
         'measurementUnits' => $data['measurementUnits'],
         'flagInsurance' => $data['flagInsurance'],
+        'discount' => $data['discount'],
         'environment' => $data['environment'],
         'endPointRate' => END_POINT_RATE,
         'endPointShip' => END_POINT_SHIP,
@@ -874,7 +922,6 @@ public function get_total_weight_order( $order_id ) {
         'endPointPrintLabel' => END_POINT_PRINT_LABEL,
         'endPointCancel' => END_POINT_CANCEL,
         'endPointPrintManifestPdf' => END_POINT_PRINT_MANIFEST_PDF,
-
 
     );
  
@@ -901,8 +948,7 @@ public function get_total_weight_order( $order_id ) {
  }
 
 
- public function save_originShipper(){
-
+public function save_originShipper(){
 
     $data = $this->unserializeForm($_POST['inputs']);
         
@@ -941,8 +987,27 @@ public function get_total_weight_order( $order_id ) {
 
 }
 
+// get order detail
+public function get_order_detail(){
 
+    $order_id = sanitize_text_field($_POST['orderId']);
 
+    // get list item order
+    $order = wc_get_order( $order_id );
+    $order_items = $order->get_items();
+
+    foreach($order_items as $item){
+
+        $orderItemsData[] = $item->get_data();
+
+    }
+
+    echo json_encode($orderItemsData, true);
+
+ 
+    die();
+
+}
 
 
   public function fedex_shipping_intra_Chile_create_OrderShipper(){
@@ -1010,18 +1075,18 @@ public function get_total_weight_order( $order_id ) {
 
   //Impresión de etiquetas
 
-  public function fedex_shipping_intra_Chile_print_label(){
+public function fedex_shipping_intra_Chile_print_label(){
+    
 
     $orderId = sanitize_text_field($_POST['orderId']);
 
     $object = new printLabelShippingController();
     $object->index($orderId);
 
-
-
   }
 
-  public function fedex_shipping_intra_Chile_confirm_send(){
+
+public function fedex_shipping_intra_Chile_confirm_send(){
 
     $orderIds = $_POST['orderIds'];
 
@@ -1047,7 +1112,6 @@ public function fedex_shipping_intra_Chile_print_manifest(){
     }
 
     echo json_encode($manifestBase64PDF, true);
-
 
     die();
 
@@ -1239,8 +1303,7 @@ public function fedex_get_select_options(){
 
 
 // Deseralizar formulario
-  public function unserializeForm($form)
-  {
+public function unserializeForm($form){
 
       foreach ($form as $key => $value) {
 
@@ -1252,9 +1315,6 @@ public function fedex_get_select_options(){
 
 
   }
-
-
-
 
 }
 

@@ -42,9 +42,10 @@
                                             <div class="col-md-5">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="password" class="form-control" value=<?php echo ACCOUNT_NUMBER ?> 
-                                                        id="accountNumber" name="accountNumber" minlength="9"
-                                                        maxlength="30" value="" required>
+                                                    <input type="password" class="form-control"
+                                                        value=<?php echo ACCOUNT_NUMBER ?> id="accountNumber"
+                                                        name="accountNumber" minlength="9" maxlength="30" value=""
+                                                        required>
                                                     <label for="accountNumber">Account Number</label>
                                                 </div>
 
@@ -76,7 +77,8 @@
                                             <div class="col-md-5">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="password" class="form-control" value=<?php echo WS_KEY_USER_CREDENTIAL ?> placeholder=""
+                                                    <input type="password" class="form-control"
+                                                        value=<?php echo WS_KEY_USER_CREDENTIAL ?> placeholder=""
                                                         id="wskeyUserCredential" name="wskeyUserCredential"
                                                         minlength="5" maxlength="50" required>
                                                     <label for="wskeyUserCredential">Wskey User Credential</label>
@@ -94,8 +96,9 @@
 
                                                 <div class="form-floating mb-3">
                                                     <input type="password" class="form-control"
-                                                        id="wskeyPasswordCredential" name="wskeyPasswordCredential" value =<?php echo WS_KEY_PASSWORD_CREDENTIAL ?>
-                                                        minlength="5" maxlength="50" required>
+                                                        id="wskeyPasswordCredential" name="wskeyPasswordCredential"
+                                                        value=<?php echo WS_KEY_PASSWORD_CREDENTIAL ?> minlength="5"
+                                                        maxlength="50" required>
                                                     <label for="wskeyPasswordCredential">Wspassword User
                                                         Credential</label>
                                                 </div>
@@ -124,14 +127,26 @@
 
                                                 <div class="form-floating mb-3">
                                                     <select class="form-select" id="serviceType" name="serviceType"
-                                                        required aria-label="Floating label select example"
-                                                        <option value="" >Search...</option>
-                                                        <option value="Expreso" <?php if(SERVICE_TYPE ==  "Expreso"){ echo "selected"; } ?> >01-Expreso</option>
-                                                        <option value="Expreso_Documento" <?php if(SERVICE_TYPE ==  "Expreso_Documento"){ echo "selected"; } ?> >02-Expreso Documento</option>
-                                                        <option value="Courier" <?php if(SERVICE_TYPE ==  "Courier"){ echo "selected"; } ?> >03-Courier</option>
-                                                        <option value="Sobre_Courier" <?php if(SERVICE_TYPE ==  "Sobre_Courier"){ echo "selected"; } ?> >04-Sobre Courier 12:00 dia siguiente</option>
-                                                        <option value="Expreso_Valorado" <?php if(SERVICE_TYPE ==  "Expreso_Valorado"){ echo "selected"; } ?> >11-Expreso Valorado</option>
-                                                        <option value="Valorado_Courier" <?php if(SERVICE_TYPE ==  "Valorado_Courier"){ echo "selected"; } ?> >12-Valorado Courier</option>
+                                                        required aria-label="Floating label select example" <option
+                                                        value="">Search...</option>
+                                                        <option value="Expreso"
+                                                            <?php if(SERVICE_TYPE ==  "Expreso"){ echo "selected"; } ?>>
+                                                            01-Expreso</option>
+                                                        <option value="Expreso_Documento"
+                                                            <?php if(SERVICE_TYPE ==  "Expreso_Documento"){ echo "selected"; } ?>>
+                                                            02-Expreso Documento</option>
+                                                        <option value="Courier"
+                                                            <?php if(SERVICE_TYPE ==  "Courier"){ echo "selected"; } ?>>
+                                                            03-Courier</option>
+                                                        <option value="Sobre_Courier"
+                                                            <?php if(SERVICE_TYPE ==  "Sobre_Courier"){ echo "selected"; } ?>>
+                                                            04-Sobre Courier 12:00 dia siguiente</option>
+                                                        <option value="Expreso_Valorado"
+                                                            <?php if(SERVICE_TYPE ==  "Expreso_Valorado"){ echo "selected"; } ?>>
+                                                            11-Expreso Valorado</option>
+                                                        <option value="Valorado_Courier"
+                                                            <?php if(SERVICE_TYPE ==  "Valorado_Courier"){ echo "selected"; } ?>>
+                                                            12-Valorado Courier</option>
 
                                                     </select>
                                                     <label for="serviceType">Service Type</label>
@@ -182,9 +197,15 @@
                                                     <select class="form-select" id="labelType" name="labelType" required
                                                         aria-label="Floating label select example">
                                                         <option value="">Search...</option>
-                                                        <option value="PDF" <?php if(LABEL_TYPE ==  "PDF"){ echo "selected"; } ?> >PDF</option>
-                                                        <option value="PDF2" <?php if(LABEL_TYPE ==  "PDF2"){ echo "selected"; } ?> >PDF2</option>
-                                                        <option value="ZPL" <?php if(LABEL_TYPE ==  "ZPL"){ echo "selected"; } ?> >ZPL</option>
+                                                        <option value="PDF"
+                                                            <?php if(LABEL_TYPE ==  "PDF"){ echo "selected"; } ?>>PDF
+                                                        </option>
+                                                        <option value="PDF2"
+                                                            <?php if(LABEL_TYPE ==  "PDF2"){ echo "selected"; } ?>>PDF2
+                                                        </option>
+                                                        <option value="ZPL"
+                                                            <?php if(LABEL_TYPE ==  "ZPL"){ echo "selected"; } ?>>ZPL
+                                                        </option>
                                                     </select>
                                                     <label for="labelType">label Type</label>
                                                 </div>
@@ -197,10 +218,48 @@
                                                         name="measurementUnits" required
                                                         aria-label="Floating label select example">
                                                         <option value="">Search...</option>
-                                                        <option value="KG/CM" <?php if(MEASUREMENT_UNITS ==  "KG/CM"){ echo "selected"; } ?> >KG/CM</option>
-                                                        <option value="LBS/IN" <?php if(MEASUREMENT_UNITS ==  "LBS/IN"){ echo "selected"; } ?> >LBS/IN</option>
+                                                        <option value="KG/CM"
+                                                            <?php if(MEASUREMENT_UNITS ==  "KG/CM"){ echo "selected"; } ?>>
+                                                            KG/CM</option>
+                                                        <option value="LBS/IN"
+                                                            <?php if(MEASUREMENT_UNITS ==  "LBS/IN"){ echo "selected"; } ?>>
+                                                            LBS/IN</option>
                                                     </select>
                                                     <label for="measurementUnits">Measurement Units</label>
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+
+                                        <hr>
+
+                                        <div class="row">
+                                            <div class="form-floating mb-3">
+                                                <div class="panel-heading">
+
+                                                    <h3 class="panel-title mb-3">Descuento Transporte</h3>
+
+
+
+
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-5">
+
+                                                <input type="range" class="form-range" id="formControlRange"
+                                                    name="discount" min="0" max="100" value=<?php echo DISCOUNT; ?>
+                                                    onChange="document.getElementById('rangeval').innerText = document.getElementById('formControlRange').value">
+
+                                                <!--align center-->
+                                                <div class="text-center">
+
+                                                    <span class="badge bg-primary">
+                                                        <span id="rangeval"><?php echo DISCOUNT; ?></span>
+                                                        <span>%</span>
+                                                    </span>
+
                                                 </div>
 
                                             </div>
@@ -224,8 +283,12 @@
                                                     <select class="form-select" id="environment" name="environment"
                                                         required aria-label="Floating label select example">
                                                         <option value="">Search...</option>
-                                                        <option value="QA" <?php if(ENVIRONMENT ==  "QA"){ echo "selected"; } ?> >QA</option>
-                                                        <option value="PRODUCTION" <?php if(ENVIRONMENT ==  "PRODUCTION"){ echo "selected"; } ?> >PRODUCTION</option>
+                                                        <option value="QA"
+                                                            <?php if(ENVIRONMENT ==  "QA"){ echo "selected"; } ?>>QA
+                                                        </option>
+                                                        <option value="PRODUCTION"
+                                                            <?php if(ENVIRONMENT ==  "PRODUCTION"){ echo "selected"; } ?>>
+                                                            PRODUCTION</option>
                                                     </select>
                                                     <label for="environment">Environment</label>
                                                 </div>
@@ -312,7 +375,8 @@
                                             <div class="col-md-6">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="personNameShipper" value= <?php echo PERSON_NAME_SHIPPER; ?>
+                                                    <input type="text" class="form-control" id="personNameShipper"
+                                                        value=<?php echo PERSON_NAME_SHIPPER; ?>
                                                         name="personNameShipper"
                                                         aria-label="Floating label example input">
                                                     <label for="personNameShipper">Person Name </label>
@@ -324,8 +388,9 @@
                                             <div class="col-md-4">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="tel" class="form-control" id="phoneShipper" value= <?php echo PHONE_SHIPPER; ?>
-                                                        name="phoneShipper" aria-label="Floating label example input">
+                                                    <input type="tel" class="form-control" id="phoneShipper"
+                                                        value=<?php echo PHONE_SHIPPER; ?> name="phoneShipper"
+                                                        aria-label="Floating label example input">
                                                     <label for="phoneShipper">Phone </label>
                                                 </div>
 
@@ -340,7 +405,8 @@
                                             <div class="col-md-6">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="companyNameShipper" value= <?php echo COMPANY_NAME_SHIPPER; ?>
+                                                    <input type="text" class="form-control" id="companyNameShipper"
+                                                        value=<?php echo COMPANY_NAME_SHIPPER; ?>
                                                         name="companyNameShipper"
                                                         aria-label="Floating label example input">
                                                     <label for="companyNameShipper">Company Name</label>
@@ -351,8 +417,9 @@
                                             <div class="col-md-4">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="email" class="form-control" id="emailShipper" value= <?php echo EMAIL_SHIPPER; ?>
-                                                        name="emailShipper" aria-label="Floating label example input">
+                                                    <input type="email" class="form-control" id="emailShipper"
+                                                        value=<?php echo EMAIL_SHIPPER; ?> name="emailShipper"
+                                                        aria-label="Floating label example input">
                                                     <label for="emailShipper">Email</label>
                                                 </div>
                                             </div>
@@ -365,8 +432,8 @@
                                             <div class="col-md-2">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="vatNumberShipper" value= <?php echo VAT_NUMBER_SHIPPER; ?>
-                                                        name="vatNumberShipper"
+                                                    <input type="text" class="form-control" id="vatNumberShipper"
+                                                        value=<?php echo VAT_NUMBER_SHIPPER; ?> name="vatNumberShipper"
                                                         aria-label="Floating label example input">
                                                     <label for="vatNumberShipper">Nif</label>
                                                 </div>
@@ -382,46 +449,78 @@
 
                                                         <option selected disabled value="">Search...</option>
 
-                                                        <option value="ANCUD" <?php if(CITY_SHIPPER == "ANCUD" ){ echo "selected"; } ?> >ANCUD</option>
+                                                        <option value="ANCUD"
+                                                            <?php if(CITY_SHIPPER == "ANCUD" ){ echo "selected"; } ?>>
+                                                            ANCUD</option>
                                                         <option value="ANGOL">ANGOL</option>
-                                                        <option value="ANTOFAGASTA" <?php if(CITY_SHIPPER == "ANTOFAGASTA" ){ echo "selected"; } ?> >ANTOFAGASTA</option>
+                                                        <option value="ANTOFAGASTA"
+                                                            <?php if(CITY_SHIPPER == "ANTOFAGASTA" ){ echo "selected"; } ?>>
+                                                            ANTOFAGASTA</option>
                                                         <option value="ARICA">ARICA</option>
                                                         <option value="CALAMA">CALAMA</option>
                                                         <option value="CASTRO">CASTRO</option>
                                                         <option value="CHILLAN">CHILLAN</option>
-                                                        <option value="CONCEPCION" <?php if(CITY_SHIPPER == "CONCEPCION" ){ echo "selected"; } ?>>CONCEPCION</option>
+                                                        <option value="CONCEPCION"
+                                                            <?php if(CITY_SHIPPER == "CONCEPCION" ){ echo "selected"; } ?>>
+                                                            CONCEPCION</option>
                                                         <option value="COPIAPO">COPIAPO</option>
                                                         <option value="COQUIMBO">COQUIMBO</option>
                                                         <option value="CURICO">CURICO</option>
-                                                        <option value="IQUIQUE" <?php if(CITY_SHIPPER == "IQUIQUE" ){ echo "selected"; } ?> >IQUIQUE</option>
-                                                        <option value="LA SERENA" <?php if(CITY_SHIPPER == "LA SERENA" ){ echo "selected"; } ?> >LA SERENA</option>
+                                                        <option value="IQUIQUE"
+                                                            <?php if(CITY_SHIPPER == "IQUIQUE" ){ echo "selected"; } ?>>
+                                                            IQUIQUE</option>
+                                                        <option value="LA SERENA"
+                                                            <?php if(CITY_SHIPPER == "LA SERENA" ){ echo "selected"; } ?>>
+                                                            LA SERENA</option>
                                                         <option value="LOS ANDES">LOS ANDES</option>
                                                         <option value="LINARES">LINARES</option>
-                                                        <option value="LOS ANGELES" <?php if(CITY_SHIPPER == "LOS ANGELES" ){ echo "selected"; } ?> >LOS ANGELES</option>
+                                                        <option value="LOS ANGELES"
+                                                            <?php if(CITY_SHIPPER == "LOS ANGELES" ){ echo "selected"; } ?>>
+                                                            LOS ANGELES</option>
                                                         <option value="LA UNION">LA UNION</option>
                                                         <option value="LOS VILOS">LOS VILOS</option>
                                                         <option value="OSORNO">OSORNO</option>
                                                         <option value="OVALLE">OVALLE</option>
-                                                        <option value="PUERTO MONTT" <?php if(CITY_SHIPPER == "PUERTO MONTT" ){ echo "selected"; } ?> >PUERTO MONTT</option>
-                                                        <option value="PUERTO NATALES" <?php if(CITY_SHIPPER == "PUERTO NATALES" ){ echo "selected"; } ?> >PUERTO NATALES</option>
-                                                        <option value="PUNTA ARENAS" <?php if(CITY_SHIPPER == "PUNTA ARENAS" ){ echo "selected"; } ?> >PUNTA ARENAS</option>
-                                                        <option value="QUILLOTA" <?php if(CITY_SHIPPER == "QUILLOTA" ){ echo "selected"; } ?> >QUILLOTA</option>
-                                                        <option value="RANCAGUA" <?php if(CITY_SHIPPER == "RANCAGUA" ){ echo "selected"; } ?> >RANCAGUA</option>
+                                                        <option value="PUERTO MONTT"
+                                                            <?php if(CITY_SHIPPER == "PUERTO MONTT" ){ echo "selected"; } ?>>
+                                                            PUERTO MONTT</option>
+                                                        <option value="PUERTO NATALES"
+                                                            <?php if(CITY_SHIPPER == "PUERTO NATALES" ){ echo "selected"; } ?>>
+                                                            PUERTO NATALES</option>
+                                                        <option value="PUNTA ARENAS"
+                                                            <?php if(CITY_SHIPPER == "PUNTA ARENAS" ){ echo "selected"; } ?>>
+                                                            PUNTA ARENAS</option>
+                                                        <option value="QUILLOTA"
+                                                            <?php if(CITY_SHIPPER == "QUILLOTA" ){ echo "selected"; } ?>>
+                                                            QUILLOTA</option>
+                                                        <option value="RANCAGUA"
+                                                            <?php if(CITY_SHIPPER == "RANCAGUA" ){ echo "selected"; } ?>>
+                                                            RANCAGUA</option>
                                                         <option value="SAN ANTONIO">SAN ANTONIO</option>
-                                                        <option value="SAN FELIPE" <?php if(CITY_SHIPPER == "SAN FELIPE" ){ echo "selected"; } ?> >SAN FELIPE</option>
+                                                        <option value="SAN FELIPE"
+                                                            <?php if(CITY_SHIPPER == "SAN FELIPE" ){ echo "selected"; } ?>>
+                                                            SAN FELIPE</option>
                                                         <option value="SAN FERNANDO">SAN FERNANDO</option>
-                                                        <option value="SANTIAGO" <?php if(CITY_SHIPPER == "SANTIAGO" ){ echo "selected"; } ?> >SANTIAGO</option>
+                                                        <option value="SANTIAGO"
+                                                            <?php if(CITY_SHIPPER == "SANTIAGO" ){ echo "selected"; } ?>>
+                                                            SANTIAGO</option>
                                                         <option value="SANTIAGO RM">SANTIAGO RM</option>
                                                         <option value="TALCA">TALCA</option>
                                                         <option value="TEMUCO">TEMUCO</option>
                                                         <option value="TOCOPILLA">TOCOPILLA</option>
                                                         <option value="VALDIVIA">VALDIVIA</option>
                                                         <option value="VALLENAR">VALLENAR</option>
-                                                        <option value="VALPARAISO" <?php if(CITY_SHIPPER == "VALPARAISO" ){ echo "selected"; } ?> >VALPARAISO</option>
+                                                        <option value="VALPARAISO"
+                                                            <?php if(CITY_SHIPPER == "VALPARAISO" ){ echo "selected"; } ?>>
+                                                            VALPARAISO</option>
                                                         <option value="VICHUQUEN">VICHUQUEN</option>
                                                         <option value="VICHUQUEN">VILLARRICA</option>
-                                                        <option value="VINA DEL MAR" <?php if(CITY_SHIPPER == "VINA DEL MAR" ){ echo "selected"; } ?> >VINA DEL MAR</option>
-                                                        <option value="VITACURA" <?php if(CITY_SHIPPER == "VITACURA" ){ echo "selected"; } ?>>VITACURA</option>
+                                                        <option value="VINA DEL MAR"
+                                                            <?php if(CITY_SHIPPER == "VINA DEL MAR" ){ echo "selected"; } ?>>
+                                                            VINA DEL MAR</option>
+                                                        <option value="VITACURA"
+                                                            <?php if(CITY_SHIPPER == "VITACURA" ){ echo "selected"; } ?>>
+                                                            VITACURA</option>
                                                         <option value="YUMBEL">YUMBEL</option>
                                                         <option value="YUNGAY">YUNGAY</option>
 
@@ -451,7 +550,8 @@
                                             <div class="col-md-2">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="postalCodeShipper" value= <?php echo POSTAL_CODE_SHIPPER; ?>
+                                                    <input type="text" class="form-control" id="postalCodeShipper"
+                                                        value=<?php echo POSTAL_CODE_SHIPPER; ?>
                                                         name="postalCodeShipper"
                                                         aria-label="Floating label example input">
                                                     <label for="postalCodeShipper">Postal Code</label>
@@ -480,10 +580,11 @@
                                                     <!--textarea-->
                                                     <textarea class="form-control" id="addressLine1Shipper"
                                                         name="addressLine1Shipper" rows="3"
-                                                        aria-label="Floating label example input" maxlength="150"><?php echo ADDRESS_LINE1_SHIPPER; ?></textarea>
+                                                        aria-label="Floating label example input"
+                                                        maxlength="150"><?php echo ADDRESS_LINE1_SHIPPER; ?></textarea>
                                                     <label for="addressLine1Shipper">Address Line 1</label>
 
-                                               
+
                                                 </div>
 
                                             </div>
@@ -494,9 +595,10 @@
                                                     <!--textarea-->
                                                     <textarea class="form-control" id="addressLine2Shipper"
                                                         name="addressLine2Shipper" rows="3"
-                                                        aria-label="Floating label example input" maxlength="150"><?php echo ADDRESS_LINE2_SHIPPER; ?></textarea>
+                                                        aria-label="Floating label example input"
+                                                        maxlength="150"><?php echo ADDRESS_LINE2_SHIPPER; ?></textarea>
                                                     <label for="addressLine2Shipper">Address Line 2</label>
-                                                    
+
                                                 </div>
 
                                             </div>
@@ -509,8 +611,9 @@
                                             <div class="col-md-3">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="taxIdShipper" value= <?php echo TAX_ID_SHIPPER; ?>
-                                                        name="taxIdShipper" aria-label="Floating label example input">
+                                                    <input type="text" class="form-control" id="taxIdShipper"
+                                                        value=<?php echo TAX_ID_SHIPPER; ?> name="taxIdShipper"
+                                                        aria-label="Floating label example input" readonly>
                                                     <label for="taxIdShipper">Tax</label>
                                                 </div>
 
@@ -519,8 +622,9 @@
                                             <div class="col-md-3">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="text" class="form-control" id="ieShipper" value= <?php echo IE_SHIPPER; ?>
-                                                        name="ieShipper" aria-label="Floating label example input">
+                                                    <input type="text" class="form-control" id="ieShipper"
+                                                        value=<?php echo IE_SHIPPER; ?> name="ieShipper"
+                                                        aria-label="Floating label example input" readonly>
                                                     <label for="ieShipper">Ie</label>
                                                 </div>
 

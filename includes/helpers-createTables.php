@@ -32,6 +32,7 @@ class createTables{
             labelType VARCHAR(50),
             measurementUnits VARCHAR(100),
             flagInsurance INT(1),
+            discount INT(20),
             environment VARCHAR(50),
             endPointRate VARCHAR(150),
             endPointShip VARCHAR(150),
@@ -55,7 +56,7 @@ class createTables{
         $this->wpdb->insert(
             $tabla,
             array(
-                'accountNumber' => '900063671',
+                'accountNumber' => '900012758',
                 'meterNumber' => '123465789',
                 'wskeyUserCredential' => 'SPEREZ',
                 'wskeyPasswordCredential' => 'Home.2020',
@@ -65,6 +66,7 @@ class createTables{
                 'labelType' => 'PDF',
                 'measurementUnits' => 'KG/CM',
                 'flagInsurance' => '',
+                'discount' => 0,
                 'environment' => 'PRODUCTION',
                 'endPointRate' => 'https://api.trinit.cl/fedex/v1/tarifario/',
                 'endPointShip' => 'https://wsbeta.fedex.com/LAC/ServicesAPI/connector/cl/documentShip',

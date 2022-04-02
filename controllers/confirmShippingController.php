@@ -136,7 +136,7 @@ class confirmShippingController {
 
             $select = $this->wpdb->get_results("
             SELECT * FROM " . $this->table_name_confirmationshipping . " 
-            WHERE manifestNumber = " . $response['recogida']
+            WHERE manifestNumber = " . $response['pickupNumber']
         );
 
             if(count($select) == 0){

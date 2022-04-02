@@ -44,21 +44,17 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $rate = array(
                     'id' => $this->id,
                     'label' => $this->title,
-                    'cost' => $this->Rate(),                    
-                    'calc_tax' => 'per_order'
+                    'cost' => $this->Rate(),
+                    'taxes' => false,
+                    'calc_tax' => 'per_item',
+                    'meta_data'  => array()
+
                 );
 
                 $this->add_rate( $rate );
 
             }
 
-
-            // update caculate shipping
-            public function update_rates( $package = array() ) {
-
-                $this->calculate_shipping( $package );
-
-            }
 
 
             // update caculate shipping checkout
@@ -122,18 +118,41 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 
 // Auto Add Tax Depending On Room Per Night Price
-/* add_action( 'woocommerce_cart_calculate_fees','auto_add_tax_for_room', 10, 1 );
-function auto_add_tax_for_room( $cart ) {
+ /*  add_action( 'woocommerce_cart_calculate_fees','auto_add_tax_for_room', 10, 1 );
+function auto_add_tax_for_room( $cart) {
     if ( is_admin() && ! defined('DOING_AJAX') ) return;
   
-    $percent = 18;
+    // seleccion metodo de envio
+    $shipping_method = WC()->session->get( 'chosen_shipping_methods' );
+    $shipping_method = $shipping_method[0];
+
+
+    if ( $shipping_method == 'method_fedex_shipping' ) {
+
+    // porcentaje descuento
+    $percent_discount = - DISCOUNT;
 
     // Calculation
-    $surcharge = ( $cart->cart_contents_total + $cart->shipping_total ) * $percent / 100;
+    $discount = (  $cart->shipping_total ) * ( $percent_discount / 100);
 
-    // Add the fee (tax third argument disabled: false)
-    $cart->add_fee( __( 'TAX', 'woocommerce')." ($percent%)", $surcharge, false );
-} */
+    $cart->add_fee( 'Descuento Envío', $discount, true, 'standard' );
+
+    // restar   
+    $cart->shipping_total = $cart->shipping_total - $discount;
+
+ 
+
+    
+
+
+
+    
+
+   }
+    
+
+
+}   */
 
 
 

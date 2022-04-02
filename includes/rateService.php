@@ -28,7 +28,7 @@ class rateService
 
     $response = json_decode($ws_response->body, true);
 
-    return $response['flete'];
+    return ($response['flete'] - (DISCOUNT/100) * $response['flete']);
 
 
 

@@ -21,6 +21,8 @@
 
     /******************************************************* */
 
+
+
     //Envio de formulario de configuración datos cliente
     jQuery("#configuration").on("submit", function (e) {
       e.preventDefault();
@@ -168,32 +170,35 @@
         url: "admin-ajax.php", // Url to which the request is send
         type: "POST",
         data: {
-          action: "fedex_shipping_intra_Chile_get_order_detail",
+          action: "get_order_detail",
           orderId: $(this).attr("data-order"),
         },
         beforeSend: function () {},
         success: function (data) {
-          $("#modal-itemsOrder").modal("show");
 
           let parse = JSON.parse(data);
+
+          console.log(parse);
 
           let html = "";
           let i = 1;
 
-          parse.items.forEach(function (item) {
+          $.each(parse, function (index, value) {
 
             html += "<tr>";
             html += "<td>" + i + "</td>";
-            html += "<td>" + item.name + "</td>";
-            html += "<td>" + item.quantity + "</td>";
-            html += "<td>" + item.total + "</td>";
+            html += "<td>" + value.name + "</td>";
+            html += "<td>" + value.quantity + "</td>";
+            html += "<td>" + value.total + "</td>";
 
             i++;
 
             html += "</tr>";
-          });
 
-          $("#itemsOrder").html(html);
+          });
+          
+
+          $("#itemsOrder").html(html);  
         },
         error: function (data) {
           console.log(data);

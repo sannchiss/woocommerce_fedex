@@ -28,9 +28,7 @@ class credentialsAccount {
             $params['labelType'] = $value->labelType;
             $params['measurementUnits'] = $value->measurementUnits;
             $params['flagInsurance'] = $value->flagInsurance;
-            $params['width'] = $value->width;
-            $params['length'] = $value->length;
-            $params['height'] = $value->height;
+            $params['discount'] = $value->discount;
             $params['environment'] = $value->environment;
             $params['endPointRate'] = $value->endPointRate;
             $params['endPointShip'] = $value->endPointShip;
