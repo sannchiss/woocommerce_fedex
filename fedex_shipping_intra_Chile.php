@@ -29,8 +29,6 @@ define('PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 
 class fedex_shipping_intra_Chile  {
 
-
-
 public function __construct() {
 
     global $wpdb;
@@ -42,7 +40,6 @@ public function __construct() {
     $this->table_name_configuration = $table_prefix . 'fedex_shipping_intra_CL_configuration';
     $this->table_name_originShipper = $table_prefix . 'fedex_shipping_intra_CL_originShipper';
     $this->table_name_responseShipping = $table_prefix . 'fedex_shipping_intra_CL_responseShipping';
-    $this->table_name_orderSend = $table_prefix . 'fedex_shipping_intra_CL_orderSend';
     $this->table_name_orderDetail = $table_prefix . 'fedex_shipping_intra_CL_orderDetail';
     $this->table_name_posts = $table_prefix . 'posts';
     $this->table_name_confirmationshipping = $table_prefix . 'fedex_shipping_intra_CL_confirmationShipping';
@@ -54,6 +51,10 @@ public function __construct() {
     add_action( 'init', array( $this, 'post_status_sent' )); 
     add_filter( 'wc_order_statuses', array( $this, 'anadir_posventa_lista_sent' ));
 
+    add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ));
+
+    //http_request_timeout
+    add_filter( 'http_request_timeout', array( $this, 'timeout_request' ));
 
     add_action( 'init', array( $this, 'add_status_shipping_fedex' ));
     add_filter( 'wc_order_statuses', array ($this, 'add_order_status_shipping_fedex' ));
@@ -281,8 +282,7 @@ public function addSubmenusPanel($submenus) {
 }
 
 
-public function enqueue_scripts()
-{
+public function enqueue_scripts(){
 
     /**Libreria para mensajes */
     wp_register_script( 'jquery', '//code.jquery.com/jquery-3.6.0.js', null, null, true );
@@ -351,8 +351,7 @@ public function enqueue_scripts()
 
   }
 
-public function enqueue_styles()
- {
+public function enqueue_styles() {
 
     /**Libreria para iconos Fontawesome */
     wp_register_style( 'Font_Awesome', '//use.fontawesome.com/releases/v5.15.4/css/all.css' );
@@ -395,6 +394,14 @@ public function add_status_shipping_fedex(){
 
 
  }
+
+//timeout_request
+public function timeout_request($timeout){
+    return 60;
+}
+
+
+
 
 
 
@@ -669,10 +676,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         }
 
-        // if response is ok
-      /*   if ( $ws_response->success ) {
-
-        } */
 
         // tour array $ws_response->body
         $response = json_decode($ws_response->body, true);
@@ -681,69 +684,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         if( $response['comments'] == "OK" ) {
-
-
-            //inserto en la tabla de envios
-            $insertsql = $this->wpdb->insert( 
-            $this->table_name_orderSend, 
-            array(        
-
-            'orderNumber' =>  $order,
-            'masterTrackingNumber' => $response['masterTrackingNumber'],
-            'orderDate' =>  $order_details['date_created']->date('Y-m-d H:i:s'),
-            'totalOrderAmount' =>  $order_details['total'],
-            'personNameRecipient' =>  $order_details['billing']['first_name'] . ' ' . $order_details['billing']['last_name'], 
-            'phoneNumberRecipient' =>  $order_details['billing']['phone'], 
-            'companyNameRecipient' =>  $order_details['billing']['company'],
-            'vatNumberRecipient' =>  '1-9',
-            'emailRecipient' =>  $order_details['billing']['email'],
-            'notesRecipient' =>  $order_details['customer_note'],
-            'cityRecipient' =>  $order_details['billing']['city'],
-            'stateOrProvinceCodeRecipient' =>  $order_details['billing']['state'],
-            'postalCodeRecipient' =>  $order_details['billing']['postcode'],
-            'countryCodeRecipient' =>  $order_details['billing']['country'], 
-            'streetLine1Recipient' =>  $order_details['billing']['address_1'], 
-            'streetLine2Recipient' =>  $order_details['billing']['address_2'], 
-            'serviceType' =>  SERVICE_TYPE,
-            'packagingType' =>  PACKAGING_TYPE,
-            'paymentType' =>  PAYMENT_TYPE,
-            'measurementUnits' =>  MEASUREMENT_UNITS,
-            'numberOfPieces' =>  $order_details['line_items_count'],
-            'packages' =>  '1',
-            'weight' =>  $order_features['weight'],
-            'weightUnits' =>  $order_details['weight_unit'],
-            'length' =>  $order_features['length'],
-            'width' =>  $order_features['width'],
-            'height' =>  $order_features['height'],
-            'volume' =>  $weightVolumetric,
-            'dimensionUnits' =>  $order_details['dimension_unit'],
-            'labelType' =>  LABEL_TYPE, 
-            'personNameShipper' =>  $order_details['shipping']['first_name'] . ' ' . $order_details['shipping']['last_name'], 
-            'phoneShipper' =>  $order_details['shipping']['phone'], 
-            'companyNameShipper' =>  $order_details['shipping']['company'],
-            'emailShipper' =>  $order_details['shipping']['email'],
-            'vatNumberShipper' =>  '1-9',
-            'cityShipper' =>  $order_details['shipping']['city'],   
-            'stateOrProvinceCodeShipper' =>  $order_details['shipping']['state'],
-            'postalCodeShipper' =>  $order_details['shipping']['postcode'],
-            'countryCodeShipper' =>  $order_details['shipping']['country'],
-            'addressLine1Shipper' =>  $order_details['shipping']['address_1'], 
-            'addressLine2Shipper' =>  $order_details['shipping']['address_2'], 
-            'taxIdShipper' => '123456789',
-            'ieShipper' =>  '123456789',
-            'status' => $response['status'],
-            'error' =>  '', 
-
-        ) );
-        
-
-      // error in the insert
-        if ( false === $insertsql ) {
-            $error = $this->wpdb->last_error;
-            $this->wpdb->print_error();
-            print_r($error);
-        }
-
 
 
          // Selecciono el tipo de etiqueta de la configuración

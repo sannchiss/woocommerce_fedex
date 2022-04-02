@@ -33,7 +33,7 @@ function add_custom_order_data_to_admin_order_page($order)
 
 
     $sql = "SELECT * FROM ".$table_prefix."posts 
-    a INNER JOIN ".$table_prefix."fedex_shipping_intra_CL_orderSend at ON a.ID = at.orderNumber";
+    a INNER JOIN ".$table_prefix."fedex_shipping_intra_CL_responseShipping at ON a.ID = at.orderNumber";
    
     $result = $wpdb->get_results($sql);
 
@@ -42,18 +42,7 @@ function add_custom_order_data_to_admin_order_page($order)
         $order_post_status = $row->post_status;
         $masterTrackingNumber = $row->masterTrackingNumber;
         $labelBase64PDF = $row->labelBase64PDF;
-        $order_length = $row->length;
-        $order_length_send = $row->lengthSend;
-        $order_width = $row->width;
-        $order_width_send = $row->widthSend;
-        $order_height = $row->height;
-        $order_height_send = $row->heightSend;
-        $order_volume = $row->volume;
-        $order_volume_send = $row->volumeSend;
-        $order_status = $row->status;
-        $order_status_send = $row->statusSend;
-        $order_date = $row->date;
-        $order_date_send = $row->dateSend;
+        
     }
 
 
@@ -88,7 +77,7 @@ function add_custom_order_data_to_admin_order_page($order)
       </li>
     <li class="list-group-item d-flex justify-content-between align-items-center">
       COSTO TOTAL
-      <span class="badge bg-primary rounded">'.$order->get_total().'</span>
+      <span class="badge bg-secondary">'.$order->get_total().'</span>
     </li>
     <li class="list-group-item d-flex justify-content-between align-items-center">
       NUMERO DE SEGUIMIENTO
@@ -141,6 +130,7 @@ function get_label_shipping($masterTrackingNumber){
     );
    
 
+   
 
     $ws_response = RestClient::post(END_POINT_PRINT_LABEL, $headers, $request, null);
 

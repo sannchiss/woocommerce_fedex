@@ -505,10 +505,11 @@
               },
 
               success: function (data) {
+                
                 var parseData = JSON.parse(data);
 
 
-                if (parseData.status == "OK") {
+                  if (parseData.status == "OK") {
                   Swal.fire({
                     title: parseData.message,
                     text: "Deseas imprimir el manifiesto?",
@@ -539,7 +540,7 @@
                     icon: "error",
                     html: "<b>" + parseData.message + "</b>",
                   });
-                }
+                }  
               },
               completed: function () {},
 

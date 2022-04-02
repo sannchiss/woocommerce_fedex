@@ -67,9 +67,4 @@ class rateService
     }
 
 
-
-
-
-
-
 }

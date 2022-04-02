@@ -17,11 +17,6 @@ $tableName = $table_prefix . 'fedex_shipping_intra_CL_originShipper';
 $sql = "DROP TABLE IF EXISTS $tableName";
 $wpdb->query($sql);
 
-
-$tableName = $table_prefix . 'fedex_shipping_intra_CL_orderSend';
-$sql = "DROP TABLE IF EXISTS $tableName";
-$wpdb->query($sql);
-
 $tableName = $table_prefix . 'fedex_shipping_intra_CL_orderDetail';
 $sql = "DROP TABLE IF EXISTS $tableName";
 $wpdb->query($sql);

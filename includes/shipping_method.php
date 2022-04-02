@@ -115,8 +115,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 
 
-
-
 // Auto Add Tax Depending On Room Per Night Price
  /*  add_action( 'woocommerce_cart_calculate_fees','auto_add_tax_for_room', 10, 1 );
 function auto_add_tax_for_room( $cart) {
@@ -139,12 +137,6 @@ function auto_add_tax_for_room( $cart) {
 
     // restar   
     $cart->shipping_total = $cart->shipping_total - $discount;
-
- 
-
-    
-
-
 
     
 

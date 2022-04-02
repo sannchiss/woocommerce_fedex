@@ -9,7 +9,6 @@ class confirmShippingController {
 
         $this->wpdb = $wpdb;
         $this->table_prefix = $table_prefix;
-        $this->table_name_ordersend = $table_prefix . 'fedex_shipping_intra_CL_orderSend';
         $this->table_name_responseshipping = $table_prefix . 'fedex_shipping_intra_CL_responseShipping';
         $this->table_name_confirmationshipping = $table_prefix . 'fedex_shipping_intra_CL_confirmationShipping';
         $this->table_name_posts = $table_prefix . 'posts';
@@ -21,15 +20,16 @@ class confirmShippingController {
 
         foreach ($orderIds as $key => $orderNumber) {
 
+
             $getRow = $this->wpdb->get_row("
             SELECT orderNumber,masterTrackingNumber 
-                FROM " . $this->table_name_ordersend . " 
+                FROM " . $this->table_name_responseshipping . " 
                     WHERE orderNumber = " . $orderNumber
                 );
 
             try {
 
-                if(!empty($getRow)){
+                if( count($getRow) > 0 ){
 
                     $orderNumber = $getRow->orderNumber;
                     $masterTrackingNumber = $getRow->masterTrackingNumber;
@@ -41,17 +41,7 @@ class confirmShippingController {
         
                     );
 
-                    // update status order 
-
-                    $this->wpdb->update(
-                        $this->table_name_posts,
-                        array(
-                            'post_status' => 'wc-fedex'
-                        ),
-                        array(
-                            'id' => $orderNumber
-                        )
-                    );
+                    
 
 
                 }else{
@@ -95,31 +85,23 @@ class confirmShippingController {
         }';
 
 
-
   
-        // Cabecera de la petición
+     // Cabecera de la petición
         $headers = array(
             'Accept' => 'application/json', 
             'Content-Type' => 'application/json'
         );
-        $options = array(
-            'auth' => array(
-                WS_KEY_USER_CREDENTIAL,
-                WS_KEY_PASSWORD_CREDENTIAL
-            ),
-        );
+        
 
-
-        $ws_response = RestClient::post(END_POINT_CONFIRMATION, $headers, $request, $options);
+        $ws_response = RestClient::post(END_POINT_CONFIRMATION, $headers, $request, null);
 
 
         // tour array $ws_response->body
-        $response = json_decode($ws_response->body, true);
+        $response = json_decode($ws_response->body, true); 
 
 
 
-
-     if($response['result'] == 'ERROR'){
+      if($response['result'] == 'ERROR'){
 
        //Mensaje de error
         echo json_encode(
@@ -133,6 +115,26 @@ class confirmShippingController {
 
         }
         else{
+
+
+            foreach ($orderIds as $key => $orderNumber) {
+
+                // update status order 
+
+                $this->wpdb->update(
+                    $this->table_name_posts,
+                    array(
+                        'post_status' => 'wc-fedex'
+                    ),
+                    array(
+                        'id' => $orderNumber
+                    )
+                );
+
+
+            }
+
+
 
             $select = $this->wpdb->get_results("
             SELECT * FROM " . $this->table_name_confirmationshipping . " 
@@ -182,7 +184,7 @@ class confirmShippingController {
 
 
 
-        }
+        } 
 
 
 

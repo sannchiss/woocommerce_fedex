@@ -9,7 +9,6 @@ class printLabelShippingController {
 
         $this->wpdb = $wpdb;
         $this->table_prefix = $table_prefix;
-        $this->table_name_ordersend = $table_prefix . 'fedex_shipping_intra_CL_orderSend';
         $this->table_name_responseshipping = $table_prefix . 'fedex_shipping_intra_CL_responseShipping';
         $this->table_name_posts = $table_prefix . 'posts';
 
