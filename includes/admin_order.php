@@ -11,9 +11,13 @@ function add_custom_order_data_to_admin_order_page($order)
     global $wpdb;
     global $table_prefix;
 
+
     $table = $table_prefix . "fedex_shipping_intra_CL_orderDetail";
 
     $order_id = $order->get_id();
+
+    print_r($order_id);
+
 
     // get total weight order
     $order        = wc_get_order( $order_id );
@@ -31,9 +35,11 @@ function add_custom_order_data_to_admin_order_page($order)
 	}
 	
 
+  // SELECT JOIN WHERE
+  
 
     $sql = "SELECT * FROM ".$table_prefix."posts 
-    a INNER JOIN ".$table_prefix."fedex_shipping_intra_CL_responseShipping at ON a.ID = at.orderNumber";
+    a INNER JOIN ".$table_prefix."fedex_shipping_intra_CL_responseShipping at ON a.ID = at.orderNumber WHERE a.ID = ".$order_id;
    
     $result = $wpdb->get_results($sql);
 
@@ -58,8 +64,14 @@ function add_custom_order_data_to_admin_order_page($order)
 
     if( $order_post_status == "wc-procesado-fedex" || $order_post_status == "wc-fedex" ):
 
-    echo '<div class="card" style="width: 100%;">
-    <h5 class="card-title">Etiqueta FedEx</h5>
+      
+
+
+    echo '<div class="card" style="width: 100%; height: 100%;">
+
+    <div class="card-header">
+    Etiqueta de envío FedEx
+    </div>
     <iframe id="contentLabelPrint" src="data:application/pdf;base64,'.$label_shipping['pdfMerge'].'" width="100%" height="100%" allowfullscreen></iframe>
 
     <div class="card-body">
@@ -68,20 +80,23 @@ function add_custom_order_data_to_admin_order_page($order)
 
     <ul class="list-group">
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      TRANSPORTE
-      <span class="badge bg-primary rounded">FedEx Express</span>
+      
+    <h3>Transporte <span class="badge bg-secondary">FedEx Express</span></h3>
     </li>
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      PESO
-      <span class="badge bg-primary rounded">'.$total_weight.'</span>
+      
+      <h3>Peso <span class="badge bg-secondary">'.$total_weight.'</span></h3>
+
       </li>
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      COSTO TOTAL
-      <span class="badge bg-secondary">'.$order->get_total().'</span>
+
+    <h3>Costo envío <span class="badge bg-secondary">'.get_post_meta($order->get_order_number(), '_order_shipping', true).'</span></h3>
+
     </li>
     <li class="list-group-item d-flex justify-content-between align-items-center">
-      NUMERO DE SEGUIMIENTO
-      <span class="badge bg-primary rounded">'.$masterTrackingNumber.'</span>
+      
+      <h3>Número seguimiento <span class="badge bg-secondary">'.$masterTrackingNumber.'</span></h3>
+
     </li>
   </ul>
 

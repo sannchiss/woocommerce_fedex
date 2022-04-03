@@ -246,6 +246,8 @@ public function fedex_shipping_intra_Chile_page() {
     // redirect panel wordpress
     wp_redirect(admin_url('admin.php?page=fedex_shipping_intra_Chile'));
 
+    // mensaje de exito
+
 }
 
 
@@ -397,7 +399,7 @@ public function add_status_shipping_fedex(){
 
 //timeout_request
 public function timeout_request($timeout){
-    return 60;
+    return 500;
 }
 
 
@@ -450,7 +452,7 @@ public function add_action_mark_wc_procesado_fedex(){
         }
  
         // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-            $location = add_query_arg( array(
+           $location = add_query_arg( array(
             'post_type' => 'shop_order',
             $slug => 1, // We'll use this as confirmation
             'changed' => count( $post_ids ), // number of changed orders
@@ -458,7 +460,7 @@ public function add_action_mark_wc_procesado_fedex(){
             'post_status' => 'all'
         ), 'edit.php' ); 
  
-        wp_redirect( admin_url( $location ) );      
+        wp_redirect( admin_url( $location ) );     
         exit; 
     }
  
@@ -680,7 +682,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         // tour array $ws_response->body
         $response = json_decode($ws_response->body, true);
 
-        var_dump($response);
 
 
         if( $response['comments'] == "OK" ) {
@@ -731,6 +732,10 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         }
         elseif( $response['comments'] == "ERROR" ){
+
+            // change status order table post
+            $this->wpdb->update( $this->table_name_posts, array( 'post_status' => 'wc-on-hold' ), array( 'ID' => $order ) );
+
 
            // $message = sprintf( _n( 'Estatus de la orden cambiando.', '%s estatus orden cambiado.', $_REQUEST['changed'] ), number_format_i18n( $_REQUEST['changed'] ) );
             echo "<div class=\"notice notice-success updated\"><p>Error en la transacción</p></div>";
