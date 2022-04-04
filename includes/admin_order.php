@@ -16,7 +16,6 @@ function add_custom_order_data_to_admin_order_page($order)
 
     $order_id = $order->get_id();
 
-    print_r($order_id);
 
 
     // get total weight order
@@ -48,7 +47,6 @@ function add_custom_order_data_to_admin_order_page($order)
         $order_post_status = $row->post_status;
         $masterTrackingNumber = $row->masterTrackingNumber;
         $labelBase64PDF = $row->labelBase64PDF;
-        
     }
 
 
@@ -79,25 +77,10 @@ function add_custom_order_data_to_admin_order_page($order)
     <div class="row">
 
     <ul class="list-group">
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      
-    <h3>Transporte <span class="badge bg-secondary">FedEx Express</span></h3>
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      
-      <h3>Peso <span class="badge bg-secondary">'.$total_weight.'</span></h3>
-
-      </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-
-    <h3>Costo envío <span class="badge bg-secondary">'.get_post_meta($order->get_order_number(), '_order_shipping', true).'</span></h3>
-
-    </li>
-    <li class="list-group-item d-flex justify-content-between align-items-center">
-      
-      <h3>Número seguimiento <span class="badge bg-secondary">'.$masterTrackingNumber.'</span></h3>
-
-    </li>
+    <li class="list-group-item">Transporte: <b>FedEx Express</b></li>
+    <li class="list-group-item">Peso: <b>'.$total_weight.'Kg</b></li>
+    <li class="list-group-item">Costo Envío: <b>$'.get_post_meta($order->get_order_number(), '_order_shipping', true).'</b></li>
+    <li class="list-group-item">Orden Transporte: <b>'.$masterTrackingNumber.'</b></li>
   </ul>
 
     </div>
