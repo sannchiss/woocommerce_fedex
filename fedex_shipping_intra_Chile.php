@@ -582,7 +582,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
     
         //Peso volumetrico real
         $weightVolumetricTotal = ( $weightOrder == 0 ? $weightOptional : $weightOrder ) / 250;
-        
+
 
         $request = '{
             "credential": {
@@ -607,15 +607,15 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             "recipient": {
                 "contact": {
                     "vatNumber": "1-9",
-                    "personName": "'. $order_details['billing']['first_name'] . ' ' . $order_details['billing']['last_name']. '",
-                    "phoneNumber": "' . $order_details['billing']['phone'] . '",
-                    "email": "' . $order_details['billing']['email'] . '"
+                    "personName": "'. substr( $order_details['billing']['first_name'] . ' ' . $order_details['billing']['last_name'], 0, 40 ). '",
+                    "phoneNumber": "' . str_replace("+56", "", substr( $order_details['billing']['phone'] , 0, 20 ) ). '",
+                    "email": "' . substr( str_replace(' ', '', $order_details['billing']['email'] ), 0, 40) . '"
                 },
                 "address": {
                     "city": "' . $city . '",
                     "postalCode": "' . $codePostal . '",
                     "countryCode": "CL",
-                    "streetLine1": "' . $order_details['billing']['address_1'] . '"
+                    "streetLine1": "' . substr( $order_details['billing']['address_1'], 0, 40 ) . '"
                 }
             },
             "serviceType": "01",
@@ -632,9 +632,9 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                 "weight": "' . $weightTotal . '",
                 "volume": "'. $weightVolumetricTotal .'"
             },
-            "referencesShip": "' . $order . '",
+            "referencesShip": "' . substr( $order, 0 , 20) . '",
             "insuranceShipValue": "0",
-            "additionalReferences": "' . $order_details['customer_note'] . '"
+            "additionalReferences": "' . substr(  preg_replace( "[\n|\r|\n\r]", "", $order_details['customer_note'] ), 0, 100  ) . '"
         }';
 
 
