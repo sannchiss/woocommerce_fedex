@@ -403,10 +403,6 @@ public function timeout_request($timeout){
 }
 
 
-
-
-
-
 public function add_order_status_shipping_fedex( $order_statuses ) {
 
     $slug = 'wc-procesado-fedex';
@@ -731,7 +727,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         }
-        elseif( $response['comments'] == "ERROR" ){
+        else{
 
             // change status order table post
             $this->wpdb->update( $this->table_name_posts, array( 'post_status' => 'wc-on-hold' ), array( 'ID' => $order ) );
