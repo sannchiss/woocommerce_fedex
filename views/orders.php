@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
 $args = array(
     'post_type' => 'shop_order',   
     'limit' => -1,
-    'status' => array('wc-fedex', 'wc-procesado-fedex', 'wc-completed'),
+    'status' => array('wc-fedex', 'wc-procesado-fedex'),
 );
 $orders = wc_get_orders( $args ); 
 

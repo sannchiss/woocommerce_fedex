@@ -7,15 +7,30 @@ class rateService
     public function getRateService()
     {
 
+        
+ 
+        // get shipping state in cart woocommerce
+        $shipping_state = WC()->customer->get_shipping_state();
+
+        // get shipping state in cart woocommerce
+        $shipping_country = WC()->customer->get_shipping_country();
+
+        // get shipping state in cart woocommerce
+        $shipping_postcode = WC()->customer->get_shipping_postcode();
+
+        // get shipping state in cart woocommerce
+        $shipping_city = WC()->customer->get_shipping_city();
+        
+
 
       $request = '{
         "servicio": 1,
         "origen": "' . $this->getCityShipper()  . '",
-        "destino": "' . WC()->customer->get_shipping_city() . '",
+        "destino": "' . $shipping_city . '",
         "peso": "' . $this->getTotalWeight() . '"
     }';
 
-
+   // WC selected shipping state
 
     // Cabecera de la petición
     $headers = array(

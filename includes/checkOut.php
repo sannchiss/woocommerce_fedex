@@ -6,7 +6,6 @@ if (!defined('ABSPATH')) {
 
 
 
-
 //Cambio el Total del Envio en Order details
 add_action('woocommerce_checkout_create_order', 'change_total_on_checking', 20, 1);
 function change_total_on_checking($order)

@@ -32,6 +32,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $this->init_form_fields();
                 $this->init_settings();
 
+
                 //save method shipping	
                 add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
 
@@ -72,13 +73,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             }
 
 
-
             public function Rate() {
                 $rateService = new rateService();
                 return $rateService->getRateService();
             }
             
-
 
 
         }
@@ -103,10 +102,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
         
         // Use the condition here with $method to apply the image to a specific method.      
         if( $method->method_id === "method_fedex_shipping" ) {
-            $label = " <i class='fas fa-shipping-fast'></i>". " ".  $label;
+            $label = "<i class='fas fa-shipping-fast'></i>". " ".  $label;
        
-            
-       
+
+
         } 
         
         return $label; 
