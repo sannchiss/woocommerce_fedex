@@ -762,7 +762,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
  //Obtiene campos de la orden
 public function fedex_shipping_intra_Chile_get_order_detail($order_id)  {
 
-    //$order_id = sanitize_text_field($order_id);
+    $order_id = sanitize_text_field($order_id);
 
 
     //Bandera de consulta bulto estandar
@@ -930,6 +930,7 @@ public function save_originShipper(){
 
 // get order detail
 public function get_order_detail(){
+
 
     $order_id = sanitize_text_field($_POST['orderId']);
 
@@ -1203,12 +1204,6 @@ public function fedex_shipping_intra_Chile_delete_order(){
         }
 
 
-
-
-
-     
-
-
     
 
     die();
@@ -1216,6 +1211,7 @@ public function fedex_shipping_intra_Chile_delete_order(){
 }
 
 public function fedex_get_select_options(){
+
 
     $curl = curl_init();
     $select_value = $_POST['select_value'];

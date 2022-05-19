@@ -456,12 +456,13 @@
                                                         <option value="ANTOFAGASTA"
                                                             <?php if(CITY_SHIPPER == "ANTOFAGASTA" ){ echo "selected"; } ?>>
                                                             ANTOFAGASTA</option>
-                                                        <option value="ARICA">ARICA</option>
+                                                        <option value="ARICA"
+                                                        <?php if(CITY_SHIPPER == "ARICA" ){ echo "selected"; } ?>>ARICA</option>
                                                         <option value="CALAMA">CALAMA</option>
                                                         <option value="CASTRO">CASTRO</option>
                                                         <option value="CHILLAN">CHILLAN</option>
                                                         <option value="CONCEPCION"
-                                                            <?php if(CITY_SHIPPER == "CONCEPCION" ){ echo "selected"; } ?>>
+                                                            <?php if(CITY_SHIPPER == "CONCEPCION" ){ echo "selected"; } ?> >
                                                             CONCEPCION</option>
                                                         <option value="COPIAPO">COPIAPO</option>
                                                         <option value="COQUIMBO">COQUIMBO</option>
@@ -472,8 +473,10 @@
                                                         <option value="LA SERENA"
                                                             <?php if(CITY_SHIPPER == "LA SERENA" ){ echo "selected"; } ?>>
                                                             LA SERENA</option>
-                                                        <option value="LOS ANDES">LOS ANDES</option>
-                                                        <option value="LINARES">LINARES</option>
+                                                        <option value="LOS ANDES" 
+                                                        <?php if(CITY_SHIPPER == "LOS ANDES" ){ echo "selected"; } ?> > LOS ANDES</option>
+                                                        <option value="LINARES" 
+                                                        <?php if(CITY_SHIPPER == "LINARES" ){ echo "selected"; } ?> >LINARES</option>
                                                         <option value="LOS ANGELES"
                                                             <?php if(CITY_SHIPPER == "LOS ANGELES" ){ echo "selected"; } ?>>
                                                             LOS ANGELES</option>

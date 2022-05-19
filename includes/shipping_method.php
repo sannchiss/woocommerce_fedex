@@ -97,8 +97,18 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     }
 
 
-
     function filter_woocommerce_cart_shipping_method_full_label( $label, $method ) {
+        if ( 'method_fedex_shipping' === $method->id ) {
+            // icon fasfa-truck
+            $label = '<span class="shipping-method-icon"><i class="fas fa-shipping-fast"></i></span> ' . $label;
+            //$label = str_replace( ':', '', $label );
+        }
+        return $label;
+    }
+    add_filter( 'woocommerce_cart_shipping_method_full_label', 'filter_woocommerce_cart_shipping_method_full_label', 10, 2 );
+
+
+   /*  function filter_woocommerce_cart_shipping_method_full_label( $label, $method ) {
         
         // Use the condition here with $method to apply the image to a specific method.      
         if( $method->method_id === "method_fedex_shipping" ) {
@@ -108,9 +118,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
         } 
         
-        return $label; 
+        return $label;  
     }
-    add_filter( 'woocommerce_cart_shipping_method_full_label', 'filter_woocommerce_cart_shipping_method_full_label', 10, 2 ); 
+    add_filter( 'woocommerce_cart_shipping_method_full_label', 'filter_woocommerce_cart_shipping_method_full_label', 10, 2 );  */
 
 
 

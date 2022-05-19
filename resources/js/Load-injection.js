@@ -601,10 +601,10 @@
           var pdfWindow = window.open("");
           pdfWindow.document.write("<title>FedEx Shipping Manifest</title>");
 
+          // DOWNLOOAD PDF
           pdfWindow.document.write(
             "<embed width='100%' height='100%' src='data:application/pdf;base64, " +
-              encodeURI(parseData) +
-              "#toolbar=1&navpanes=0&scrollbar=0'>"
+              encodeURI(parseData) + "#toolbar=1&navpanes=0&scrollbar=0'>"
           );
         },
         error: function (error) {

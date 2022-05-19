@@ -99,8 +99,6 @@ function add_custom_order_data_to_admin_order_page($order)
 
 
 function get_label_shipping($masterTrackingNumber){
-    global $wpdb;
-    global $table_prefix;
 
     $request = '{
         "credential": {
