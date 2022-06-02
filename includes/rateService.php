@@ -7,43 +7,29 @@ class rateService
     public function getRateService()
     {
 
-        
- 
-        // get shipping state in cart woocommerce
-        $shipping_state = WC()->customer->get_shipping_state();
-
-        // get shipping state in cart woocommerce
-        $shipping_country = WC()->customer->get_shipping_country();
-
-        // get shipping state in cart woocommerce
-        $shipping_postcode = WC()->customer->get_shipping_postcode();
 
         // get shipping state in cart woocommerce
         $shipping_city = WC()->customer->get_shipping_city();
-        
+
+         $request = '{
+            "servicio": 1,
+            "origen": "' . $this->getCityShipper()  . '",
+            "destino": "' . $shipping_city . '",
+            "peso": "' . $this->getTotalWeight() . '"
+        }';
 
 
-      $request = '{
-        "servicio": 1,
-        "origen": "' . $this->getCityShipper()  . '",
-        "destino": "' . $shipping_city . '",
-        "peso": "' . $this->getTotalWeight() . '"
-    }';
+        $curl = curl_init( END_POINT_RATE );
+        curl_setopt( $curl, CURLOPT_POST, true );
+        curl_setopt( $curl, CURLOPT_POSTFIELDS, $request );
+        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
+        $response = curl_exec( $curl );
+        curl_close( $curl );
 
-   // WC selected shipping state
+        $body = json_decode($response, true);
 
-    // Cabecera de la petición
-    $headers = array(
-        'Accept' => 'application/json', 
-        'Content-Type' => 'application/json'
-    );
-   
 
-    $ws_response = RestClient::post(END_POINT_RATE, $headers, $request, null);
-
-    $response = json_decode($ws_response->body, true);
-
-    return ($response['flete'] - (DISCOUNT/100) * $response['flete']);
+        return ($body['flete'] - (DISCOUNT/100) * $body['flete']);  
 
 
 

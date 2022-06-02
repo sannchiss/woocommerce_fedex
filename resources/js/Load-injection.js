@@ -502,16 +502,21 @@
                   title: "Solicitando el servicio",
                   text: "Espere un momento...",
                 });
-              },
+              },              
 
               success: function (data) {
-                
-                var parseData = JSON.parse(data);
+
+               // convertir a json
+               var parseData = JSON.parse(data);
+
+               console.log(parseData);
 
 
-                  if (parseData.status == "OK") {
+               $.each(parseData, function (index, value) {
+
+                  if (value.status == "OK") {
                   Swal.fire({
-                    title: parseData.message,
+                    title: value.message,
                     text: "Deseas imprimir el manifiesto?",
                     icon: "warning",
                     showCancelButton: true,
@@ -527,7 +532,7 @@
 
                       pdfWindow.document.write(
                         "<embed width='100%' height='100%' src='data:application/pdf;base64, " +
-                          encodeURI(parseData.manifestBase64) +
+                          encodeURI(value.manifestBase64) +
                           "#toolbar=1&navpanes=0&scrollbar=0'>"
                       );
 
@@ -538,9 +543,13 @@
                   Swal.fire({
                     title: "Error",
                     icon: "error",
-                    html: "<b>" + parseData.message + "</b>",
+                    html: "<b>" + value.message + "</b>",
                   });
                 }  
+
+
+                });
+
               },
               completed: function () {},
 

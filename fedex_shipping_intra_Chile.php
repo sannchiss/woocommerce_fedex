@@ -95,12 +95,12 @@ public function __construct() {
 public function required() {
 
 
-    require_once PLUGIN_DIR_PATH . 'traits/clearStringTrait.php';
 
     require_once PLUGIN_DIR_PATH . 'lib/RestClient.php';
 
     require_once PLUGIN_DIR_PATH . 'required/credentialsAccount.php';
 
+    require_once PLUGIN_DIR_PATH . 'includes/clearString.php';
     require_once PLUGIN_DIR_PATH . 'includes/admin_order.php';
     require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
     require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
@@ -160,11 +160,11 @@ public function init(){
 
     register_activation_hook(__FILE__, array($init, 'configuration'));
     register_activation_hook(__FILE__, array($init, 'originShipper'));
-    register_activation_hook(__FILE__, array($init, 'orderSend'));
     register_activation_hook(__FILE__, array($init, 'orderDetail'));
     register_activation_hook(__FILE__, array($init, 'responseShipping'));
     register_activation_hook(__FILE__, array($init, 'confirmationShipping'));
     register_activation_hook(__FILE__, array($init, 'cityOrComune'));        
+
 
 }
 
@@ -446,9 +446,16 @@ public function add_action_mark_wc_procesado_fedex(){
             $order->update_status( $slug, $order_note, true );
  
         }
- 
+
+        // Redirect back to the page
+        wp_redirect( $_SERVER['HTTP_REFERER'] );
+        exit;
+
+
+
+         
         // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-           $location = add_query_arg( array(
+         /*   $location = add_query_arg( array(
             'post_type' => 'shop_order',
             $slug => 1, // We'll use this as confirmation
             'changed' => count( $post_ids ), // number of changed orders
@@ -457,7 +464,7 @@ public function add_action_mark_wc_procesado_fedex(){
         ), 'edit.php' ); 
  
         wp_redirect( admin_url( $location ) );     
-        exit; 
+        exit;  */
     }
  
 
@@ -551,7 +558,9 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         $characters_string = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order, '_billing_comuna', true );
 
-        $comunaClear = clearTrait::clearString( $characters_string );
+        $clearString = new clearString;
+        $comunaClear = $clearString->setString($characters_string);
+        //$comunaClear = clearTrait::clearString( $characters_string );
 
         
             // select like ciudad and code postal sql
@@ -617,7 +626,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             "serviceType": "01",
             "shippingChargesPayment": {
                 "paymentType": "P",
-                "accountNumber": "' . $params['accountNumber'] . '"
+                "accountNumber": "' . ACCOUNT_NUMBER . '"
             },
             "servicesLabelPrint": {
                 "labelType": "' . LABEL_TYPE . '",
@@ -715,7 +724,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             'orderDate' => $order_details['date_created']->date('Y-m-d H:i:s'),
             'masterTrackingNumber' => $response['masterTrackingNumber'],
             'status' => $response['status'],
-            'labelType' => $params['labelType'],
+            'labelType' => LABEL_TYPE,
             'labelBase64IMG' => $labelType == 'PNG' ? $response['labelResp'] : '',
             'labelBase64PDF' => $labelType == 'PDF' ? $response['labelResp'] : '',
             'labelBase64PDF2' => $labelType =='PDF2'? $response['labelResp'] : '',
@@ -766,7 +775,7 @@ public function fedex_shipping_intra_Chile_get_order_detail($order_id)  {
 
 
     //Bandera de consulta bulto estandar
-    $flagInsurance = $params['flagInsurance'];
+   // $flagInsurance = $params['flagInsurance'];
 
 
     $select = $this->wpdb->get_results("SELECT * FROM $this->table_name_orderDetail WHERE orderNumber = $order_id", ARRAY_A);

@@ -33,6 +33,7 @@ class printLabelShippingController {
   // Selecciono el tipo de etiqueta de la configuración
 
         if( LABEL_TYPE == 'PDF' || LABEL_TYPE == 'PDF2' ){
+            
 
 
             $request = '{
@@ -61,12 +62,12 @@ class printLabelShippingController {
             );
            
     
-    
             $ws_response = RestClient::post(END_POINT_PRINT_LABEL, $headers, $request, null);
     
     
             // tour array $ws_response->body
             $response = json_decode($ws_response->body, true);
+
 
              $label[] = array(
                 'status' => 'success',
@@ -75,7 +76,6 @@ class printLabelShippingController {
                 'labelBase64' => $response['pdfMerge'],
                );
 
-               curl_close($curl);
 
                echo json_encode($label, true); 
 

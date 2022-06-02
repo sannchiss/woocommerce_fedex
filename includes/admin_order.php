@@ -43,10 +43,10 @@ function add_custom_order_data_to_admin_order_page($order)
     $result = $wpdb->get_results($sql);
 
     foreach ($result as $row) {
-        $order_number = $row->order_id;
         $order_post_status = $row->post_status;
         $masterTrackingNumber = $row->masterTrackingNumber;
         $labelBase64PDF = $row->labelBase64PDF;
+
     }
 
 
@@ -129,14 +129,6 @@ function get_label_shipping($masterTrackingNumber){
    
 
     $ws_response = RestClient::post(END_POINT_PRINT_LABEL, $headers, $request, null);
-
-        // validate time out request
-        if($ws_response->code == "408"){
-            $ws_response = RestClient::post(END_POINT_PRINT_LABEL, $headers, $request, null);
-        }
-
-        
-
 
 
     // tour array $ws_response->body

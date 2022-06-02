@@ -17,6 +17,7 @@ class confirmShippingController {
 
     public function index($orderIds) {
 
+        $listMasterTrackingNumber = array();
 
         foreach ($orderIds as $key => $orderNumber) {
 
@@ -27,13 +28,14 @@ class confirmShippingController {
                     WHERE orderNumber = " . $orderNumber
                 );
 
-            try {
 
-                if( count($getRow) > 0 ){
+            try {
+                //  select $getRow is not empty
+
+                if(!empty($getRow)){
 
                     $orderNumber = $getRow->orderNumber;
                     $masterTrackingNumber = $getRow->masterTrackingNumber;
-
 
                     $listMasterTrackingNumber[$key] = array(
 
@@ -41,10 +43,8 @@ class confirmShippingController {
         
                     );
 
-                    
-
-
                 }else{
+
 
                     throw new Exception('No se encontró el número de orden de transporte');
 
@@ -83,6 +83,7 @@ class confirmShippingController {
                 ' . json_encode($listMasterTrackingNumber) . '
             
         }';
+
 
 
   
@@ -171,14 +172,16 @@ class confirmShippingController {
 
             }
 
+        $manifest[] = array(
+            'status' => $response['result'],
+            'message' => 'Se generó la confirmacion de entrega #'.$response['pickupNumber'],
+            'manifestBase64' => $response['manifest'],
+        ); 
+        
 
         //Mensaje de exito
         echo json_encode(
-            array(
-                'status' => $response['result'],
-                'message' => 'Se generó la confirmacion de entrega #'.$response['pickupNumber'],
-                'manifestBase64' => $response['manifest'],
-            ), 
+            $manifest, 
             true
         );
 
