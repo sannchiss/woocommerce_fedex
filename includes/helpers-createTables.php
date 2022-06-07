@@ -56,7 +56,7 @@ class createTables{
         $this->wpdb->insert(
             $tabla,
             array(
-                'accountNumber' => '900070672',
+                'accountNumber' => '900063671',
                 'meterNumber' => '123465789',
                 'wskeyUserCredential' => 'SPEREZ',
                 'wskeyPasswordCredential' => 'Home.2020',

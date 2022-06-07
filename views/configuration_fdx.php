@@ -450,14 +450,15 @@
                                                         <option selected disabled value="">Search...</option>
 
                                                         <option value="ANCUD"
-                                                            <?php if(CITY_SHIPPER == "ANCUD" ){ echo "selected"; } ?>>
+                                                            <?php if(CITY_SHIPPER == "ANCUD" ){ echo "selected"; } ?> >
                                                             ANCUD</option>
                                                         <option value="ANGOL">ANGOL</option>
                                                         <option value="ANTOFAGASTA"
-                                                            <?php if(CITY_SHIPPER == "ANTOFAGASTA" ){ echo "selected"; } ?>>
+                                                            <?php if(CITY_SHIPPER == "ANTOFAGASTA" ){ echo "selected"; } ?> >
                                                             ANTOFAGASTA</option>
                                                         <option value="ARICA"
-                                                        <?php if(CITY_SHIPPER == "ARICA" ){ echo "selected"; } ?>>ARICA</option>
+                                                        <?php if(CITY_SHIPPER == "ARICA" ){ echo "selected"; } ?> >
+                                                        ARICA</option>
                                                         <option value="CALAMA">CALAMA</option>
                                                         <option value="CASTRO">CASTRO</option>
                                                         <option value="CHILLAN">CHILLAN</option>

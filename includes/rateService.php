@@ -7,9 +7,8 @@ class rateService
     public function getRateService()
     {
 
-
-        // get shipping state in cart woocommerce
-        $shipping_city = WC()->customer->get_shipping_city();
+         // get shipping state in cart woocommerce
+         $shipping_city = WC()->customer->get_shipping_city();
 
          $request = '{
             "servicio": 1,
@@ -18,19 +17,17 @@ class rateService
             "peso": "' . $this->getTotalWeight() . '"
         }';
 
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, END_POINT_RATE);
+        curl_setopt($ch, CURLOPT_POST, 1);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $server_output = curl_exec($ch);
+        curl_close($ch);
 
-        $curl = curl_init( END_POINT_RATE );
-        curl_setopt( $curl, CURLOPT_POST, true );
-        curl_setopt( $curl, CURLOPT_POSTFIELDS, $request );
-        curl_setopt( $curl, CURLOPT_RETURNTRANSFER, true );
-        $response = curl_exec( $curl );
-        curl_close( $curl );
+        $response = json_decode($server_output, true);
 
-        $body = json_decode($response, true);
-
-
-        return ($body['flete'] - (DISCOUNT/100) * $body['flete']);  
-
+        return ($response['flete'] - (DISCOUNT/100) * $response['flete']); 
 
 
     }

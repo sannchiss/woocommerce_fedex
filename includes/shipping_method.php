@@ -41,26 +41,88 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
             }
 
         
-             public function calculate_shipping( $package = array() ) {
+           // calculate_shipping function api rest
+            public function calculate_shipping( $package = array() ) {
 
                 $rate = array(
                     'id' => $this->id,
                     'label' => $this->title,
-                    'cost' => $this->Rate(),
-                    'taxes' => false,
-                    'calc_tax' => 'per_order',
-
+                    'cost' => $this->getRateService(),
+                    'calc_tax' => 'per_order'
                 );
 
+                // Register the rate.
                 $this->add_rate( $rate );
 
             }
 
-            private function Rate() {
-                $rateService = new rateService();
-                return $rateService->getRateService();
+
+            // get data of order
+            public function getTotalWeight()
+            {
                
-            }  
+                $total_weight = 0;
+                foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
+                    $total_weight += $cart_item['data']->get_weight() * $cart_item['quantity'];
+                }
+
+                return $total_weight == 0 ? 1 : $total_weight;
+
+
+            }
+
+
+            // get city origin client
+            public function getCityShipper()
+            {
+
+                global $wpdb;
+                global $table_prefix;
+
+                $table_name = $table_prefix . 'fedex_shipping_intra_CL_originShipper';
+                $sql = "SELECT cityShipper FROM $table_name WHERE id = 1";
+
+                $cityShipper = $wpdb->get_var($sql);
+
+                return $cityShipper;
+
+            }
+
+
+            // get data of order
+            public function getRateService()
+            {
+
+                $shipping_city = WC()->customer->get_shipping_city();
+
+                $request = '{
+                   "servicio": 1,
+                   "origen": "' . $this->getCityShipper()  . '",
+                   "destino": "' . $shipping_city . '",
+                   "peso": "' . $this->getTotalWeight() . '"
+               }';
+
+               $ch = curl_init(END_POINT_RATE);
+                curl_setopt($ch, CURLOPT_URL, END_POINT_RATE);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+                curl_setopt($ch, CURLOPT_CONNECTTIMEOUT , 10);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($ch, CURLOPT_POST, 1);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Content-Type: application/json',
+                ));
+                $result = curl_exec($ch);
+                curl_close($ch);
+
+                $result = json_decode($result, true);
+
+                return ($result['flete'] - (DISCOUNT/100) * $result['flete']); 
+
+
+
+            }
+
 
 
 
@@ -100,18 +162,12 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     function filter_woocommerce_cart_shipping_method_full_label( $label, $method ) {
         if ( 'method_fedex_shipping' === $method->id ) {
             // icon fasfa-truck
-            $label = '<span class="shipping-method-icon"><i class="fas fa-shipping-fast"></i></span> ' . $label;
+            $label = $label;
             //$label = str_replace( ':', '', $label );
         }
         return $label;
     }
     add_filter( 'woocommerce_cart_shipping_method_full_label', 'filter_woocommerce_cart_shipping_method_full_label', 10, 2 );
-
-
-
-
-
-
 
 
     

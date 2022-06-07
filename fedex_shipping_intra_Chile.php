@@ -53,9 +53,6 @@ public function __construct() {
 
     add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ));
 
-    //http_request_timeout
-    add_filter( 'http_request_timeout', array( $this, 'timeout_request' ));
-
     add_action( 'init', array( $this, 'add_status_shipping_fedex' ));
     add_filter( 'wc_order_statuses', array ($this, 'add_order_status_shipping_fedex' ));
 
@@ -70,7 +67,6 @@ public function __construct() {
     add_action( 'wp_ajax_save_configuration', array( $this, 'save_configuration' ));
     add_action( 'wp_ajax_save_originShipper', array( $this, 'save_originShipper' ));
 
-    
 
     add_action( 'wp_ajax_get_order_detail', array( $this, 'get_order_detail' ));
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_create_OrderShipper', array( $this, 'fedex_shipping_intra_Chile_create_OrderShipper' ));
@@ -94,15 +90,13 @@ public function __construct() {
 
 public function required() {
 
-
-
     require_once PLUGIN_DIR_PATH . 'lib/RestClient.php';
 
     require_once PLUGIN_DIR_PATH . 'required/credentialsAccount.php';
 
     require_once PLUGIN_DIR_PATH . 'includes/clearString.php';
     require_once PLUGIN_DIR_PATH . 'includes/admin_order.php';
-    require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
+    //require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
     require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'includes/checkOut.php';
     require_once PLUGIN_DIR_PATH . 'includes/shipping_method.php';
@@ -152,8 +146,13 @@ public function constants() {
 }
 
 
-
 public function init(){
+
+    // require curl
+    if (!function_exists('curl_init')) {
+        throw new Exception('Fedex Shipping Intra Chile needs the CURL PHP extension.');
+    }
+
 
 
     $init = new createTables();
@@ -397,10 +396,7 @@ public function add_status_shipping_fedex(){
 
  }
 
-//timeout_request
-public function timeout_request($timeout){
-    return 500;
-}
+
 
 
 public function add_order_status_shipping_fedex( $order_statuses ) {
@@ -644,26 +640,31 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
 
-        // Cabecera de la petición
-        $headers = array(
-            'Accept' => 'application/json', 
-            'Content-Type' => 'application/json'
-        );
-        $options = array(
-            'auth' => array(
-                WS_KEY_USER_CREDENTIAL,
-                WS_KEY_PASSWORD_CREDENTIAL
-            ),
-        );
-
         // try in response web service
-        try {
-            $ws_response = RestClient::post(
-                END_POINT_SHIP,
-                $headers,
-                $request,
-                $options
-            );
+        try {          
+
+
+            $curl = curl_init();
+
+            curl_setopt_array($curl, array(
+              CURLOPT_URL => END_POINT_SHIP,
+              CURLOPT_RETURNTRANSFER => true,
+              CURLOPT_ENCODING => '',
+              CURLOPT_MAXREDIRS => 10,
+              CURLOPT_TIMEOUT => 0,
+              CURLOPT_FOLLOWLOCATION => true,
+              CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+              CURLOPT_CUSTOMREQUEST => 'POST',
+              CURLOPT_POSTFIELDS => $request,
+              CURLOPT_HTTPHEADER => array(
+                'Content-Type: application/json',
+                'Cookie: _abck=8B703E59AB8F068FFC03F46AD1F9FC51~-1~YAAQHIkKuqM9F1N8AQAASkcwnwaeb5C2xCWK/aeeZP/QkpNcXGV1kNZx9886ivLLOJieyavy6mNGfwwVOz8fG9oEIXO8jQgMyaD5av5yyHaRnwIBqEfcA7ji8Q6ZA/UYsfw9i4890BvYr8mewLJJGf4Iw5WVg9mjvX4adSnXtkHr6xh0w0SrD175t8HPx6ihyv1SlMQAJArB2pqH6E0kSb5V9FXMlZRiA0uhoUR6sf/c8h6R9FKlWciNXcYrUxp4SROH3C4Gd7/6Gj8bcluBZe0RLoA+C3GVrCa7ragFMqDsjF6TShSvsUYm1f/vSs/SncnIxSEMgk9IkSXthF0UkDt1tSCja4pXZ9Zxt1yHFW16j++EvOrBGw==~-1~-1~-1; fdx_cbid=10880496071634758313009000438201; siteDC=wtc'
+              ),
+            ));
+            
+            $ws_response = curl_exec($curl);
+            
+            curl_close($curl);
 
 
         } catch (Requests_Exception $e) {
@@ -685,7 +686,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         // tour array $ws_response->body
-        $response = json_decode($ws_response->body, true);
+        $response = json_decode($ws_response, true);
 
 
 
@@ -1150,29 +1151,32 @@ public function fedex_shipping_intra_Chile_delete_order(){
     }';
 
 
+        $curl = curl_init();
 
- 
-        // Cabecera de la petición
-        $headers = array(
-            'Accept' => 'application/json', 
-            'Content-Type' => 'application/json'
-        );
-        $options = array(
-            'auth' => array(
-                WS_KEY_USER_CREDENTIAL,
-                WS_KEY_PASSWORD_CREDENTIAL
-            ),
-        );
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => END_POINT_CANCEL,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS =>$request,
+        CURLOPT_HTTPHEADER => array(
+            'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA==',
+            'Content-Type: application/json'
+        ),
+        ));
 
-        
+        $ws_response = curl_exec($curl);
 
-        $ws_response = RestClient::post(END_POINT_CANCEL, $headers, $request, $options);
+        curl_close($curl);
 
+        echo $ws_response;
 
-        echo $ws_response->body;
-
-       
-        $response = json_decode($ws_response->body, true);
+               
+        $response = json_decode($ws_response, true);
 
         foreach($response as $key => $value){
 
@@ -1262,7 +1266,28 @@ public function unserializeForm($form){
 
   }
 
+
+
+
 }
+
+
+
+ function calculate_shipping( $package = array() ) {
+
+    $rate = array(
+        'id' => $this->id,
+        'label' => $this->title,
+        'cost' => 100,
+        'taxes' => false,
+        'calc_tax' => 'per_order',
+
+    );
+
+    $this->add_rate( $rate );
+
+}
+
 
 /*Instantiate class*/
 $GLOBALS['fedex_shipping_intra_Chile'] = new fedex_shipping_intra_Chile();
