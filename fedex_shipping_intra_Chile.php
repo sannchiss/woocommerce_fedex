@@ -76,7 +76,9 @@ public function __construct() {
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_get_locations', array($this, 'fedex_shipping_intra_Chile_get_locations' ));
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_track_shipment', array($this, 'fedex_shipping_intra_Chile_track_shipment' ));
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_delete_order', array($this, 'fedex_shipping_intra_Chile_delete_order' ));
-    add_action( 'wp_ajax_fedex_get_select_options', array($this, 'fedex_get_select_options' ));
+
+    
+
 
     $this->required();
     $this->constants();
@@ -1223,32 +1225,7 @@ public function fedex_shipping_intra_Chile_delete_order(){
 
 }
 
-public function fedex_get_select_options(){
 
-
-    $curl = curl_init();
-    $select_value = $_POST['select_value'];
-
-    
-    curl_setopt_array($curl, array(
-    CURLOPT_URL => 'https://api.trinit.cl/fedex/v1/geogra/comuna/?pais=CL&region='.$select_value,
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_ENCODING => '',
-    CURLOPT_MAXREDIRS => 10,
-    CURLOPT_TIMEOUT => 0,
-    CURLOPT_FOLLOWLOCATION => true,
-    CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-    CURLOPT_CUSTOMREQUEST => 'GET',
-    ));
-
-    $response = curl_exec($curl);
-
-    curl_close($curl);
-    echo $response;
-
-    die();
-
-}
 
 
 
@@ -1268,23 +1245,6 @@ public function unserializeForm($form){
 
 
 
-
-}
-
-
-
- function calculate_shipping( $package = array() ) {
-
-    $rate = array(
-        'id' => $this->id,
-        'label' => $this->title,
-        'cost' => 100,
-        'taxes' => false,
-        'calc_tax' => 'per_order',
-
-    );
-
-    $this->add_rate( $rate );
 
 }
 

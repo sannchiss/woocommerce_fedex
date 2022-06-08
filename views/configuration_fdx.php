@@ -500,33 +500,45 @@
                                                         <option value="RANCAGUA"
                                                             <?php if(CITY_SHIPPER == "RANCAGUA" ){ echo "selected"; } ?>>
                                                             RANCAGUA</option>
-                                                        <option value="SAN ANTONIO">SAN ANTONIO</option>
+                                                        <option value="SAN ANTONIO" <?php if(CITY_SHIPPER == "SAN ANTONIO" ){ echo "selected"; } ?>
+                                                        >SAN ANTONIO</option>
                                                         <option value="SAN FELIPE"
                                                             <?php if(CITY_SHIPPER == "SAN FELIPE" ){ echo "selected"; } ?>>
                                                             SAN FELIPE</option>
                                                         <option value="SAN FERNANDO">SAN FERNANDO</option>
                                                         <option value="SANTIAGO"
-                                                            <?php if(CITY_SHIPPER == "SANTIAGO" ){ echo "selected"; } ?>>
+                                                            <?php if(CITY_SHIPPER == "SANTIAGO" ){ echo "selected"; } ?> >
                                                             SANTIAGO</option>
-                                                        <option value="SANTIAGO RM">SANTIAGO RM</option>
-                                                        <option value="TALCA">TALCA</option>
-                                                        <option value="TEMUCO">TEMUCO</option>
-                                                        <option value="TOCOPILLA">TOCOPILLA</option>
-                                                        <option value="VALDIVIA">VALDIVIA</option>
-                                                        <option value="VALLENAR">VALLENAR</option>
+                                                        <option value="SANTIAGO RM" 
+                                                        <?php if(CITY_SHIPPER == "SANTIAGO RM" ){ echo "selected"; } ?>
+                                                        >SANTIAGO RM</option>
+                                                        <option value="TALCA" <?php if(CITY_SHIPPER == "TALCA" ){ echo "selected"; } ?>
+                                                        >TALCA</option>
+                                                        <option value="TEMUCO" <?php if(CITY_SHIPPER == "TEMUCO" ){ echo "selected"; } ?>
+                                                        >TEMUCO</option>
+                                                        <option value="TOCOPILLA" <?php if(CITY_SHIPPER == "TOCOPILLA" ){ echo "selected"; } ?>
+                                                        >TOCOPILLA</option>
+                                                        <option value="VALDIVIA" <?php if(CITY_SHIPPER == "VALDIVIA" ){ echo "selected"; } ?>
+                                                        >VALDIVIA</option>
+                                                        <option value="VALLENAR" <?php if(CITY_SHIPPER == "VALLENAR" ){ echo "selected"; } ?>
+                                                        >VALLENAR</option>
                                                         <option value="VALPARAISO"
                                                             <?php if(CITY_SHIPPER == "VALPARAISO" ){ echo "selected"; } ?>>
                                                             VALPARAISO</option>
-                                                        <option value="VICHUQUEN">VICHUQUEN</option>
-                                                        <option value="VICHUQUEN">VILLARRICA</option>
+                                                        <option value="VICHUQUEN" <?php if(CITY_SHIPPER == "VICHUQUEN" ){ echo "selected"; } ?>
+                                                        >VICHUQUEN</option>
+                                                        <option value="VILLARRICA" <?php if(CITY_SHIPPER == "VILLARRICA" ){ echo "selected"; } ?>
+                                                        >VILLARRICA</option>
                                                         <option value="VINA DEL MAR"
                                                             <?php if(CITY_SHIPPER == "VINA DEL MAR" ){ echo "selected"; } ?>>
                                                             VINA DEL MAR</option>
                                                         <option value="VITACURA"
                                                             <?php if(CITY_SHIPPER == "VITACURA" ){ echo "selected"; } ?>>
                                                             VITACURA</option>
-                                                        <option value="YUMBEL">YUMBEL</option>
-                                                        <option value="YUNGAY">YUNGAY</option>
+                                                        <option value="YUMBEL"  <?php if(CITY_SHIPPER == "YUMBEL" ){ echo "selected"; } ?>
+                                                        >YUMBEL</option>
+                                                        <option value="YUNGAY" <?php if(CITY_SHIPPER == "YUNGAY" ){ echo "selected"; } ?>
+                                                        >YUNGAY</option>
 
                                                     </select>
 

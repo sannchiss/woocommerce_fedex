@@ -2,7 +2,7 @@
 
 
 //Cambio el Total del Envio en Order details
-add_action('woocommerce_checkout_create_order', 'change_total_on_checking', 20, 1);
+ add_action('woocommerce_checkout_create_order', 'change_total_on_checking', 20, 1);
 function change_total_on_checking($order)
 {
     // Get order total
@@ -13,65 +13,79 @@ function change_total_on_checking($order)
 
     // Set the new calculated total
     $order->set_total($new_total);
-}
+} 
 
 
 
-add_action('woocommerce_checkout_order_processed', 'action_checkout_order_processed', 10, 1);
 
 
-function action_checkout_order_processed($order_id)
+
+// details order
+add_action('woocommerce_order_details_after_order_table', 'details_order', 10, 1);
+
+
+function details_order($order)
 {
 
-    // Declaración global Base de datos
-    global $wpdb;
-    global $table_prefix;
 
-    // get an instance of the order object
-    $order = wc_get_order($order_id);
+        // Declaración global Base de datos
+        global $wpdb;
+        global $table_prefix;
+    
+    
+        $order_id = $order->get_id();
+    
+        // get total weight order
+        $order  = wc_get_order( $order_id );
+    
+        /*********************************************************************** */
+    
+        $table = $table_prefix . "fedex_shipping_intra_CL_orderDetail";
+    
+          // Loop through cart items
+        $order_items  = $order->get_items();
+        $total_qty    = 0;
+        $total_weight = 0;
 
-    $order_data = $order->get_data(); // The Order data
+        foreach ( $order_items as $item_id => $product_item ) {
+            $product         = $product_item->get_product();
+            if ( ! $product ) continue;
+            $product_weight  = $product->get_weight();        
+            $quantity        = $product_item->get_quantity();
+            $total_qty      += $quantity;
+            $total_weight   += floatval( $product_weight * $quantity );
 
-    /*********************************************************************** */
+            // get length and width
+            $length += $product->get_length() * $quantity;
+            $width += $product->get_width() * $quantity;
+            $height += $product->get_height() * $quantity;
 
-    $table = $table_prefix . "fedex_shipping_intra_CL_orderDetail";
+        }
 
-      // Loop through cart items
-      foreach (WC()->cart->get_cart() as $cart_item) {
-        // Get an instance of the WC_Product object and cart quantity
-        $product = $cart_item['data'];
-        $qty     = $cart_item['quantity'];
+        // get total volume order
+     
+        $data = array(
+    
+            'orderNumber' => $order->get_id(),
+            'weight' => $total_weight,
+            'weightUnits' => get_option('woocommerce_weight_unit'),
+            'length' => $length ? $length : 0.1,
+            'width' => $width ? $width : 0.1,
+            'height' => $height ? $height : 0.1,
+            'dimensionUnits' => get_option('woocommerce_dimension_unit'),
+            'productDescription' => '',
+            'quantity' =>  $order->get_item_count(),
+            'totalPrice' => $order->get_total(),
+            'created_at' =>  $order->get_date_created()->date('Y-m-d H:i:s'),
+    
+        );
+    
+    
+        $wpdb->insert($table, $data, null);
 
-        // Get product dimensions  
-        $length += $product->get_length() * $qty; // Longitud
-        $width  += $product->get_width() * $qty;  // Ancho
-        $height += $product->get_height() * $qty; // Altura
-
-        // Calculations a item level
-        $volume += $length * $width * $height * $qty;
-
-        
-    }
-
- 
-    $data = array(
-
-        'orderNumber' => $order->get_id(),
-        'weight' => WC()->cart->cart_contents_weight,
-        'weightUnits' => get_option('woocommerce_weight_unit'),
-        'length' => $length,
-        'width' => $width,
-        'height' => $height,
-        'dimensionUnits' => get_option('woocommerce_dimension_unit'),
-        'productDescription' => '',
-        'quantity' =>  $order->get_item_count(),
-        'totalPrice' => $order->get_total(),
-        'created_at' =>  $order_data['date_created']->date('Y-m-d H:i:s')
-
-    );
-
-
-    $wpdb->insert($table, $data, null);
 
 
 }
+
+
+

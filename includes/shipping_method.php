@@ -126,7 +126,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 
 
-            // update caculate shipping checkout
+/*             // update caculate shipping checkout
             public function change_total_on_checking($order) {
 
                 // Get order total
@@ -139,7 +139,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $order->set_total($new_total);
 
             }
-
+ */
 
            
             
