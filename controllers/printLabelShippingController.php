@@ -102,11 +102,12 @@ class printLabelShippingController {
 
         }elseif( LABEL_TYPE == 'ZPL' ){
 
+            //var_dump(base64_decode($labelBase64['labelBase64ZPL']));
 
                $curl = curl_init();
 
                 curl_setopt_array($curl, array(
-                CURLOPT_URL => 'http://api.labelary.com/v1/printers/8dpmm/labels/4x3/0/',
+                CURLOPT_URL => 'http://api.labelary.com/v1/printers/8dpmm/labels/4x3/',
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 10,

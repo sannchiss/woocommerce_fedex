@@ -35,7 +35,6 @@ function add_custom_order_data_to_admin_order_page($order)
 	
 
   // SELECT JOIN WHERE
-  
 
     $sql = "SELECT * FROM ".$table_prefix."posts 
     a INNER JOIN ".$table_prefix."fedex_shipping_intra_CL_responseShipping at ON a.ID = at.orderNumber WHERE a.ID = ".$order_id;
@@ -44,16 +43,24 @@ function add_custom_order_data_to_admin_order_page($order)
 
     $order_post_status = null;
     $masterTrackingNumber = null;
-    $labelBase64PDF = null;
+    $labelBase64Byte = null;
+
 
     foreach ($result as $row) {
         $order_post_status = $row->post_status;
         $masterTrackingNumber = $row->masterTrackingNumber;
-        $labelBase64PDF = $row->labelBase64PDF;
+
+        if($row->labelBase64PDF != null){
+            $labelBase64Byte = $row->labelBase64PDF;
+        }
+        elseif($row->labelBase64PDF2 != null){
+            $labelBase64Byte = $row->labelBase64PDF2;
+        }
+        elseif($row->labelBase64ZPL != null){
+            $labelBase64Byte = $row->labelBase64ZPL;
+        }
 
     }
-
-
 
 
     // get method shipping
@@ -61,12 +68,10 @@ function add_custom_order_data_to_admin_order_page($order)
 
     
     // get label shiping
-    $label_shipping = get_label_shipping( $masterTrackingNumber );
+    $label_shipping = get_label_shipping( $masterTrackingNumber, $labelBase64Byte ? $labelBase64Byte:null );
 
 
     if( $order_post_status == "wc-procesado-fedex" || $order_post_status == "wc-fedex" ):
-
-      
 
 
     echo '<div class="card" style="width: 100%; height: 100%;">
@@ -74,7 +79,8 @@ function add_custom_order_data_to_admin_order_page($order)
     <div class="card-header">
     Etiqueta de envío FedEx
     </div>
-    <iframe id="contentLabelPrint" src="data:application/pdf;base64,'.$label_shipping['pdfMerge'].'" width="100%" height="100%" allowfullscreen></iframe>
+
+    <iframe src="data:application/pdf;base64,'.$label_shipping['pdfMerge'].'" type="application/pdf" width="100%" height="100%" allowfullscreen></iframe>
 
     <div class="card-body">
 
@@ -96,13 +102,16 @@ function add_custom_order_data_to_admin_order_page($order)
     endif;
                          
 
-    // show the label code 64
+   // download label byhref
 
 
 }
 
 
-function get_label_shipping($masterTrackingNumber){
+function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
+
+
+    if( LABEL_TYPE == "PDF" || LABEL_TYPE == "PDF2" ){
 
     $request = '{
         "credential": {
@@ -154,6 +163,43 @@ function get_label_shipping($masterTrackingNumber){
     $response = json_decode($ws_response, true);
 
     return $response;
+
+
+    }
+    elseif(LABEL_TYPE == "ZPL"){
+
+
+        $curl = curl_init();
+
+                curl_setopt_array($curl, array(
+                CURLOPT_URL => 'http://api.labelary.com/v1/printers/8dpmm/labels/4x3/',
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => '',
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => 'POST',
+                CURLOPT_POSTFIELDS => base64_decode($labelBase64Byte),
+                CURLOPT_HTTPHEADER => array(
+                    'Accept: application/pdf',
+                    'Content-Type: application/x-www-form-urlencoded'
+                ),
+                ));
+                
+                
+            $response = curl_exec($curl);
+
+            curl_close($curl);
+
+            return array(
+                'pdfMerge' => base64_encode($response),
+               ); 
+               
+               
+
+        
+    }
 
 }
 
