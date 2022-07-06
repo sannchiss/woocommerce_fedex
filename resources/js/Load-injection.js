@@ -15,7 +15,7 @@
         [30, 45, 60, -1],
         [30, 45, 60, "Todos"],
       ],
-      pageLength: 10,
+      pageLength: 40,
     });
 
 
