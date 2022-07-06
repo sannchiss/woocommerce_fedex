@@ -15,7 +15,6 @@ $orders = wc_get_orders( $args );
 
 
 
-
 include PLUGIN_DIR_PATH . 'views/modal/orderShipping.php';
 include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
@@ -104,23 +103,23 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                     </td>
                                     <td><?php
                                             
-                                            if($order->post_status == 'wc-pending'){
+                                            if($order->get_status() == 'pending'){
                                                 echo '<span class="badge bg-warning">Pendiente</span>';
-                                            }elseif($order->post_status == 'wc-processing'){
+                                            }elseif($order->get_status() == 'processing'){
                                                 echo '<span class="badge bg-success">Procesado</span>';
-                                            }elseif($order->post_status == 'wc-on-hold'){
+                                            }elseif($order->get_status() == 'on-hold'){
                                                 echo '<span class="badge bg-primary">En espera</span>';
-                                            }elseif($order->post_status == 'wc-completed'){
+                                            }elseif($order->get_status() == 'completed'){
                                                 echo '<span class="badge bg-success">Completado</span>';
-                                            }elseif($order->post_status == 'wc-cancelled'){
+                                            }elseif($order->get_status() == 'cancelled'){
                                                 echo '<span class="badge bg-danger">Cancelado</span>';
-                                            }elseif($order->post_status == 'wc-refunded'){
+                                            }elseif($order->get_status() == 'refunded'){
                                                 echo '<span class="badge bg-danger">Reembolsado</span>';
-                                            }elseif($order->post_status == 'wc-failed'){
+                                            }elseif($order->get_status() == 'failed'){
                                                 echo '<span class="badge bg-danger">Fallido</span>';
-                                            }elseif($order->post_status == 'wc-procesado-fedex'){
+                                            }elseif($order->get_status() == 'procesado-fedex'){
                                                 echo '<span class="badge bg-primary"><i class="fas fa-shipping-fast"></i> Procesando con FedEx</span>';                                               
-                                            }elseif($order->post_status == 'wc-fedex'){
+                                            }elseif($order->get_status() == 'fedex'){
                                                 echo '<span class="badge bg-primary"><i class="fas fa-shipping-fast"></i> Enviado con FedEx</span>';
                                             }
                                             
@@ -130,7 +129,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                     <td>
                                         <?php
                                                 
-                                                  if($order->post_status!= 'wc-fedex' && $order->post_status!= 'wc-procesado-fedex' && $order->post_status!= 'wc-cancelled' && $order->post_status!= 'wc-failed'){              
+                                                  if($order->get_status()!= 'fedex' && $order->get_status()!= 'procesado-fedex' && $order->get_status()!= 'cancelled' && $order->get_status()!= 'failed'){              
                                                 ?>
 
                                         <div class="btn-group btn-group-sm" role="group" aria-label="...">
@@ -141,7 +140,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
                                         </div>
 
-                                        <?php }elseif($order->post_status!= 'wc-cancelled' && $order->post_status!= 'wc-failed') { ?>
+                                        <?php }elseif($order->get_status()!= 'cancelled' && $order->get_status()!= 'failed') { ?>
 
 
                                         <div class="btn-group btn-group-sm" role="group" aria-label="...">
@@ -153,7 +152,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
                                             <?php
 
-                                                    if($order->post_status == 'wc-procesado-fedex' ){
+                                                    if($order->get_status() == 'procesado-fedex' ){
 
                                                     ?>
 
@@ -168,7 +167,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                             <label class="btn btn-outline-primary"
                                                 for=<?php echo "checkOrden".$order->get_order_number(); ?>>Confirmar</label>
 
-                                            <?php }elseif($order->post_status == 'wc-fedex')
+                                            <?php }elseif($order->get_status() == 'fedex')
                                                     { ?>
 
                                             <button type="button" class="btn btn-primary trackShipment"
