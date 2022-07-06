@@ -120,7 +120,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                             }elseif($order->get_status() == 'procesado-fedex'){
                                                 echo '<span class="badge bg-primary"><i class="fas fa-shipping-fast"></i> Procesando con FedEx</span>';                                               
                                             }elseif($order->get_status() == 'fedex'){
-                                                echo '<span class="badge bg-primary"><i class="fas fa-shipping-fast"></i> Enviado con FedEx</span>';
+                                                echo '<span class="badge bg-success"><i class="fas fa-shipping-fast"></i> Enviado con FedEx</span>';
                                             }
                                             
                                              ?>
