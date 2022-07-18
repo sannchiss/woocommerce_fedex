@@ -50,13 +50,10 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     'cost' => $this->getRateService() == 0 ?  $this->add_notice() : $this->getRateService(),
                     'calc_tax' => 'per_order'
                 );
-
                 
 
                 // Register the rate.
                 $this->add_rate( $rate );
-
-                
 
             }
 
