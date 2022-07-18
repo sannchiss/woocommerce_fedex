@@ -47,14 +47,34 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $rate = array(
                     'id' => $this->id,
                     'label' => $this->title,
-                    'cost' => $this->getRateService(),
+                    'cost' => $this->getRateService() == 0 ?  $this->add_notice() : $this->getRateService(),
                     'calc_tax' => 'per_order'
                 );
+
+                
 
                 // Register the rate.
                 $this->add_rate( $rate );
 
+                
+
             }
+
+            // function dont repeat add_notice
+            public function add_notice( ) {
+
+                if($this->getRateService() == 0) {
+                    wc_clear_notices();
+                    $notice = wc_add_notice( __( '<b>Sin cobertura FedEx</b>.', 'woocommerce' ), 'error' );
+                    return $notice;
+
+                }
+               
+            }
+         
+
+            
+
 
 
             // get data of order
