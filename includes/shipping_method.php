@@ -29,7 +29,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
             public function init() {
 
-
+                
                 // Load the settings.
                 $this->init_form_fields();
                 $this->init_settings();
@@ -56,9 +56,50 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $this->add_rate( $rate );
 
             }
+            //calculate_volume function
+            
+
+            function get_cart_volumetric_weight(){
+                global $woocommerce;
+                $cart_volume = 0;
+                $quantity = 0;
+                $length = 0;
+                $width = 0;
+                $height = 0;
+                $product_weight = 0;
+                foreach ( $woocommerce->cart->get_cart() as $cart_item_key => $cart_item ) {
+                    $_product = $cart_item['data'];
+
+                    // count articles order
+                    $quantity += $cart_item['quantity'];
+
+                    // get weight total order
+                    $product_weight += $_product->get_weight();
+                    $product_weight = $product_weight * $cart_item['quantity'];
+
+
+                    // get length,width, height
+                    $length += $_product->get_length() * $cart_item['quantity'];
+                    $width += $_product->get_width() * $cart_item['quantity'];
+                    $height += $_product->get_height() * $cart_item['quantity'];
+
+                }
+
+
+                $volumen_volumetric = (($length * $width * $height) / 4000 ) * $quantity;
+                
+                if($volumen_volumetric > $product_weight ){
+                    return $volumen_volumetric;
+                }
+                else{
+                    return $product_weight;
+                }
+                
+            }
+            
 
             // function dont repeat add_notice
-            public function add_notice( ) {
+            public function add_notice() {
 
                 if($this->getRateService() == 0) {
                     wc_clear_notices();
@@ -69,25 +110,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                
             }
          
-
-            
-
-
-
-            // get data of order
-            public function getTotalWeight()
-            {
-               
-                $total_weight = 0;
-                foreach ( WC()->cart->get_cart() as $cart_item_key => $cart_item ) {
-                    $total_weight += $cart_item['data']->get_weight() * $cart_item['quantity'];
-                }
-
-                return $total_weight == 0 ? 1 : $total_weight;
-
-
-            }
-
 
             // get city origin client
             public function getCityShipper()
@@ -116,7 +138,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                    "servicio": 1,
                    "origen": "' . $this->getCityShipper()  . '",
                    "destino": "' . $shipping_city . '",
-                   "peso": "' . $this->getTotalWeight() . '"
+                   "peso": "' . $this->get_cart_volumetric_weight() . '"
                }';
 
                $ch = curl_init(END_POINT_RATE);
@@ -139,26 +161,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 
             }
-
-
-
-
-/*             // update caculate shipping checkout
-            public function change_total_on_checking($order) {
-
-                // Get order total
-                $total = $order->get_total();
-
-                ## -- Make your checking and calculations -- ##
-                $new_total = $total; // <== Fake calculation
-
-                // Set the new calculated total
-                $order->set_total($new_total);
-
-            }
- */
-
-           
             
 
         }
@@ -178,9 +180,8 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
     function filter_woocommerce_cart_shipping_method_full_label( $label, $method ) {
         if ( 'method_fedex_shipping' === $method->id ) {
-            // icon fasfa-truck
-            $label = $label;
-            //$label = str_replace( ':', '', $label );
+            // add icon fasfa-truck
+            $label = '<span class="fas fa-truck"></span> ' . $label;
         }
         return $label;
     }

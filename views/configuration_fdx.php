@@ -459,15 +459,15 @@
                                                         <option value="ARICA"
                                                         <?php if(CITY_SHIPPER == "ARICA" ){ echo "selected"; } ?> >
                                                         ARICA</option>
-                                                        <option value="CALAMA">CALAMA</option>
-                                                        <option value="CASTRO">CASTRO</option>
-                                                        <option value="CHILLAN">CHILLAN</option>
+                                                        <option value="CALAMA" <?php if(CITY_SHIPPER == "CALAMA" ){ echo "selected"; } ?> >CALAMA</option>
+                                                        <option value="CASTRO" <?php if(CITY_SHIPPER == "CASTRO" ){ echo "selected"; } ?> >CASTRO</option>
+                                                        <option value="CHILLAN" <?php if(CITY_SHIPPER == "CHILLAN" ){ echo "selected"; } ?> >CHILLAN</option>
                                                         <option value="CONCEPCION"
                                                             <?php if(CITY_SHIPPER == "CONCEPCION" ){ echo "selected"; } ?> >
                                                             CONCEPCION</option>
-                                                        <option value="COPIAPO">COPIAPO</option>
-                                                        <option value="COQUIMBO">COQUIMBO</option>
-                                                        <option value="CURICO">CURICO</option>
+                                                        <option value="COPIAPO" <?php if(CITY_SHIPPER == "COPIAPO" ){ echo "selected"; } ?> >COPIAPO</option>
+                                                        <option value="COQUIMBO" <?php if(CITY_SHIPPER == "COQUIMBO" ){ echo "selected"; } ?> >COQUIMBO</option>
+                                                        <option value="CURICO" <?php if(CITY_SHIPPER == "CURICO" ){ echo "selected"; } ?> >CURICO</option>
                                                         <option value="IQUIQUE"
                                                             <?php if(CITY_SHIPPER == "IQUIQUE" ){ echo "selected"; } ?>>
                                                             IQUIQUE</option>
