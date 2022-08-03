@@ -121,7 +121,7 @@ class createTables{
                 'personNameShipper' => 'personNameShipper',
                 'phoneShipper' => 'phoneShipper',
                 'companyNameShipper' => 'companyNameShipper',
-                'emailShipper' => 'emailShipper',
+                'emailShipper' => 'emailShipper@none.cl',
                 'vatNumberShipper' => 'vatNumberShipper',
                 'cityShipper' => 'SANTIAGO',
                 'stateOrProvinceCodeShipper' => '8320000',
