@@ -61,7 +61,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
             function get_cart_volumetric_weight(){
                 global $woocommerce;
-                $cart_volume = 0;
                 $quantity = 0;
                 $length = 0;
                 $width = 0;
@@ -87,7 +86,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
 
                 $volumen_volumetric = (($length * $width * $height) / 4000 ) * $quantity;
-                
+               
                 if($volumen_volumetric > $product_weight ){
                     return $volumen_volumetric;
                 }
