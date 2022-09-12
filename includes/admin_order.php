@@ -16,8 +16,6 @@ function add_custom_order_data_to_admin_order_page($order)
 
     $order_id = $order->get_id();
 
-
-
     // get total weight order
     $order        = wc_get_order( $order_id );
 	$order_items  = $order->get_items();

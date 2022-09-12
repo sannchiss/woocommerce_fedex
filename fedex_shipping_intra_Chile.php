@@ -171,7 +171,6 @@ public function init(){
 
 public function fedex_shipping_intra_Chile_menu() {
 
-
     $menus = [];
 
     $menus[] = [
@@ -228,16 +227,6 @@ public function fedex_shipping_intra_Chile_menu() {
 
 }
 
-public function fedex_shipping_intra_Chile_menu_page() {
-
-
-    // open page in new tab
-    echo '<script>window.open("https://www.fedex.com/es-cl/home.html", "_blank");</script>';
-
-  
-
-}
-
 // function open external page in new tab
 public function fedex_shipping_intra_Chile_page() {
 
@@ -251,7 +240,15 @@ public function fedex_shipping_intra_Chile_page() {
 
 }
 
+public function fedex_shipping_intra_Chile_menu_page() {
 
+
+    // open page in new tab
+    echo '<script>window.open("https://www.fedex.com/es-cl/home.html", "_blank");</script>';
+
+  
+
+}
 
 public function addmenusPanel($menus) {
 
@@ -364,6 +361,10 @@ public function enqueue_styles() {
     wp_register_style( 'Bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' );
     wp_enqueue_style('Bootstrap');
 
+    /**Libreria estilo DataTable */
+    wp_register_style('DataTable', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css');
+    wp_enqueue_style('DataTable');
+
     /**Libreria para DataTable */
     wp_register_style( 'DataTable', '//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css' );
     wp_enqueue_style('DataTable');
@@ -397,8 +398,6 @@ public function add_status_shipping_fedex(){
 
 
  }
-
-
 
 
 public function add_order_status_shipping_fedex( $order_statuses ) {

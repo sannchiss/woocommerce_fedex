@@ -23,25 +23,33 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
 <div class="container-xxl">
 
-    <div class="row">
-        <div class="col-md-12">
-            <h1></h1>
+    <nav class="navbar bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img src="https://assets.turbologo.com/blog/es/2019/12/19132841/Fedex-logo.png" alt="" width="100"
+                    height="60">
+            </a>
+
+        </div>
+    </nav>
+
+    <div class="row ">
+        <div class="col-md-12 mb-5">
+
+            <div class="float-right">
+                <button type="button" class="btn btn-primary btn-sm confirmSend">
+                    Confirmar Entrega
+                    <i class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
+                </button>
+                <!--icon add-->
+
+            </div>
         </div>
     </div>
 
     <div class="panel">
-        <div class="panel-heading mb-3">
-            <h3 class="panel-title">ORDENES DE ENVÍO</h3>
-        </div>
 
-        <div class="row">
-            <div class="col-md-12 mb-5">
-                <div class="form-group">
-                    <button type="button" class="btn btn-secondary btn-sm confirmSend">Confirmar
-                        Entrega</button>
-                </div>
-            </div>
-        </div>
+
 
 
         <div class="panel-body">

@@ -47,18 +47,25 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $rate = array(
                     'id' => $this->id,
                     'label' => $this->title,
-                    'cost' => $this->getRateService() == 0 ?  $this->add_notice() : $this->getRateService(),
+                    'cost' => $this->getRateService(),
                     'calc_tax' => 'per_order'
                 );
                 
+                // if cost is 0, then don't show the rate
+                if ( $rate['cost'] > 0 ) {
+                    $this->add_rate( $rate );
+                }else{
+                    return;
+                }
+
 
                 // Register the rate.
                 $this->add_rate( $rate );
 
             }
-            //calculate_volume function
-            
 
+
+            //calculate_volume function
             function get_cart_volumetric_weight(){
                 global $woocommerce;
                 $quantity = 0;
@@ -84,30 +91,30 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 }
 
+                $volume = $length * $width * $height;
 
-                $volumen_volumetric = (($length * $width * $height) / 4000 ) * $quantity;
-               
-                if($volumen_volumetric > $product_weight ){
-                    return $volumen_volumetric;
+                $weight_volumetric = $volume / 4000;
+
+                if($weight_volumetric > $product_weight ){
+                    return $weight_volumetric;
                 }
                 else{
-                    return $product_weight;
+                    return $product_weight;              
                 }
                 
             }
             
 
             // function dont repeat add_notice
-            public function add_notice() {
+           /*  public function add_notice() {
 
                 if($this->getRateService() == 0) {
                     wc_clear_notices();
                     $notice = wc_add_notice( __( '<b>Sin cobertura FedEx</b>.', 'woocommerce' ), 'error' );
                     return $notice;
-
                 }
                
-            }
+            } */
          
 
             // get city origin client

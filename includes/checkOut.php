@@ -18,8 +18,6 @@ function change_total_on_checking($order)
 
 
 
-
-
 // details order
 add_action('woocommerce_order_details_after_order_table', 'details_order', 10, 1);
 
@@ -46,6 +44,10 @@ function details_order($order)
         $order_items  = $order->get_items();
         $total_qty    = 0;
         $total_weight = 0;
+
+        $length = 0;
+        $width = 0;
+        $height = 0;
 
         foreach ( $order_items as $item_id => $product_item ) {
             $product         = $product_item->get_product();
