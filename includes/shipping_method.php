@@ -55,18 +55,16 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 if ( $rate['cost'] > 0 ) {
                     $this->add_rate( $rate );
                 }else{
+
+                    $this->add_notice();
                     return;
                 }
-
-
-                // Register the rate.
-                $this->add_rate( $rate );
 
             }
 
 
             //calculate_volume function
-            function get_cart_volumetric_weight(){
+            public function get_cart_volumetric_weight(){
                 global $woocommerce;
                 $quantity = 0;
                 $length = 0;
@@ -93,20 +91,21 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 $volume = $length * $width * $height;
 
-                $weight_volumetric = $volume / 4000;
-
+                $weight_volumetric = ($volume / 4000) / 250;
+                
                 if($weight_volumetric > $product_weight ){
                     return $weight_volumetric;
                 }
                 else{
-                    return $product_weight;              
+                    
+                    return $product_weight;          
                 }
                 
             }
             
 
             // function dont repeat add_notice
-           /*  public function add_notice() {
+             public function add_notice() {
 
                 if($this->getRateService() == 0) {
                     wc_clear_notices();
@@ -114,7 +113,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     return $notice;
                 }
                
-            } */
+            } 
          
 
             // get city origin client
