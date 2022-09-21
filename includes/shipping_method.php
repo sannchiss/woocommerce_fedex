@@ -71,27 +71,26 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 $width = 0;
                 $height = 0;
                 $product_weight = 0;
+                $volume_total = 0;
                 foreach ( $woocommerce->cart->get_cart() as $cart_item_key => $cart_item ) {
                     $_product = $cart_item['data'];
 
                     // count articles order
                     $quantity += $cart_item['quantity'];
 
+                    // get volumen total order
+                    $length = $_product->get_length();
+                    $width = $_product->get_width();
+                    $height = $_product->get_height();
+
+                    $volume_total += ($length * $width * $height) * $cart_item['quantity'];
+
                     // get weight total order
-                    $product_weight += $_product->get_weight();
-                    $product_weight = $product_weight * $cart_item['quantity'];
-
-
-                    // get length,width, height
-                    $length += $_product->get_length() * $cart_item['quantity'];
-                    $width += $_product->get_width() * $cart_item['quantity'];
-                    $height += $_product->get_height() * $cart_item['quantity'];
+                    $product_weight += $_product->get_weight() * $cart_item['quantity'];
 
                 }
 
-                $volume = $length * $width * $height;
-
-                $weight_volumetric = ($volume / 4000) / 250;
+                $weight_volumetric = ($volume_total / 4000) / 250;
                 
                 if($weight_volumetric > $product_weight ){
                     return $weight_volumetric;
