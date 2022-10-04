@@ -97,6 +97,14 @@ function add_custom_order_data_to_admin_order_page($order)
     </div>
   </div>';
 
+
+    // parse code 64 bit
+    $pdf = base64_decode($label_shipping['pdfMerge']);
+
+    // call function print label
+    print_label( $pdf, $masterTrackingNumber );
+        
+
     endif;
                          
 
@@ -201,6 +209,31 @@ function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
 
 }
 
+
+function print_label($pdf, $masterTrackingNumber){
+
+    $file = 'etiqueta_fedex_'.$masterTrackingNumber.'.pdf';
+    $fp = fopen($file, "w");
+    fwrite($fp, $pdf);
+    fclose($fp);
+
+    echo '<div class="card" style="width: 100%; height: 100%;">
+    <div class="card-header">
+    Impresión
+    </div>
+    <div class="card-body">
+    <div class="row">
+    <div class="col-md-6">
+    <a href="data:application/pdf;base64,'.base64_encode($pdf).'" download="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" class="btn btn-primary btn-block">Descargar</a>
+    </div>
+    <div class="col-md-6">
+    <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-primary btn-block" type="application/pdf" >Ver PDF</a>
+    </div>
+    </div>
+    </div>
+    </div>';
+
+}
 
 
 
