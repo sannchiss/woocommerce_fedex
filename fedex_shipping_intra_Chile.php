@@ -59,6 +59,7 @@ public function __construct() {
     add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_actions_edit_shop_order' ));
     add_action( 'admin_action_mark_wc-procesado-fedex', array( $this, 'add_action_mark_wc_procesado_fedex' ));
     add_action('admin_notices', array($this, 'add_action_admin_notices'));
+    add_action( 'admin_head', array( $this, 'add_action_admin_head' ));
 
     add_action( 'woocommerce_order_status_changed', array( $this, 'action_woocommerce_order_status_changed' ) );
 
@@ -387,13 +388,16 @@ public function add_status_shipping_fedex(){
 
     $slug = 'wc-procesado-fedex';
     $label = 'Procesado con FedEx';
+    // icono de woocommerce
+    $icon = '<icon>dashicons-yes-alt</icon>';
+
         register_post_status( $slug, [
             'label'                     => $label,
             'public'                    => true,
             'exclude_from_search'       => false,
             'show_in_admin_all_list'    => true,
             'show_in_admin_status_list' => true,
-            'label_count'               => _n_noop( $label . ' <span class="count">(%s)</span>', $label . ' <span class="count">(%s)</span>' )
+            'label_count'               => _n_noop( $label . ' <span class="count">(%s)</span>', $label . ' <span class="count">(%s)</span>' ),
         ]);
 
 
@@ -406,10 +410,10 @@ public function add_order_status_shipping_fedex( $order_statuses ) {
     $label = 'Procesado con FedEx';
  
         $new_order_statuses = [
-            $slug => $label
+            $slug => $label,
         ];
  
-        return array_merge( $new_order_statuses, $order_statuses );
+        return array_merge( $new_order_statuses, $order_statuses);
 
  }
 
@@ -527,6 +531,59 @@ public function anadir_posventa_lista_sent($order_statuses){
           }
           return $new_order_statuses;
       }
+
+
+/********************************************************************************************************** */
+// function to add the icon/background to the status
+public function add_action_admin_head(){
+
+    global $pagenow, $post;
+
+    if( $pagenow != 'edit.php') return; // Exit
+    if( get_post_type($post->ID) != 'shop_order' ) return; // Exit
+
+    // HERE we set your custom status
+    $order_status_process = 'procesado-fedex'; 
+    $order_status_sent = 'fedex'; 
+    ?>
+    <style>
+        .order-status.status-<?php echo sanitize_title( $order_status_process ); ?> {
+            background:rgb(134, 47, 222) !important;
+            font-weight: bold;
+            color: #FFFFFF;
+            border: 1px solid rgb(134, 47, 222) !important;
+            
+        }
+
+        .order-status.status-<?php echo sanitize_title( $order_status_sent ); ?>  {
+            background:rgb(134, 47, 222) !important;
+            font-weight: bold;
+            color: #FFFFFF;
+            border: 1px solid rgb(134, 47, 222) !important;
+
+        }
+
+        // add icon 
+        .order-status.status-<?php echo sanitize_title( $order_status_process ); ?>::before {
+            content: "\f155";
+            font-family: "dashicons";
+            font-size: 20px;
+            font-weight: bold;
+            color: #FFFFFF;
+            border: 1px solid rgb(134, 47, 222) !important;
+            padding: 5px;
+            border-radius: 50%;
+            background: rgb(134, 47, 222);
+            margin-right: 5px;
+        }
+
+       
+
+    </style>
+    <?php
+
+}
+
 
 
 /********************************************************************************************************** */
