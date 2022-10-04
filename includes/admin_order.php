@@ -214,9 +214,9 @@ function print_label($pdf, $masterTrackingNumber){
     fwrite($fp, $pdf);
     fclose($fp);
 
-    echo '<div class="card" style="width: 80%; height: 100%;">
-    <div class="card-header">
-    Impresión
+    echo '<div class="d-flex justify-content-center"><div class="card" style="width: 80%; height: 100%;">
+    <div class="card-title text-center">
+    Opcciones de etiqueta
     </div>
     <div class="card-body">
     <div class="row">
@@ -227,6 +227,7 @@ function print_label($pdf, $masterTrackingNumber){
     <div class="col-md-6">
     <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-primary btn-sm" type="application/pdf" >
     <icon class="fa fa-print" aria-hidden="true"></icon> Imprimir</a>
+    </div>
     </div>
     </div>
     </div>
