@@ -33,24 +33,25 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
         </div>
     </nav>
 
-    <div class="row ">
-        <div class="col-md-12 mb-5">
+    <div class="d-flex justify-content-end">
 
-            <div class="float-right">
-                <button type="button" class="btn btn-primary btn-sm confirmSend">
-                    Confirmar Entrega
-                    <i class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
-                </button>
-                <!--icon add-->
-
+        <div class="row ">
+            <div class="col-md-12 mb-5">
+    
+                <div class="float-right">
+                    <button type="button" class="btn btn-primary btn-sm confirmSend">
+                        Confirmar Entrega
+                        <i class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
+                    </button>
+                    <!--icon add-->
+    
+                </div>
             </div>
         </div>
+
     </div>
 
     <div class="panel">
-
-
-
 
         <div class="panel-body">
 
