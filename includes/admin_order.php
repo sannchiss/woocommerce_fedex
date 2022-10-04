@@ -85,9 +85,6 @@ function add_custom_order_data_to_admin_order_page($order)
     <div class="row">
 
     <ul class="list-group">
-    <li class="list-group-item">Transporte: <b>FedEx Express</b></li>
-    <li class="list-group-item">Peso: <b>'.$total_weight.'Kg</b></li>
-    <li class="list-group-item">Costo Envío: <b>$'.get_post_meta($order->get_order_number(), '_order_shipping', true).'</b></li>
     <li class="list-group-item">Orden Transporte: <b>'.$masterTrackingNumber.'</b></li>
   </ul>
 
@@ -217,17 +214,19 @@ function print_label($pdf, $masterTrackingNumber){
     fwrite($fp, $pdf);
     fclose($fp);
 
-    echo '<div class="card" style="width: 100%; height: 100%;">
+    echo '<div class="card" style="width: 80%; height: 100%;">
     <div class="card-header">
     Impresión
     </div>
     <div class="card-body">
     <div class="row">
     <div class="col-md-6">
-    <a href="data:application/pdf;base64,'.base64_encode($pdf).'" download="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" class="btn btn-primary btn-block">Descargar</a>
+    <a href="data:application/pdf;base64,'.base64_encode($pdf).'" download="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" class="btn btn-primary btn-sm">
+    <i class="fa fa-download"></i> Descargar</a>
     </div>
     <div class="col-md-6">
-    <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-primary btn-block" type="application/pdf" >Ver PDF</a>
+    <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-primary btn-sm" type="application/pdf" >
+    <icon class="fa fa-print" aria-hidden="true"></icon> Imprimir</a>
     </div>
     </div>
     </div>

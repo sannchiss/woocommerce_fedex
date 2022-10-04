@@ -362,19 +362,19 @@ public function enqueue_styles() {
     wp_enqueue_style('Bootstrap');
 
     /**Libreria estilo DataTable */
-    wp_register_style('DataTable', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css');
-    wp_enqueue_style('DataTable');
+   /*  wp_register_style('DataTable', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css');
+    wp_enqueue_style('DataTable'); */
 
     /**Libreria para DataTable */
-    wp_register_style( 'DataTable', '//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css' );
-    wp_enqueue_style('DataTable');
+  /*   wp_register_style( 'DataTable', '//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css' );
+    wp_enqueue_style('DataTable'); */
 
     /**Libreria para DataTable */
     wp_register_style( 'DataTableBootstrap', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css' );
     wp_enqueue_style('DataTableBootstrap');
 
-    wp_register_style( 'stackpath', '//stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css');
-    wp_enqueue_style('stackpath');
+   /*  wp_register_style( 'stackpath', '//stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css');
+    wp_enqueue_style('stackpath'); */
 
     
   }

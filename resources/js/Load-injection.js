@@ -440,11 +440,11 @@
 
           parseData.forEach((element) => {
 
-             pdfWindow.document.write(
+              pdfWindow.document.write(
               "<embed width='100%' height='100%' type='application/pdf' src='data:application/pdf;base64," +
                 encodeURI(element.labelBase64) +
                 "#toolbar=1&navpanes=0&scrollbar=0'>"
-            ); 
+            );  
           });
         },
         error: function (error) {

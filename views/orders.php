@@ -177,14 +177,12 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
                                             <?php }elseif($order->get_status() == 'fedex')
                                                     { ?>
-
-                                            <button type="button" class="btn btn-primary trackShipment"
-                                                data-order="<?php echo $order->get_order_number(); ?>"><i
-                                                    class="fas fa-map-marked-alt"></i></button>
-
-
+                                            <button type="button" class="btn btn-warning trackShipment"
+                                                data-order="<?php echo $order->get_order_number(); ?>">
+                                                <i class="fas fa-truck"></i>
+                                                
+                                                </button>
                                             <?php } ?>
-
                                         </div>
 
 
