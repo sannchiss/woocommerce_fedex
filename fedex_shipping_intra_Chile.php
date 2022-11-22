@@ -643,6 +643,9 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         $weightVolumetricTotal = ( $weightOrder == 0 ? $weightOptional : $weightOrder ) / 250;
 
 
+        /******************************************************** */
+
+
         $request = '{
             "credential": {
                 "accountNumber": "' . ACCOUNT_NUMBER . '",
@@ -653,7 +656,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                 "contact": {
                     "vatNumber": "",
                     "personName": "",
-                    "phoneNumber": "",
+                    "phoneNumber": "999999999",
                     "email": ""
                 },
                 "address": {
@@ -667,7 +670,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                 "contact": {
                     "vatNumber": "1-9",
                     "personName": "'. substr( $order_details['billing']['first_name'] . ' ' . $order_details['billing']['last_name'], 0, 40 ). '",
-                    "phoneNumber": "' . str_replace("+56", "", substr( $order_details['billing']['phone'] , 0, 20 ) ). '",
+                    "phoneNumber": "'.str_replace("+", "", substr( $order_details['billing']['phone'] , 0, 15 ) ).'",
                     "email": "' . substr( str_replace(' ', '', $order_details['billing']['email'] ), 0, 40) . '"
                 },
                 "address": {
@@ -693,11 +696,11 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             },
             "referencesShip": "' . substr( $order, 0 , 20) . '",
             "insuranceShipValue": "0",
-            "additionalReferences": "' . substr(  preg_replace( "[\n|\r|\n\r]", "", $order_details['customer_note'] ), 0, 100  ) . '"
+            "additionalReferences": "' . substr(  preg_replace( "[\n|\r|\n\r]", "", $order_details['customer_note'] ), 0, 100  ) .'"
         }';
 
 
-
+        /*********************************************************** */
         // try in response web service
         try {          
 
@@ -716,8 +719,8 @@ public function action_woocommerce_order_status_changed( $order_id ) {
               CURLOPT_POSTFIELDS => $request,
               CURLOPT_HTTPHEADER => array(
                 'Content-Type: application/json',
-                'Cookie: _abck=8B703E59AB8F068FFC03F46AD1F9FC51~-1~YAAQHIkKuqM9F1N8AQAASkcwnwaeb5C2xCWK/aeeZP/QkpNcXGV1kNZx9886ivLLOJieyavy6mNGfwwVOz8fG9oEIXO8jQgMyaD5av5yyHaRnwIBqEfcA7ji8Q6ZA/UYsfw9i4890BvYr8mewLJJGf4Iw5WVg9mjvX4adSnXtkHr6xh0w0SrD175t8HPx6ihyv1SlMQAJArB2pqH6E0kSb5V9FXMlZRiA0uhoUR6sf/c8h6R9FKlWciNXcYrUxp4SROH3C4Gd7/6Gj8bcluBZe0RLoA+C3GVrCa7ragFMqDsjF6TShSvsUYm1f/vSs/SncnIxSEMgk9IkSXthF0UkDt1tSCja4pXZ9Zxt1yHFW16j++EvOrBGw==~-1~-1~-1; fdx_cbid=10880496071634758313009000438201; siteDC=wtc'
-              ),
+                'Cookie: fdx_cbid=10880496071634758313009000438201; siteDC=wtc'
+               ),
             ));
             
             $ws_response = curl_exec($curl);
