@@ -50,17 +50,28 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                     'cost' => $this->getRateService(),
                     'calc_tax' => 'per_order'
                 );
+
                 
                 // if cost is 0, then don't show the rate
-                if ( $rate['cost'] > 0 ) {
+                 if ( $rate['cost'] > 0 ) {
                     $this->add_rate( $rate );
-                }else{
-
+                }else if($rate['cost'] == 0 && WC()->customer->get_shipping_city() != ''){
                     $this->add_notice();
                     return;
-                }
+                } 
 
             }
+
+                   // function dont repeat add_notice
+            public function add_notice() {
+
+                if($this->getRateService() == 0) {
+                        wc_clear_notices();
+                        $notice = wc_add_notice( __( '<b>Sin cobertura FedEx</b>.', 'woocommerce' ), 'error' );
+                        return $notice;
+                    }
+                   
+                }           
 
 
             //calculate_volume function
@@ -101,18 +112,6 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
                 }
                 
             }
-            
-
-            // function dont repeat add_notice
-             public function add_notice() {
-
-                if($this->getRateService() == 0) {
-                    wc_clear_notices();
-                    $notice = wc_add_notice( __( '<b>Sin cobertura FedEx</b>.', 'woocommerce' ), 'error' );
-                    return $notice;
-                }
-               
-            } 
          
 
             // get city origin client
