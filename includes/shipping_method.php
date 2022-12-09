@@ -173,9 +173,9 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     
     }
 
-    add_filter( 'woocommerce_shipping_methods', 'add_your_shipping_method' );
+    add_filter( 'woocommerce_shipping_methods', 'fedex_shipping_method' );
     
-    function add_your_shipping_method( $methods ) {
+    function fedex_shipping_method( $methods ) {
         $methods['method_fedex_shipping'] = 'WC_METHOD_FEDEX_SHIPPING';
         return $methods;
     }
