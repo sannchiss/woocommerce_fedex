@@ -220,8 +220,18 @@ public function fedex_shipping_intra_Chile_menu() {
         'functionName' => ''
         
     ];
+
+    $submenu[] = [
+        'parent_slug' => 'fedex_shipping_intra_Chile',
+        'page_title' => 'Log',
+        'menu_title' => 'Log',
+        'capabality' => 'manage_options',
+        'menu_slug' => plugin_dir_path(__FILE__) . 'views/log.php',  //Ruta absoluta,
+        'functionName' => ''
+        
+    ];
     
-    ;
+    
 
     $this->addSubmenusPanel($submenu);
 
@@ -599,22 +609,32 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
      if ( $order_status == 'procesado-fedex' ) {
 
-
-
         // get deatils of the order
         $order_details = $order->get_data();
 
         // get the order id
         $order = $order->get_id();
 
+        if(($order_details['billing']['address_1'] != $order_details['shipping']['address_1']) && $order_details['shipping']['city'] != null){
+            $this->register_log(date('Y-m-d H:i:s').'_La dirección de facturación es diferente a la dirección de envío');
 
-        // Clear string of special characters  
+            $clearCity  =  $order_details['shipping']['city'];
+            $address = $order_details['shipping']['address_1'];
+            
+        }
+        else {
+            $this->register_log(date('Y-m-d H:i:s').'_La dirección de facturación es igual a la dirección de envío');
 
-        $characters_string = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order, '_billing_comuna', true );
+            $clearCity = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order, '_billing_comuna', true );
+            $address = substr( $order_details['billing']['address_1'], 0, 40 );
 
+            }
+
+
+
+         // Clear string of special characters  
         $clearString = new clearString;
-        $comunaClear = $clearString->setString($characters_string);
-        //$comunaClear = clearTrait::clearString( $characters_string );
+        $comunaClear = $clearString->setString($clearCity);
 
         
             // select like ciudad and code postal sql
@@ -643,8 +663,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         $weightVolumetricTotal = ( $weightOrder == 0 ? $weightOptional : $weightOrder ) / 250;
 
 
-        /******************************************************** */
-
 
         $request = '{
             "credential": {
@@ -664,7 +682,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                     "postalCode": "",
                     "countryCode": "CL",
                     "streetLine1": ""
-                }
+                } 
             },
             "recipient": {
                 "contact": {
@@ -677,7 +695,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                     "city": "' . $city . '",
                     "postalCode": "' . $codePostal . '",
                     "countryCode": "CL",
-                    "streetLine1": "' . substr( $order_details['billing']['address_1'], 0, 40 ) . '"
+                    "streetLine1": "' . $address . '"
                 }
             },
             "serviceType": "01",
@@ -700,7 +718,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         }';
 
 
-        /*********************************************************** */
         // try in response web service
         try {          
 
@@ -795,6 +812,8 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         )); 
 
+        // write log with date and time
+        $this->register_log( $response );
 
 
         }
@@ -807,6 +826,8 @@ public function action_woocommerce_order_status_changed( $order_id ) {
            // $message = sprintf( _n( 'Estatus de la orden cambiando.', '%s estatus orden cambiado.', $_REQUEST['changed'] ), number_format_i18n( $_REQUEST['changed'] ) );
             echo "<div class=\"notice notice-success updated\"><p>Error en la transacción</p></div>";
 
+            // write log with date and time
+            $this->register_log( $response );
 
             ?>
 
@@ -818,7 +839,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
 
-        }
+        } 
         
 
 
@@ -828,6 +849,45 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 }
 
+public function register_log($message) {
+
+    // if message is array, convert to string
+    if ( is_array( $message  ) || is_object( $message ) ) {
+        $message = print_r( $message, true );
+    }
+
+
+
+    // create folder in woocommerce upload folder
+     $upload_dir = wp_upload_dir();
+     $upload_dir = $upload_dir['basedir'] . '/woocommerce_logs_register_fedex/';
+        if ( ! is_dir( $upload_dir ) ) {
+            mkdir( $upload_dir, 0777, true );
+
+            // get date
+            $date = date('Y-m-d H:i:s');
+
+            // name file with date
+            $file_name = 'log_'.$date.'.txt';
+   
+               // create file in folder
+            $file = fopen( $upload_dir . 'Log_.txt', 'w' );
+            //write in file
+            fwrite( $file, $message . PHP_EOL );
+            fclose( $file );
+   
+           }else {            
+               
+                //write in file add jump line file_put_contents
+                file_put_contents( $upload_dir . 'Log_.txt', $message . PHP_EOL, FILE_APPEND);
+                fclose( $file );
+               
+    
+           }
+
+
+    
+}
 
 
  //Obtiene campos de la orden
