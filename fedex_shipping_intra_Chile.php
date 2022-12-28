@@ -964,6 +964,13 @@ public function save_configuration(){
         $this->wpdb->update($this->table_name_configuration, $collection, array('id' => 1));
 
         print "Se actualizo la configuración";
+        
+
+        $this->register_log( array_merge(array(
+            'Date' => date('Y-m-d H:i:s'),
+            'Action' => 'Configuración actualizada',        
+        ), $collection) );
+
         die();
 
     }else{
@@ -971,7 +978,15 @@ public function save_configuration(){
         $this->wpdb->insert($this->table_name_configuration, $collection);
 
         print "Se guardo la configuración";
+        
+
+        $this->register_log( array_merge(array(
+            'Date' => date('Y-m-d H:i:s'),
+            'Action' => 'Configuración guardada',        
+        ), $collection) );
+
         die();
+
      } 
  
     

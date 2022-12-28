@@ -72,9 +72,6 @@ echo "</tbody>
             </div>";
 
 
-
-
-
 ?>
 
 <script>
