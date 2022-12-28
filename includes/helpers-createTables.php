@@ -1,7 +1,7 @@
 <?php
 
-
-class createTables{
+class createTables
+{
 
 
     public function __construct(){

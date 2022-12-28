@@ -1,6 +1,8 @@
 <?php
 
-class printLabelShippingController {
+require_once PLUGIN_DIR_PATH . 'fedex_shipping_intra_Chile.php';
+
+class printLabelShippingController extends fedex_shipping_intra_Chile {
 
     public function __construct() {
 
@@ -16,6 +18,9 @@ class printLabelShippingController {
 
     public function index($orderId) {
 
+         // instancia para registrar log
+         $logReg = new printLabelShippingController;
+
 
         $sql  = $this->wpdb->get_results("SELECT masterTrackingNumber, labelBase64".LABEL_TYPE." 
         FROM ".$this->table_name_responseshipping." 
@@ -26,8 +31,6 @@ class printLabelShippingController {
             $labelBase64 = $value;
 
         } 
-
-
 
 
   // Selecciono el tipo de etiqueta de la configuración
@@ -95,6 +98,16 @@ class printLabelShippingController {
 
                echo json_encode($label, true); 
 
+               $logReg->register_log(
+                array(
+                'OT' => $labelBase64['masterTrackingNumber'],
+                'fecha' => date('Y-m-d H:i:s'),
+                'status' => 'success',
+                'type' => 'PDF',
+                'message' => 'Se ha generado la etiqueta correctamente'               
+                ));
+
+
 
         }elseif( LABEL_TYPE == 'PNG' ){
 
@@ -136,6 +149,15 @@ class printLabelShippingController {
                    curl_close($curl);
 
                    echo json_encode($label, true);
+
+                   $logReg->register_log(
+                    array(
+                    'OT' => $labelBase64['masterTrackingNumber'],
+                    'fecha' => date('Y-m-d H:i:s'),
+                    'status' => 'success',
+                    'type' => 'ZPL',
+                    'message' => 'Se ha generado la etiqueta correctamente'               
+                    ));
 
 
 

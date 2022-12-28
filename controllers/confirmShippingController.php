@@ -1,6 +1,8 @@
 <?php
 
-class confirmShippingController {
+require_once PLUGIN_DIR_PATH . 'fedex_shipping_intra_Chile.php';
+
+class confirmShippingController extends fedex_shipping_intra_Chile{
 
     public function __construct() {
 
@@ -16,6 +18,10 @@ class confirmShippingController {
     }
 
     public function index($orderIds) {
+
+        // instancia para registrar log
+        $logReg = new confirmShippingController;
+        
 
         $listMasterTrackingNumber = array();
 
@@ -56,11 +62,10 @@ class confirmShippingController {
         catch (Exception $e) {
 
             echo 'Ha habido una excepción: ' . $e->getMessage() . "<br>";
+            $logReg->register_log('Ha habido una excepción: '. date('Y-m-d H:i:s'). '___' . $e->getMessage());
             
 
         }
-
-
 
 
         }
@@ -123,6 +128,15 @@ class confirmShippingController {
             ), 
             true
         );
+
+        $logReg->register_log('Ha habido una excepción:'. date('Y-m-d H:i:s'). '___' . json_encode(
+            array(
+                'status' => $response['result'],
+                'message' => 'Error en la solicitud: '.$response['message'],
+            ), 
+            true
+        ));
+
 
 
         }
@@ -195,6 +209,12 @@ class confirmShippingController {
             $manifest, 
             true
         );
+
+        $logReg->register_log('Se generó la confirmacion: ' . date('Y-m-d H:i:s'). '___' . json_encode(
+            $manifest, 
+            true
+        ));
+
 
 
 

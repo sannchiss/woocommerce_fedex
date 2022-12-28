@@ -27,6 +27,7 @@ defined('ABSPATH') || exit;
 //Constante de la ruta del plugin de nombre: PLUGIN_DIR_PATH
 define('PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 
+
 class fedex_shipping_intra_Chile  {
 
 public function __construct() {
@@ -44,7 +45,6 @@ public function __construct() {
     $this->table_name_posts = $table_prefix . 'posts';
     $this->table_name_confirmationshipping = $table_prefix . 'fedex_shipping_intra_CL_confirmationShipping';
     $this->table_name_locations = $table_prefix . 'fedex_shipping_intra_CL_localidades';
-    
 
 
     add_action( 'admin_menu', array( $this, 'fedex_shipping_intra_Chile_menu' ));
@@ -58,7 +58,7 @@ public function __construct() {
 
     add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_actions_edit_shop_order' ));
     add_action( 'admin_action_mark_wc-procesado-fedex', array( $this, 'add_action_mark_wc_procesado_fedex' ));
-    add_action('admin_notices', array($this, 'add_action_admin_notices'));
+    add_action( 'admin_notices', array($this, 'add_action_admin_notices'));
     add_action( 'admin_head', array( $this, 'add_action_admin_head' ));
 
     add_action( 'woocommerce_order_status_changed', array( $this, 'action_woocommerce_order_status_changed' ) );
@@ -67,7 +67,6 @@ public function __construct() {
     add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ));
     add_action( 'wp_ajax_save_configuration', array( $this, 'save_configuration' ));
     add_action( 'wp_ajax_save_originShipper', array( $this, 'save_originShipper' ));
-
 
     add_action( 'wp_ajax_get_order_detail', array( $this, 'get_order_detail' ));
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_create_OrderShipper', array( $this, 'fedex_shipping_intra_Chile_create_OrderShipper' ));
@@ -78,7 +77,8 @@ public function __construct() {
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_track_shipment', array($this, 'fedex_shipping_intra_Chile_track_shipment' ));
     add_action( 'wp_ajax_fedex_shipping_intra_Chile_delete_order', array($this, 'fedex_shipping_intra_Chile_delete_order' ));
 
-    
+    add_action( 'wp_ajax_delete_logs', array($this, 'delete_logs' ));
+
 
 
     $this->required();
@@ -86,10 +86,6 @@ public function __construct() {
     $this->init();
     
 }
-
-// define constantes variables
-
-
 
 public function required() {
 
@@ -165,7 +161,9 @@ public function init(){
     register_activation_hook(__FILE__, array($init, 'orderDetail'));
     register_activation_hook(__FILE__, array($init, 'responseShipping'));
     register_activation_hook(__FILE__, array($init, 'confirmationShipping'));
-    register_activation_hook(__FILE__, array($init, 'cityOrComune'));        
+    register_activation_hook(__FILE__, array($init, 'cityOrComune'));    
+    
+ 
 
 
 }
@@ -223,8 +221,8 @@ public function fedex_shipping_intra_Chile_menu() {
 
     $submenu[] = [
         'parent_slug' => 'fedex_shipping_intra_Chile',
-        'page_title' => 'Log',
-        'menu_title' => 'Log',
+        'page_title' => 'Logs',
+        'menu_title' => 'Logs',
         'capabality' => 'manage_options',
         'menu_slug' => plugin_dir_path(__FILE__) . 'views/log.php',  //Ruta absoluta,
         'functionName' => ''
@@ -616,14 +614,14 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         $order = $order->get_id();
 
         if(($order_details['billing']['address_1'] != $order_details['shipping']['address_1']) && $order_details['shipping']['city'] != null){
-            $this->register_log(date('Y-m-d H:i:s').'_La dirección de facturación es diferente a la dirección de envío');
+            $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order.'  | La dirección de facturación es diferente a la dirección de envío');
 
             $clearCity  =  $order_details['shipping']['city'];
             $address = $order_details['shipping']['address_1'];
             
         }
         else {
-            $this->register_log(date('Y-m-d H:i:s').'_La dirección de facturación es igual a la dirección de envío');
+            $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order.'  | La dirección de facturación es igual a la dirección de envío');
 
             $clearCity = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order, '_billing_comuna', true );
             $address = substr( $order_details['billing']['address_1'], 0, 40 );
@@ -813,7 +811,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         )); 
 
         // write log with date and time
-        $this->register_log( $response );
+        $this->register_log( array_merge(array('Date' => date('Y-m-d H:i:s')), $response) );
 
 
         }
@@ -827,7 +825,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             echo "<div class=\"notice notice-success updated\"><p>Error en la transacción</p></div>";
 
             // write log with date and time
-            $this->register_log( $response );
+            $this->register_log( array_merge(array('Date' => date('Y-m-d H:i:s')), $response) );
 
             ?>
 
@@ -847,46 +845,6 @@ public function action_woocommerce_order_status_changed( $order_id ) {
       
 
 
-}
-
-public function register_log($message) {
-
-    // if message is array, convert to string
-    if ( is_array( $message  ) || is_object( $message ) ) {
-        $message = print_r( $message, true );
-    }
-
-
-
-    // create folder in woocommerce upload folder
-     $upload_dir = wp_upload_dir();
-     $upload_dir = $upload_dir['basedir'] . '/woocommerce_logs_register_fedex/';
-        if ( ! is_dir( $upload_dir ) ) {
-            mkdir( $upload_dir, 0777, true );
-
-            // get date
-            $date = date('Y-m-d H:i:s');
-
-            // name file with date
-            $file_name = 'log_'.$date.'.txt';
-   
-               // create file in folder
-            $file = fopen( $upload_dir . 'Log_.txt', 'w' );
-            //write in file
-            fwrite( $file, $message . PHP_EOL );
-            fclose( $file );
-   
-           }else {            
-               
-                //write in file add jump line file_put_contents
-                file_put_contents( $upload_dir . 'Log_.txt', $message . PHP_EOL, FILE_APPEND);
-                fclose( $file );
-               
-    
-           }
-
-
-    
 }
 
 
@@ -1148,8 +1106,7 @@ public function get_order_detail(){
 
   //Impresión de etiquetas
 
-public function fedex_shipping_intra_Chile_print_label(){
-    
+public function fedex_shipping_intra_Chile_print_label(){    
 
     $orderId = sanitize_text_field($_POST['orderId']);
 
@@ -1361,6 +1318,65 @@ public function unserializeForm($form){
 
 
   }
+
+
+  // Registro de logs
+  public function register_log($message) {
+
+    // if message is array, convert to string
+    if ( is_array( $message  ) || is_object( $message ) ) {
+        $message = print_r( $message, true );
+    }
+
+
+
+    // create folder in woocommerce upload folder
+     $upload_dir = wp_upload_dir();
+     $upload_dir = $upload_dir['basedir'] . '/woocommerce_logs_register_fedex/';
+        if ( ! is_dir( $upload_dir ) ) {
+
+            mkdir( $upload_dir, 0777, true );       
+   
+               // create file in folder
+            $file = fopen( $upload_dir . 'Log_.txt', 'w' );
+            //write in file
+            fwrite( $file, $message . PHP_EOL );
+            fclose( $file );
+   
+           }else {            
+               
+                //write in file add jump line file_put_contents
+                file_put_contents( $upload_dir . 'Log_.txt', $message . PHP_EOL, FILE_APPEND);
+                fclose( $file );
+    
+           }
+
+    
+}
+
+
+    public function delete_logs(){
+
+        var_dump('delete_logs');
+
+        $upload_dir = wp_upload_dir();
+        $upload_dir = $upload_dir['basedir'] . '/woocommerce_logs_register_fedex/';
+
+        // clear file Log_.txt
+        $file = fopen( $upload_dir . 'Log_.txt', 'w' );
+        fclose( $file );
+
+
+      /*   $files = glob($upload_dir.'*'); // get all file names
+        foreach($files as $file){ // iterate files
+        if(is_file($file))
+            unlink($file); // delete file
+        }
+
+        die(); */
+
+
+    }
 
 
 
