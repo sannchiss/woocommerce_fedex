@@ -1,5 +1,8 @@
 <?php
  
+ require_once PLUGIN_DIR_PATH . 'fedex_shipping_intra_Chile.php';
+
+
 if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
 
 
@@ -20,11 +23,11 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                     // add image to shipping method
                     $this->enabled = isset( $this->settings['enabled'] ) ? $this->settings['enabled'] : 'yes';
-                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( $this->method_title. " - imp. incl" , 'woocommerce');
+                    $this->title = isset( $this->settings['title'] ) ? $this->settings['title'] : __( $this->method_title, 'woocommerce');
                    
                     $this->init();
        
-            }
+                    }
 
 
             public function init() {

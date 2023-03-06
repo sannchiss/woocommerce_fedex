@@ -69,10 +69,11 @@ function add_custom_order_data_to_admin_order_page($order)
     $label_shipping = get_label_shipping( $masterTrackingNumber, $labelBase64Byte ? $labelBase64Byte:null );
 
 
-    if( $order_post_status == "wc-procesado-fedex" || $order_post_status == "wc-fedex" ):
+    if( $order_post_status == "wc-procesado-fedex" || $order_post_status == "wc-fedex" || $order_post_status == "wc-completed" || $order_post_status == "wc-processing"
+    || $order_post_status == "wc-on-hold"):
 
 
-    echo '<div class="card" style="width: 100%; height: 100%;">
+    echo '<div class="card" style="width: 100%; height: 80%;">
 
     <div class="card-header">
     Etiqueta de envío FedEx
@@ -235,7 +236,7 @@ function print_label($pdf, $masterTrackingNumber){
 
 }
 
-
+?>
 
 
 

@@ -150,7 +150,7 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
                 $this->wpdb->update(
                     $this->table_name_posts,
                     array(
-                        'post_status' => 'wc-fedex'
+                        'post_status' => 'wc-'.STATUS_CONFIRM_ORDER
                     ),
                     array(
                         'id' => $orderNumber

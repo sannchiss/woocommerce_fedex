@@ -30,6 +30,8 @@ class credentialsAccount {
             $params['flagInsurance'] = $value->flagInsurance;
             $params['discount'] = $value->discount;
             $params['environment'] = $value->environment;
+            $params['statusCreateOrder'] = $value->statusCreateOrder;
+            $params['statusConfirmOrder'] = $value->statusConfirmOrder;
             $params['endPointRate'] = $value->endPointRate;
             $params['endPointShip'] = $value->endPointShip;
             $params['endPointConfirmation'] = $value->endPointConfirmation;

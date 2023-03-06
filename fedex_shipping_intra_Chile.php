@@ -121,6 +121,8 @@ public function constants() {
     define('FLAG_INSURANCE', $credentialsAccount->getDataAccount()['flagInsurance']);
     define('DISCOUNT', $credentialsAccount->getDataAccount()['discount']);
     define('ENVIRONMENT', $credentialsAccount->getDataAccount()['environment']);
+    define('STATUS_CREATE_ORDER', $credentialsAccount->getDataAccount()['statusCreateOrder']);
+    define('STATUS_CONFIRM_ORDER', $credentialsAccount->getDataAccount()['statusConfirmOrder']);
     define('END_POINT_RATE', $credentialsAccount->getDataAccount()['endPointRate']);
     define('END_POINT_SHIP', $credentialsAccount->getDataAccount()['endPointShip']);
     define('END_POINT_CONFIRMATION', $credentialsAccount->getDataAccount()['endPointConfirmation']);
@@ -140,7 +142,6 @@ public function constants() {
     define('ADDRESS_LINE2_SHIPPER', $credentialsAccount->getDataAccount()['addressLine2Shipper']);
     define('TAX_ID_SHIPPER', $credentialsAccount->getDataAccount()['taxIdShipper']);
     define('IE_SHIPPER', $credentialsAccount->getDataAccount()['ieShipper']);
-
    
 }
 
@@ -163,8 +164,6 @@ public function init(){
     register_activation_hook(__FILE__, array($init, 'confirmationShipping'));
     register_activation_hook(__FILE__, array($init, 'cityOrComune'));    
     
- 
-
 
 }
 
@@ -523,7 +522,7 @@ public function post_status_sent(){
               'show_in_admin_all_list'    => true,
               'show_in_admin_status_list' => true,
               'label_count'               => _n_noop('Enviado con Fedex (%s)', 'Enviado con Fedex (%s)')
-          ));
+          )); 
       }
   
       //Añade estado 'Fedex' al lisatdo disponible de Woocomerce wc_order_statuses
@@ -602,16 +601,30 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         //  obtains the status of the order according to the order ID
         $order = wc_get_order( $order_id );
+
         $order_status = $order->get_status();
 
+        $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order_id.'  | Estatus de la orden: '.$order_status);
 
-     if ( $order_status == 'procesado-fedex' ) {
+
+        // get name rate shipping
+        $shipping_method = $order->get_shipping_method();
+
+
+        $this->register_log("Registro de Orden: ". $order);
+
+
+     if ( $order_status == STATUS_CREATE_ORDER && $shipping_method == "FedEx Express") {
+
+        // update status in wc_get_order
+        //$order->update_status( 'procesado-fedex' );
 
         // get deatils of the order
         $order_details = $order->get_data();
 
         // get the order id
         $order = $order->get_id();
+
 
         if(($order_details['billing']['address_1'] != $order_details['shipping']['address_1']) && $order_details['shipping']['city'] != null){
             $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order.'  | La dirección de facturación es diferente a la dirección de envío');
@@ -946,6 +959,8 @@ public function save_configuration(){
         'flagInsurance' => $data['flagInsurance'],
         'discount' => $data['discount'],
         'environment' => $data['environment'],
+        'statusCreateOrder' => $data['statusCreateOrder'],
+        'statusConfirmOrder' => $data['statusConfirmOrder'],
         'endPointRate' => END_POINT_RATE,
         'endPointShip' => END_POINT_SHIP,
         'endPointConfirmation' => END_POINT_CONFIRMATION,
@@ -1333,6 +1348,7 @@ public function unserializeForm($form){
 
 
   }
+
 
 
   // Registro de logs

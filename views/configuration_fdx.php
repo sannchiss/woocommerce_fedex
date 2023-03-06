@@ -41,12 +41,18 @@
 
                                             <div class="col-md-5">
 
-                                                <div class="form-floating mb-3">
+                                                <div class="input-group input-group-sm mb-3">
+                                                <span class="input-group-text" id="inputGroup-sizing-sm">Account Number</span>
                                                     <input type="password" class="form-control"
                                                         value=<?php echo ACCOUNT_NUMBER ?> id="accountNumber"
                                                         name="accountNumber" minlength="9" maxlength="30" value=""
                                                         required>
-                                                    <label for="accountNumber">Account Number</label>
+                                                    <span class="input-group-text" id="basic-addon2">
+
+                                                    <i class="fas fa-eye" id="toggleAccountNumber"></i> 
+                                                        
+                                                    
+                                                    </span>
                                                 </div>
 
                                             </div>
@@ -76,31 +82,46 @@
 
                                             <div class="col-md-5">
 
-                                                <div class="form-floating mb-3">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <span class="input-group-text" id="inputGroup-sizing-sm">User Credential</span>
                                                     <input type="password" class="form-control"
                                                         value=<?php echo WS_KEY_USER_CREDENTIAL ?> placeholder=""
                                                         id="wskeyUserCredential" name="wskeyUserCredential"
                                                         minlength="5" maxlength="50" required>
-                                                    <label for="wskeyUserCredential">Wskey User Credential</label>
+
+                                                    <span class="input-group-text" id="basic-addon2">
+
+                                                    <i class="fas fa-eye" id="toggleUserKey"></i> 
+                                                        
+                                                    </span>
+
                                                 </div>
 
 
                                             </div>
 
-                                        </div>
+                                            </div>
 
                                         <!--wspassword User Credential--->
                                         <div class="row">
 
                                             <div class="col-md-5">
 
-                                                <div class="form-floating mb-3">
+                                            <div class="input-group input-group-sm mb-3">
+                                                <span class="input-group-text" id="inputGroup-sizing-sm">Password Credential</span>
+
                                                     <input type="password" class="form-control"
                                                         id="wskeyPasswordCredential" name="wskeyPasswordCredential"
                                                         value=<?php echo WS_KEY_PASSWORD_CREDENTIAL ?> minlength="5"
-                                                        maxlength="50" required>
-                                                    <label for="wskeyPasswordCredential">Wspassword User
-                                                        Credential</label>
+                                                        maxlength="50" required>                                                    
+
+                                                        <span class="input-group-text" id="basic-addon2">
+
+                                                        <i class="fas fa-eye" id="togglePasswordCredential"></i> 
+                                                            
+                                                        </span>
+
+
                                                 </div>
 
                                                 <div id="html_bl"></div>
@@ -240,9 +261,6 @@
 
                                                     <h3 class="panel-title mb-3">Descuento Transporte</h3>
 
-
-
-
                                                 </div>
                                             </div>
 
@@ -298,7 +316,84 @@
 
                                         </div>
 
+                                        <hr>
+
+                                        
+
+                                        <div class="row">
+                                      
+
+                                        <div class="form-floating mb-3">
+                                            <div class="panel-heading">
+
+                                                    <h3 class="panel-title mb-3">Estado para solicitudes</h3>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="row">
+
+                                            <div class="col-md-2">
+                                            <div class="form-floating mb-2">
+                                                    <select class="form-select" id="statusCreateOrder" name="statusCreateOrder" required
+                                                        aria-label="Floating label select example">
+                                                        <option value="">Search...</option>
+                                                        <option value="procesado-fedex"
+                                                            <?php if(STATUS_CREATE_ORDER ==  "procesado-fedex"){ echo "selected"; } ?>>FedEx Processed
+                                                        </option>
+                                                        <option value="pending"
+                                                            <?php if(STATUS_CREATE_ORDER ==  "pending"){ echo "selected"; } ?>>Pending payment
+                                                        </option>
+                                                        <option value="processing"
+                                                            <?php if(STATUS_CREATE_ORDER ==  "processing"){ echo "selected"; } ?>>Processing
+                                                        </option>
+                                                        <option value="on-hold"
+                                                            <?php if(STATUS_CREATE_ORDER ==  "on-hold"){ echo "selected"; } ?>>On hold
+                                                        </option>
+                                                        <option value="completed"
+                                                            <?php if(STATUS_CREATE_ORDER ==  "completed"){ echo "selected"; } ?>>Completed
+                                                        </option>                                                        
+                                                    </select>
+                                                    <label for="status">Creación de OT</label>
+                                            </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                            <div class="form-floating mb-2">
+                                                    <select class="form-select" id="statusConfirmOrder" name="statusConfirmOrder" required
+                                                        aria-label="Floating label select example">
+                                                        <option value="">Search...</option>
+                                                        <option value="fedex"
+                                                            <?php if(STATUS_CONFIRM_ORDER ==  "fedex"){ echo "selected"; } ?>>FedEx Confirmed
+                                                        </option>
+                                                        <option value="pending"
+                                                            <?php if(STATUS_CONFIRM_ORDER ==  "pending"){ echo "selected"; } ?>>Pending payment
+                                                        </option>
+                                                        <option value="processing"
+                                                            <?php if(STATUS_CONFIRM_ORDER ==  "processing"){ echo "selected"; } ?>>Processing
+                                                        </option>
+                                                        <option value="on-hold"
+                                                            <?php if(STATUS_CONFIRM_ORDER ==  "on-hold"){ echo "selected"; } ?>>On hold
+                                                        </option>
+                                                        <option value="completed"
+                                                            <?php if(STATUS_CONFIRM_ORDER ==  "completed"){ echo "selected"; } ?>>Completed
+                                                        </option> 
+                                                    </select>
+                                                    <label for="status">Confirmación de OT</label>
+
+
+                                            </div>
+                                            </div>
+                                           
+
+                                        </div>
+        
+
+
                                     </div>
+
+                                    
+  
+                                 
 
                                     <hr>
 
@@ -691,3 +786,70 @@
     No tienes acceso a esta sección
 </p>
 <?php endif; ?>
+
+<script>
+
+const toggleAccountNumber = document
+            .querySelector('#toggleAccountNumber');
+  
+        const accountNumber = document.querySelector('#accountNumber');
+  
+        toggleAccountNumber.addEventListener('click', () => {
+  
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = accountNumber
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+                  
+                accountNumber.setAttribute('type', type);
+  
+            // Toggle the eye and bi-eye icon
+            //this.classList.toggle('eye-slash');
+        });
+
+
+         const toggleUserKey = document
+            .querySelector('#toggleUserKey');
+  
+        const wskeyUserCredential = document.querySelector('#wskeyUserCredential');
+  
+        toggleUserKey.addEventListener('click', () => {
+  
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = wskeyUserCredential
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+                  
+            wskeyUserCredential.setAttribute('type', type);
+  
+            // Toggle the eye and bi-eye icon
+            //this.classList.toggle('eye-slash');
+        }); 
+
+
+
+        const togglePasswordCredential = document
+            .querySelector('#togglePasswordCredential');
+
+        const passwordCredential = document.querySelector('#wskeyPasswordCredential');
+
+        togglePasswordCredential.addEventListener('click', () => {
+
+            // Toggle the type attribute using
+            // getAttribure() method
+            const type = passwordCredential
+                .getAttribute('type') === 'password' ?
+                'text' : 'password';
+
+            passwordCredential.setAttribute('type', type);
+
+            // Toggle the eye and bi-eye icon
+            //this.classList.toggle('eye-slash');
+        });
+
+       
+   
+
+</script>

@@ -9,14 +9,10 @@ if (!defined('ABSPATH')) {
 $args = array(
     'post_type' => 'shop_order',   
     'limit' => -1,
-    'status' => array('wc-fedex', 'wc-procesado-fedex'),
+    'status' => array('wc-fedex', 'wc-procesado-fedex', 'wc-completed', 'wc-processing', 'wc-on-hold'),
 );
 $orders = wc_get_orders( $args ); 
 
-
-
-include PLUGIN_DIR_PATH . 'views/modal/orderShipping.php';
-include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
 ?>
 
@@ -40,7 +36,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
     
                 <div class="float-right">
                     <button type="button" class="btn btn-primary btn-sm confirmSend">
-                        Confirmar Entrega
+                        Confirma Entrega
                         <i class="fa fa-check-circle fa-lg" aria-hidden="true"></i>
                     </button>
                     <!--icon add-->
@@ -78,6 +74,12 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                 <?php
                                         $i = 1;
                                         foreach ($orders as $order) {
+
+                                            // get name rate shipping
+                                            $rate = $order->get_shipping_method();
+
+
+                                        if ($rate == 'FedEx Express') {
 
                                             ?>
                                 <tr>
@@ -138,7 +140,9 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                     <td>
                                         <?php
                                                 
-                                                  if($order->get_status()!= 'fedex' && $order->get_status()!= 'procesado-fedex' && $order->get_status()!= 'cancelled' && $order->get_status()!= 'failed'){              
+                                            if($order->get_status()!= 'fedex' && $order->get_status()!= 'procesado-fedex' && $order->get_status()!= 'on-hold' 
+                                            && $order->get_status()!='processing' && $order->get_status()!='pending' && $order->get_status()!='completed' && $order->get_status()!= 'cancelled' && $order->get_status()!= 'failed' 
+                                            && $order->get_status()!= 'refunded'){              
                                                 ?>
 
                                         <div class="btn-group btn-group-sm" role="group" aria-label="...">
@@ -161,7 +165,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
                                             <?php
 
-                                                    if($order->get_status() == 'procesado-fedex' ){
+                                                    if($order->get_status() == STATUS_CREATE_ORDER ){
 
                                                     ?>
 
@@ -199,6 +203,7 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                 </tr>
                                 <?php
                                             $i++;
+                                            }
                                         }
                                         ?>
                             </tbody>
