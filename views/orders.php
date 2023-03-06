@@ -13,6 +13,7 @@ $args = array(
 );
 $orders = wc_get_orders( $args ); 
 
+include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
 ?>
 
@@ -79,7 +80,7 @@ $orders = wc_get_orders( $args );
                                             $rate = $order->get_shipping_method();
 
 
-                                        if ($rate == 'FedEx Express') {
+                                        if ($rate == 'FedEx Express' && ($order->get_status() == STATUS_CREATE_ORDER || $order->get_status() == STATUS_CONFIRM_ORDER)) {
 
                                             ?>
                                 <tr>
@@ -138,23 +139,12 @@ $orders = wc_get_orders( $args );
 
                                     </td>
                                     <td>
-                                        <?php
-                                                
-                                            if($order->get_status()!= 'fedex' && $order->get_status()!= 'procesado-fedex' && $order->get_status()!= 'on-hold' 
-                                            && $order->get_status()!='processing' && $order->get_status()!='pending' && $order->get_status()!='completed' && $order->get_status()!= 'cancelled' && $order->get_status()!= 'failed' 
-                                            && $order->get_status()!= 'refunded'){              
-                                                ?>
 
-                                        <div class="btn-group btn-group-sm" role="group" aria-label="...">
-                                            <button type="button" class="btn btn-primary create_shipping"
-                                                data-bs-toggle="modal" data-bs-target="#modal-order"
-                                                data-order="<?php echo $order->get_order_number(); ?>"><i
-                                                    class="fas fa-paper-plane"></i></button>
+                                            <?php
 
-                                        </div>
+                                                    if($order->get_status() == STATUS_CREATE_ORDER ){
 
-                                        <?php }elseif($order->get_status()!= 'cancelled' && $order->get_status()!= 'failed') { ?>
-
+                                                    ?>
 
                                         <div class="btn-group btn-group-sm" role="group" aria-label="...">
 
@@ -162,12 +152,6 @@ $orders = wc_get_orders( $args );
                                                 data-order="<?php echo $order->get_order_number(); ?>"><i
                                                     class="fas fa-print"></i></button>
 
-
-                                            <?php
-
-                                                    if($order->get_status() == STATUS_CREATE_ORDER ){
-
-                                                    ?>
 
                                             <button type="button" class="btn btn-danger delete_shipping"
                                                 data-order="<?php echo $order->get_order_number(); ?>"><i
@@ -180,14 +164,20 @@ $orders = wc_get_orders( $args );
                                             <label class="btn btn-outline-primary"
                                                 for=<?php echo "checkOrden".$order->get_order_number(); ?>>Confirmar</label>
 
-                                            <?php }elseif($order->get_status() == 'fedex')
-                                                    { ?>
+                                            <?php }elseif($order->get_status() == STATUS_CONFIRM_ORDER){ ?>
+                                              
+                                                <div class="btn-group btn-group-sm" role="group" aria-label="...">
                                             <button type="button" class="btn btn-warning trackShipment"
                                                 data-order="<?php echo $order->get_order_number(); ?>">
                                                 <i class="fas fa-truck"></i>
                                                 
                                                 </button>
+                                                </div>
                                             <?php } ?>
+
+
+
+                                            
                                         </div>
 
 
@@ -204,7 +194,7 @@ $orders = wc_get_orders( $args );
                                 <?php
                                             $i++;
                                             }
-                                        }
+                                        
                                         ?>
                             </tbody>
                         </table>
