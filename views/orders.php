@@ -1,5 +1,8 @@
 <?php
 
+include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
+
+
 if (!defined('ABSPATH')) {
     die();
 }
@@ -9,11 +12,11 @@ if (!defined('ABSPATH')) {
 $args = array(
     'post_type' => 'shop_order',   
     'limit' => -1,
-    'status' => array('wc-fedex', 'wc-procesado-fedex', 'wc-completed', 'wc-processing', 'wc-on-hold'),
+    'status' => array(STATUS_CREATE_ORDER, STATUS_CONFIRM_ORDER),
 );
+
 $orders = wc_get_orders( $args ); 
 
-include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
 ?>
 
@@ -53,7 +56,6 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
         <div class="panel-body">
 
 
-            <div class="row">
                 <div class="col-md-12">
                     <div class="table-responsive">
                         <table class="table table-striped table-bordered table-hover shippingList">
@@ -181,9 +183,6 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                         </div>
 
 
-                                        <?php
-
-                                                } ?>
 
 
 
@@ -194,6 +193,8 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
                                 <?php
                                             $i++;
                                             }
+
+                                        }
                                         
                                         ?>
                             </tbody>
@@ -203,7 +204,6 @@ include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
                 </div>
 
-            </div>
 
         </div>
 

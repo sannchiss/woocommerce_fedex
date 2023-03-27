@@ -236,7 +236,7 @@ function print_label($pdf, $masterTrackingNumber){
 
 }
 
-?>
+
 
 
 
