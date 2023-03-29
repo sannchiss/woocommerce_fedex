@@ -53,6 +53,7 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
 
 
                     throw new Exception('No se encontró el número de orden de transporte');
+                    $logReg->register_log('No se encontró el número de orden de transporte'. date('Y-m-d H:i:s'). '___' . $e->getMessage());
 
                 }
            

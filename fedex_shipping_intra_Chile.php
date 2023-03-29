@@ -48,17 +48,38 @@ public function __construct() {
 
 
     add_action( 'admin_menu', array( $this, 'fedex_shipping_intra_Chile_menu' ));
-    add_action( 'init', array( $this, 'post_status_sent' )); 
-    add_filter( 'wc_order_statuses', array( $this, 'anadir_posventa_lista_sent' ));
 
     add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ));
 
-    add_action( 'init', array( $this, 'add_status_shipping_fedex' ));
-    add_filter( 'wc_order_statuses', array ($this, 'add_order_status_shipping_fedex' ));
+    // add filter  masive the name: Procesar con FedEx to order page
+    add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_actions_process_order_fedex' ));
+    /********************************************************************************** */
+    // add status (Procesar con FedEx) to order page admin (details order page)
+    add_action( 'init', array( $this, 'register_process_order_status_fedex_admin' ));
+    add_filter( 'wc_order_statuses', array ($this, 'add_process_order_status_fedex_to_list' ));
+    /*********************************************************************************** */
 
-    add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_actions_edit_shop_order' ));
+    // mark order status (Procesar con FedEx) to order page order
     add_action( 'admin_action_mark_wc-procesado-fedex', array( $this, 'add_action_mark_wc_procesado_fedex' ));
-    add_action( 'admin_notices', array($this, 'add_action_admin_notices'));
+
+    /*********************************************************************************** */
+    /*********************************************************************************** */
+
+    // add filter masive the name: Confirmar con FedEx to order page
+    add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_actions_confirm_order_fedex' ));
+    /*********************************************************************************** */
+    // add status (Confirmar con FedEx) to order page admin (details order page)
+    add_action( 'init', array( $this, 'register_confirm_order_status_fedex_admin' )); 
+    add_filter( 'wc_order_statuses', array( $this, 'add_confirm_order_status_fedex_to_list' ));
+
+    /*********************************************************************************** */
+    // mark order status (Confirmar con FedEx) to order page order
+    add_action( 'admin_action_mark_wc-confirmado-fedex', array( $this, 'add_action_mark_wc_confirm_fedex' ));
+    
+    /*********************************************************************************** */
+    /*********************************************************************************** */
+
+    //add_action( 'admin_notices', array($this, 'add_action_admin_notices'));
     add_action( 'admin_head', array( $this, 'add_action_admin_head' ));
 
     add_action( 'woocommerce_order_status_changed', array( $this, 'action_woocommerce_order_status_changed' ) );
@@ -388,45 +409,10 @@ public function enqueue_styles() {
   }
 
 
-
  /******************************************************************************************************** */
 
-public function add_status_shipping_fedex(){
-
-    $slug = 'wc-procesado-fedex';
-    $label = 'Procesado con FedEx';
-    // icono de woocommerce
-    $icon = '<icon>dashicons-yes-alt</icon>';
-
-        register_post_status( $slug, [
-            'label'                     => $label,
-            'public'                    => true,
-            'exclude_from_search'       => false,
-            'show_in_admin_all_list'    => true,
-            'show_in_admin_status_list' => true,
-            'label_count'               => _n_noop( $label . ' <span class="count">(%s)</span>', $label . ' <span class="count">(%s)</span>' ),
-        ]);
-
-
- }
-
-
-public function add_order_status_shipping_fedex( $order_statuses ) {
-
-    $slug = 'wc-procesado-fedex';
-    $label = 'Procesado con FedEx';
- 
-        $new_order_statuses = [
-            $slug => $label,
-        ];
- 
-        return array_merge( $new_order_statuses, $order_statuses);
-
- }
-
-
-
-public function add_bulk_actions_edit_shop_order( $bulk_actions ) {
+// Agrego accion masiva de nombre: Procesar con FedEx en el panel de pedidos
+ public function add_bulk_actions_process_order_fedex( $bulk_actions ) {
 
     $slug = 'wc-procesado-fedex';
     $action = "mark_" . $slug;
@@ -438,8 +424,43 @@ public function add_bulk_actions_edit_shop_order( $bulk_actions ) {
 
 }
 
+ /******************************************************************************************************** */
+// Agrego accion masiva de nombre: Procesar con FedEx en detalle de pedido y su vez se lista en el panel de pedidos
+ public function register_process_order_status_fedex_admin(){
 
-public function add_action_mark_wc_procesado_fedex(){
+    $slug = 'wc-procesado-fedex';
+    $label = 'Procesar con FedEx';
+
+    register_post_status(
+		$slug,
+		array(
+			'label'		=> 'Procesar con FedEx',
+			'public'	=> true,
+			'show_in_admin_status_list' => true,
+			'label_count'	=> _n_noop( 'Procesar con FedEx (%s)', 'Procesar con FedEx (%s)' )
+		)
+	);
+
+
+
+
+ }
+
+
+  public function add_process_order_status_fedex_to_list( $order_statuses ) {
+
+    $slug = 'wc-procesado-fedex';
+    $label = 'Procesando con FedEx';
+
+    $order_statuses[ $slug ] = $label;
+	return $order_statuses;
+
+   } 
+
+
+  /******************************************************************************************************** */
+ // Marcamos el pedido como Procesado con FedEx
+  public function add_action_mark_wc_procesado_fedex(){
 
     $slug = 'wc-procesado-fedex';
  
@@ -459,85 +480,84 @@ public function add_action_mark_wc_procesado_fedex(){
         wp_redirect( $_SERVER['HTTP_REFERER'] );
         exit;
 
+    } 
 
 
+  /******************************************************************************************************** */
+  /******************************************************************************************************** */
+
+    // Agrego accion masiva de nombre: Confirma con FedEx en el panel de pedidos   
+     public function add_bulk_actions_confirm_order_fedex( $bulk_actions ) {
+
+        $slug = 'wc-confirmado-fedex';
+        $action = "mark_" . $slug;
+            $label = 'Confirmar con FedEx';
          
-        // And it's usually best to redirect the user back to the main order page, with some confirmation variables we can use in our notice:
-         /*   $location = add_query_arg( array(
-            'post_type' => 'shop_order',
-            $slug => 1, // We'll use this as confirmation
-            'changed' => count( $post_ids ), // number of changed orders
-            'ids' => join( $post_ids, ',' ), // list of ids
-            'post_status' => 'all'
-        ), 'edit.php' ); 
- 
-        wp_redirect( admin_url( $location ) );     
-        exit;  */
-    }
- 
+                $bulk_actions[ $action  ] = $label;
+         
+                return $bulk_actions;
+    
+    } 
+    
+   /******************************************************************************************************** */
 
 
-public function add_action_admin_notices(){
+    // Agrego accion masiva de nombre: Confirma con FedEx en detalle de pedido y su vez se lista en el panel de pedidos
+     public function register_confirm_order_status_fedex_admin(){
 
-    global $pagenow, $typenow;
-        $status = false;
- 
-        $listeningStatuses = [
-            'wc-procesado-fedex'
-        ];
- 
-        foreach( $listeningStatuses as $listeningStatus )
-        {
-            if( isset($_REQUEST[ $listeningStatus ]) && $_REQUEST[ $listeningStatus ] == 1 )
-            {
-                $status = $listeningStatus;
+        $slug = 'wc-confirmado-fedex';
+        $label = 'Confirmar con FedEx';
+
+        register_post_status(
+            $slug,
+            array(
+                'label'		=> 'Confirmar con FedEx',
+                'public'	=> true,
+                'show_in_admin_status_list' => true,
+                'label_count'	=> _n_noop( 'Confirmar con FedEx (%s)', 'Confirmar con FedEx (%s)' )
+            )
+        );
+
+        
+        
+        }
+
+
+    public function add_confirm_order_status_fedex_to_list( $order_statuses ) {
+        
+            $slug = 'wc-confirmado-fedex';
+            $label = 'Confirmando con FedEx';
+        
+            $order_statuses[ $slug ] = $label;
+            return $order_statuses;
+        
+    } 
+
+   /******************************************************************************************************** */
+
+    // Marcamos el pedido como Confirmado con FedEx
+     public function add_action_mark_wc_confirm_fedex(){
+        
+            $slug = 'wc-confirmado-fedex';
+         
+            // if an array with order IDs is not present, abort
+            if( !isset( $_REQUEST['post'] ) && !is_array( $_REQUEST['post'] ) )  return;
+         
+            // Loop through the Post Ids and update each of them to the new status.
+            foreach( $_REQUEST['post'] as $order_id ) {
+         
+                $order = new WC_Order( $order_id );
+                $order_note = 'El estado de este pedido fue cambiado por una edición masiva:';
+                $order->update_status( $slug, $order_note, true );
+         
             }
-        }
- 
- 
-        if( $typenow == 'shop_order'
-            && $pagenow == 'edit.php'
-            && $status
-            && isset( $_REQUEST['changed'] ) ) {
- 
-            $message = sprintf( _n( 'Estatus de la orden cambiando.', '%s estatus orden cambiado.', $_REQUEST['changed'] ), number_format_i18n( $_REQUEST['changed'] ) );
-            echo "<div class=\"notice notice-success updated\"><p>{$message}</p></div>";
- 
-        }
+        
+            // Redirect back to the page
+            wp_redirect( $_SERVER['HTTP_REFERER'] );
+            exit;
+        
+        } 
 
-
-}
-
-/**************************************************************************************************** */
-
-// Añado status Enviado con Fedex a la lista de estados de orden
-
-      //Registro del nuevo estado Enviado FedEx
-public function post_status_sent(){
-
-          register_post_status('wc-fedex', array(
-              'label'                     => 'Enviado con Fedex', //Nombre público
-              'public'                    => true,
-              'exclude_from_search'       => false,
-              'show_in_admin_all_list'    => true,
-              'show_in_admin_status_list' => true,
-              'label_count'               => _n_noop('Enviado con Fedex (%s)', 'Enviado con Fedex (%s)')
-          )); 
-      }
-  
-      //Añade estado 'Fedex' al lisatdo disponible de Woocomerce wc_order_statuses
-public function anadir_posventa_lista_sent($order_statuses){
-
-          $new_order_statuses = array();
-          // lo ponemos despues de Completado
-          foreach ($order_statuses as $key => $status) {
-              $new_order_statuses[$key] = $status;
-              if ('wc-completed' === $key) {
-                  $new_order_statuses['wc-fedex'] = 'Enviado con Fedex';
-              }
-          }
-          return $new_order_statuses;
-      }
 
 
 /********************************************************************************************************** */
@@ -551,15 +571,17 @@ public function add_action_admin_head(){
 
     // HERE we set your custom status
     $order_status_process = 'procesado-fedex'; 
-    $order_status_sent = 'fedex'; 
+    $order_status_sent = 'confirmado-fedex'; 
     ?>
     <style>
         .order-status.status-<?php echo sanitize_title( $order_status_process ); ?> {
             background:rgb(134, 47, 222) !important;
             font-weight: bold;
             color: #FFFFFF;
-            border: 1px solid rgb(134, 47, 222) !important;
-            
+            border: 1px solid rgb(134, 47, 222) !important;          
+
+
+           
         }
 
         .order-status.status-<?php echo sanitize_title( $order_status_sent ); ?>  {
@@ -852,6 +874,19 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
         } 
         
+
+
+      }
+
+      // elseif order status is processing
+
+      
+
+      else if($order_status == STATUS_CONFIRM_ORDER && $shipping_method == "FedEx Express") {
+
+        // add log
+        $this->register_log( array('Date' => date('Y-m-d H:i:s'), 'Order' => $order, 'Status' => 'Order en proceso de confirmación') );
+
 
 
       }
