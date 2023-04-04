@@ -133,7 +133,7 @@ $orders = wc_get_orders( $args );
                                                 echo '<span class="badge bg-danger">Fallido</span>';
                                             }elseif($order->get_status() == 'procesado-fedex'){
                                                 echo '<span class="badge bg-primary"><i class="fas fa-shipping-fast"></i> Procesando con FedEx</span>';                                               
-                                            }elseif($order->get_status() == 'fedex'){
+                                            }elseif($order->get_status() == 'confirmado-fedex'){
                                                 echo '<span class="badge bg-success"><i class="fas fa-shipping-fast"></i> Enviado con FedEx</span>';
                                             }
                                             
@@ -171,9 +171,13 @@ $orders = wc_get_orders( $args );
                                                 <div class="btn-group btn-group-sm" role="group" aria-label="...">
                                             <button type="button" class="btn btn-warning trackShipment"
                                                 data-order="<?php echo $order->get_order_number(); ?>">
-                                                <i class="fas fa-truck"></i>
-                                                
+                                                <i class="fas fa-truck"></i>                                                
                                                 </button>
+
+                                                <button type="button" class="btn btn-primary printOneLabel"
+                                                data-order="<?php echo $order->get_order_number(); ?>"><i
+                                                    class="fas fa-print"></i></button>
+
                                                 </div>
                                             <?php } ?>
 

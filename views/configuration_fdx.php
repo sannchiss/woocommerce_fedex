@@ -363,7 +363,7 @@
                                                         aria-label="Floating label select example">
                                                         <option value="">Search...</option>
                                                         <option value="confirmado-fedex"
-                                                            <?php if(STATUS_CONFIRM_ORDER ==  "fedex"){ echo "selected"; } ?>>FedEx Confirmed
+                                                            <?php if(STATUS_CONFIRM_ORDER ==  "confirmado-fedex"){ echo "selected"; } ?>>FedEx Confirmed
                                                         </option>
                                                         <option value="pending"
                                                             <?php if(STATUS_CONFIRM_ORDER ==  "pending"){ echo "selected"; } ?>>Pending payment

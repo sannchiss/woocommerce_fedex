@@ -17,7 +17,7 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
 
     }
 
-    public function index($orderIds) {
+    public function index($orderId, $flt) {
 
         // instancia para registrar log
         $logReg = new confirmShippingController;
@@ -25,7 +25,7 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
 
         $listMasterTrackingNumber = array();
 
-        foreach ($orderIds as $key => $orderNumber) {
+        foreach ($orderId as $key => $orderNumber) {
 
 
             $getRow = $this->wpdb->get_row("
@@ -50,7 +50,6 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
                     );
 
                 }else{
-
 
                     throw new Exception('No se encontró el número de orden de transporte');
                     $logReg->register_log('No se encontró el número de orden de transporte'. date('Y-m-d H:i:s'). '___' . $e->getMessage());
@@ -144,7 +143,7 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
         else{
 
 
-            foreach ($orderIds as $key => $orderNumber) {
+            foreach ($orderId as $key => $orderNumber) {
 
                 // update status order 
 
@@ -204,12 +203,15 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
             'manifestBase64' => $response['manifest'],
         ); 
         
-
+        if($flt == true)
+        {
         //Mensaje de exito
         echo json_encode(
             $manifest, 
             true
         );
+
+        }
 
         $logReg->register_log('Se generó la confirmacion: ' . date('Y-m-d H:i:s'). '___' . json_encode(
             $manifest, 
@@ -223,7 +225,7 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
 
 
 
-        die();
+      //  die();
 
 
     }

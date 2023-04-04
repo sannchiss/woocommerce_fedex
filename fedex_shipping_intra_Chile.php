@@ -578,22 +578,22 @@ public function add_action_admin_head(){
             background:rgb(134, 47, 222) !important;
             font-weight: bold;
             color: #FFFFFF;
-            border: 1px solid rgb(134, 47, 222) !important;          
-
+            border: 2px solid #000;
 
            
         }
 
         .order-status.status-<?php echo sanitize_title( $order_status_sent ); ?>  {
-            background:rgb(134, 47, 222) !important;
+            background: rgb(134, 47, 222) !important ;
             font-weight: bold;
             color: #FFFFFF;
-            border: 1px solid rgb(134, 47, 222) !important;
+            border: 2px solid #000;
+            
 
         }
 
         // add icon 
-        .order-status.status-<?php echo sanitize_title( $order_status_process ); ?>::before {
+       /*  .order-status.status-<?php echo sanitize_title( $order_status_process ); ?>::before {
             content: "\f155";
             font-family: "dashicons";
             font-size: 20px;
@@ -604,7 +604,7 @@ public function add_action_admin_head(){
             border-radius: 50%;
             background: rgb(134, 47, 222);
             margin-right: 5px;
-        }
+        } */
 
        
 
@@ -622,43 +622,36 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         //  obtains the status of the order according to the order ID
-        $order = wc_get_order( $order_id );
+        $orderId = wc_get_order( $order_id );
 
-        $order_status = $order->get_status();
+        $order_status = $orderId->get_status();
 
         $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order_id.'  | Estatus de la orden: '.$order_status);
 
-
         // get name rate shipping
-        $shipping_method = $order->get_shipping_method();
+        $shipping_method = $orderId->get_shipping_method();
 
 
-        $this->register_log("Registro de Orden: ". $order);
+        $this->register_log("Registro de Orden: ". $orderId);
+
+         // get deatils of the order
+         $order_details = $orderId->get_data();
 
 
      if ( $order_status == STATUS_CREATE_ORDER && $shipping_method == "FedEx Express") {
 
-        // update status in wc_get_order
-        //$order->update_status( 'procesado-fedex' );
-
-        // get deatils of the order
-        $order_details = $order->get_data();
-
-        // get the order id
-        $order = $order->get_id();
-
 
         if(($order_details['billing']['address_1'] != $order_details['shipping']['address_1']) && $order_details['shipping']['city'] != null){
-            $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order.'  | La dirección de facturación es diferente a la dirección de envío');
+            $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order_id.'  | La dirección de facturación es diferente a la dirección de envío');
 
             $clearCity  =  $order_details['shipping']['city'];
             $address = $order_details['shipping']['address_1'];
             
         }
         else {
-            $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order.'  | La dirección de facturación es igual a la dirección de envío');
+            $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order_id.'  | La dirección de facturación es igual a la dirección de envío');
 
-            $clearCity = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order, '_billing_comuna', true );
+            $clearCity = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order_id, '_billing_comuna', true );
             $address = substr( $order_details['billing']['address_1'], 0, 40 );
 
             }
@@ -680,11 +673,11 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             $city = $cityAndCodeSql[0]['ciudad'];
             $codePostal = $cityAndCodeSql[0]['codigo'];
 
-        // get order details
-        $order_features = $this->fedex_shipping_intra_Chile_get_order_detail( $order );
+        // get order_id details
+        $order_features = $this->fedex_shipping_intra_Chile_get_order_detail( $order_id );
        
         //Peso total de la orden
-        $weightOrder = $this->get_total_weight_order( $order );
+        $weightOrder = $this->get_total_weight_order( $order_id );
 
         // peso opcional
         $weightOptional = $order_features['weight'] == 0 ? 1 : $order_features['weight'];
@@ -745,7 +738,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
                 "weight": "' . $weightTotal . '",
                 "volume": "'. $weightVolumetricTotal .'"
             },
-            "referencesShip": "' . substr( $order, 0 , 20) . '",
+            "referencesShip": "' . substr( $order_id, 0 , 20) . '",
             "insuranceShipValue": "0",
             "additionalReferences": "' . substr(  preg_replace( "[\n|\r|\n\r]", "", $order_details['customer_note'] ), 0, 100  ) .'"
         }';
@@ -828,11 +821,15 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         }
 
 
+        // delete order exist in table responseShipping
+        $this->wpdb->delete($this->table_name_responseShipping, array('orderNumber' => $order_id));
+
+
         //Insertar respuesta WS en tabla responseshipping
 
         $this->wpdb->insert($this->table_name_responseShipping, array(
                     
-            'orderNumber' => $order,
+            'orderNumber' => $order_id,
             'orderDate' => $order_details['date_created']->date('Y-m-d H:i:s'),
             'masterTrackingNumber' => $response['masterTrackingNumber'],
             'status' => $response['status'],
@@ -850,10 +847,10 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
 
         }
-        else{
+        else {
 
-            // change status order table post
-            $this->wpdb->update( $this->table_name_posts, array( 'post_status' => 'wc-on-hold' ), array( 'ID' => $order ) );
+            // change status order_id table post
+            $this->wpdb->update( $this->table_name_posts, array( 'post_status' => 'wc-on-hold' ), array( 'ID' => $order_id ) );
 
 
            // $message = sprintf( _n( 'Estatus de la orden cambiando.', '%s estatus orden cambiado.', $_REQUEST['changed'] ), number_format_i18n( $_REQUEST['changed'] ) );
@@ -878,18 +875,22 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
       }
 
-      // elseif order status is processing
-
-      
 
       else if($order_status == STATUS_CONFIRM_ORDER && $shipping_method == "FedEx Express") {
 
+        // convert order_id to array
+        $order_id_ = array($order_id);
+
         // add log
-        $this->register_log( array('Date' => date('Y-m-d H:i:s'), 'Order' => $order, 'Status' => 'Order en proceso de confirmación') );
+        //$this->register_log( array('Date' => date('Y-m-d H:i}:s'), 'Search Order' => $order_id_) );
+
+        $object = new confirmShippingController();
+        $object->index($order_id_, $flt = false); 
 
 
 
       }
+      
       
 
 
@@ -1186,7 +1187,9 @@ public function fedex_shipping_intra_Chile_confirm_send(){
     $orderIds = $_POST['orderIds'];
 
     $object = new confirmShippingController();
-    $object->index($orderIds);
+    $object->index($orderIds, $flt = true);
+
+    die();
 
 }
 
@@ -1267,6 +1270,23 @@ public function fedex_shipping_intra_Chile_track_shipment(){
 }
 
 
+public function fedex_shipping_intra_Chile_get_order(){
+
+    $orderId = $_POST['orderId'];
+
+    $select = $this->wpdb->get_results("
+    SELECT * FROM ". $this->table_name_responseShipping."
+         WHERE orderNumber = '".$orderId."'", ARRAY_A
+        );
+
+    echo json_encode($select, true);
+
+    die();
+
+
+}
+
+
 // Eliminar Orden de transporte
 
 public function fedex_shipping_intra_Chile_delete_order(){
@@ -1274,9 +1294,8 @@ public function fedex_shipping_intra_Chile_delete_order(){
     $orderId = $_POST['orderId'];
 
     $select = $this->wpdb->get_results("
-    SELECT masterTrackingNumber 
-        FROM ". $this->table_name_responseShipping." 
-            WHERE orderNumber = '".$orderId."'", ARRAY_A
+    SELECT masterTrackingNumber FROM ". $this->table_name_responseShipping."
+         WHERE orderNumber = '".$orderId."'", ARRAY_A
         );
 
 
@@ -1305,7 +1324,7 @@ public function fedex_shipping_intra_Chile_delete_order(){
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => 'POST',
-        CURLOPT_POSTFIELDS =>$request,
+        CURLOPT_POSTFIELDS => $request,
         CURLOPT_HTTPHEADER => array(
             'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA==',
             'Content-Type: application/json'
@@ -1413,9 +1432,11 @@ public function unserializeForm($form){
                
                 //write in file add jump line file_put_contents
                 file_put_contents( $upload_dir . 'Log_.txt', $message . PHP_EOL, FILE_APPEND);
-                fclose( $file );
+               // fclose( $file );
     
            }
+
+          // die();
 
     
 }
@@ -1423,23 +1444,18 @@ public function unserializeForm($form){
 
     public function delete_logs(){
 
-        var_dump('delete_logs');
-
         $upload_dir = wp_upload_dir();
         $upload_dir = $upload_dir['basedir'] . '/woocommerce_logs_register_fedex/';
 
-        // clear file Log_.txt
+        // vaciar log.txt
         $file = fopen( $upload_dir . 'Log_.txt', 'w' );
+        fwrite( $file, '' );
         fclose( $file );
 
 
-      /*   $files = glob($upload_dir.'*'); // get all file names
-        foreach($files as $file){ // iterate files
-        if(is_file($file))
-            unlink($file); // delete file
-        }
+        die();
 
-        die(); */
+
 
 
     }
