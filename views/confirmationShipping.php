@@ -1,5 +1,4 @@
 <?php
-
 if (!defined('ABSPATH')) {
     die();
 }
@@ -8,10 +7,7 @@ require_once PLUGIN_DIR_PATH . 'required/confirmedShipments.php';
 
 $reponse = new confirmedShipments();
 $retreats = $reponse->index();
-
-
 ?>
-
 
 <div class="container">
 
@@ -28,10 +24,7 @@ $retreats = $reponse->index();
                     <h3 class="panel-title">Ordenes de retiro</h3>
                 </div>
 
-
                 <div class="panel-body">
-
-                
                     <div class="row">
                         <div class="col-md-12">
                             <div class="table-responsive">
@@ -48,9 +41,7 @@ $retreats = $reponse->index();
                                     <tbody>
                                         <?php
                                         $i = 1;
-                                        foreach ($retreats as $retreat) {
-
-                                            ?>
+                                        foreach ($retreats as $retreat) {?>
                                         <tr>
                                             <td><?php echo '<span class="badge bg-light text-dark">'.$i.'</span>' ?>
                                             </td>
@@ -65,27 +56,14 @@ $retreats = $reponse->index();
                                             </td>                                            
 
                                         </tr>
-                                        <?php
-                                            $i++;
-                                        }
-                                        ?>
+                                        <?php $i++; }?>
                                     </tbody>
                                 </table>
-
                             </div>
-
                         </div>
-
                     </div>
-
                 </div>
-
-
             </div>
-
         </div>
-
     </div>
-
-
 </div>

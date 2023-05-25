@@ -62,4 +62,5 @@ function addSubmenusPanel( $submenus ){
     }
 
 }
+?>
 

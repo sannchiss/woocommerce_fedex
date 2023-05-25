@@ -1,7 +1,4 @@
-
-
 <?php
-
 // get file in woocommerce upload folder
 $upload_dir = wp_upload_dir();
 $upload_dir = wp_upload_dir();
@@ -70,14 +67,10 @@ echo "</tbody>
                     </div>
                 </div>
             </div>";
-
-
-?>
-
+            ?>
 <script>
 
 function limpiarLog() {
-
     // add sweetalert
     (function ($) {
 
@@ -145,7 +138,5 @@ function limpiarLog() {
     })(jQuery);
 
 }
-
-
 </script>
 

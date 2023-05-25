@@ -1,9 +1,5 @@
 <?php
-
-// woocommerce_admin_order_data_after_order_details
-
 add_action('woocommerce_admin_order_data_after_billing_address', 'add_custom_order_data_to_admin_order_page', 10, 1);
-
 
 function add_custom_order_data_to_admin_order_page($order)
 {
@@ -61,21 +57,32 @@ function add_custom_order_data_to_admin_order_page($order)
     }
 
 
-    // get method shipping
-    $method_shipping = get_post_meta($order_id, '_shipping_method_title', true);
+    // get method shipping order
+    $method_shipping = $order->get_shipping_method();
 
-    
-    // get label shiping
+    // get status order
+    $status_order = $order->get_status();
+
+
+    if( $method_shipping == "FedEx Express" ):
+
+     // get label shiping
     $label_shipping = get_label_shipping( $masterTrackingNumber, $labelBase64Byte ? $labelBase64Byte:null );
 
+    // label is null
+    if($masterTrackingNumber == null){
+        return;
+    }
+    
+    else {    
 
-    if( $order_post_status == 'wc-'.STATUS_CREATE_ORDER || $order_post_status == 'wc-'.STATUS_CONFIRM_ORDER ):
+    // parse code 64 bit
+    $pdf = base64_decode($label_shipping['pdfMerge']);
 
     echo '<div class="card" style="width: 100%; height: 80%;">
 
-    <div class="card-header">
-    Etiqueta de envío FedEx
-    </div>
+    <div class="card-header"><i class="fa fa-truck"></i>
+    Order #'.$masterTrackingNumber.'</div>
 
     <iframe src="data:application/pdf;base64,'.$label_shipping['pdfMerge'].'" type="application/pdf" width="100%" height="100%" allowfullscreen></iframe>
 
@@ -83,9 +90,26 @@ function add_custom_order_data_to_admin_order_page($order)
 
     <div class="row">
 
-    <ul class="list-group">
-    <li class="list-group-item">Orden Transporte: <b>'.$masterTrackingNumber.'</b></li>
-  </ul>
+    <div class="d-flex justify-content-center">
+    
+    <div class="ms-2 me-auto">
+        <div class="btn-group" role="group" aria-label="Default button group">';
+
+        if($status_order == STATUS_CONFIRM_ORDER):
+        echo '<a href="https://gtstnt.tntchile.cl/gtstnt/pub/clielocserv.seam?expedicion='.$masterTrackingNumber.'&cliente='.ACCOUNT_NUMBER.'" target="_blank" class="btn btn-secondary btn-sm" type="application/pdf" >
+        <icon class="fa fa-car" aria-hidden="true"></icon> Traking</a>';
+        endif;
+        echo '
+        <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-secondary btn-sm" type="application/pdf" >
+        <icon class="fa fa-print" aria-hidden="true"></icon> Printf</a>
+        <a href="data:application/pdf;base64,'.base64_encode($pdf).'" download="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" class="btn btn-secondary btn-sm">
+        <i class="fa fa-download"></i> Download</a>
+
+        </div>
+        </div>
+    
+    </div>
+      
 
     </div>
 
@@ -94,18 +118,14 @@ function add_custom_order_data_to_admin_order_page($order)
   </div>';
 
 
-    // parse code 64 bit
-    $pdf = base64_decode($label_shipping['pdfMerge']);
-
     // call function print label
-    print_label( $pdf, $masterTrackingNumber );
-        
+    printAndDownloadLabel( $pdf, $masterTrackingNumber );
+
+    }
 
     endif;
-                         
 
-   // download label byhref
-
+    
 
 }
 
@@ -206,40 +226,12 @@ function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
 }
 
 
-function print_label($pdf, $masterTrackingNumber){
+function printAndDownloadLabel($pdf, $masterTrackingNumber){
 
     $file = 'etiqueta_fedex_'.$masterTrackingNumber.'.pdf';
     $fp = fopen($file, "w");
     fwrite($fp, $pdf);
     fclose($fp);
 
-    echo '<div class="d-flex justify-content-center"><div class="card" style="width: 80%; height: 100%;">
-    <div class="card-title text-center">
-    Opcciones de etiqueta
-    </div>
-    <div class="card-body">
-    <div class="row">
-    <div class="col-md-6">
-    <a href="data:application/pdf;base64,'.base64_encode($pdf).'" download="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" class="btn btn-primary btn-sm">
-    <i class="fa fa-download"></i> Descargar</a>
-    </div>
-    <div class="col-md-6">
-    <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-primary btn-sm" type="application/pdf" >
-    <icon class="fa fa-print" aria-hidden="true"></icon> Imprimir</a>
-    </div>
-    </div>
-    </div>
-    </div>
-    </div>';
-
 }
-
-?>
-
-
-
-
-
-
-
-    
+?>    

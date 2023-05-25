@@ -56,8 +56,7 @@ class credentialsAccount {
 
         return $params;
 
-
     }
 
 
-}
+}?>

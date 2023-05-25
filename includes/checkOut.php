@@ -1,7 +1,4 @@
 <?php
-
-
-//Cambio el Total del Envio en Order details
  add_action('woocommerce_checkout_create_order', 'change_total_on_checking', 20, 1);
 function change_total_on_checking($order)
 {
@@ -14,9 +11,6 @@ function change_total_on_checking($order)
     // Set the new calculated total
     $order->set_total($new_total);
 } 
-
-
-
 
 // details order
 add_action('woocommerce_order_details_after_order_table', 'details_order', 10, 1);
@@ -87,7 +81,5 @@ function details_order($order)
 
 
 
-}
-
-
+}?>
 

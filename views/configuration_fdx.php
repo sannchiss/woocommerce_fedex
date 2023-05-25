@@ -1,5 +1,4 @@
 <?php if (current_user_can('manage_options')) : #Condicional Alternativa 
-
 ?>
 
 <div class="accordion" id="accordionExample">
@@ -45,7 +44,7 @@
                                                 <span class="input-group-text" id="inputGroup-sizing-sm">Account Number</span>
                                                     <input type="password" class="form-control"
                                                         value=<?php echo ACCOUNT_NUMBER ?> id="accountNumber"
-                                                        name="accountNumber" minlength="9" maxlength="30" value=""
+                                                        name="accountNumber" minlength="9" maxlength="30"
                                                         required>
                                                     <span class="input-group-text" id="basic-addon2">
 
@@ -66,7 +65,7 @@
                                             <div class="col-md-5">
 
                                                 <div class="form-floating mb-3">
-                                                    <input type="password" class="form-control" placeholder=""
+                                                    <input type="password" class="form-control" 
                                                         id="meterNumber" name="meterNumber" value="123456789"
                                                         minlength="9" maxlength="30" readonly>
                                                     <label for="meterNumber">Meter Number</label>
@@ -85,7 +84,7 @@
                                             <div class="input-group input-group-sm mb-3">
                                                 <span class="input-group-text" id="inputGroup-sizing-sm">User Credential</span>
                                                     <input type="password" class="form-control"
-                                                        value=<?php echo WS_KEY_USER_CREDENTIAL ?> placeholder=""
+                                                        value=<?php echo WS_KEY_USER_CREDENTIAL ?>
                                                         id="wskeyUserCredential" name="wskeyUserCredential"
                                                         minlength="5" maxlength="50" required>
 
@@ -788,7 +787,6 @@
 <?php endif; ?>
 
 <script>
-
 const toggleAccountNumber = document
             .querySelector('#toggleAccountNumber');
   
@@ -848,8 +846,5 @@ const toggleAccountNumber = document
             // Toggle the eye and bi-eye icon
             //this.classList.toggle('eye-slash');
         });
-
-       
-   
 
 </script>

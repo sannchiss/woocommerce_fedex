@@ -1,5 +1,4 @@
 <?php
-
 include PLUGIN_DIR_PATH . 'views/modal/orderItems.php';
 
 
@@ -7,20 +6,14 @@ if (!defined('ABSPATH')) {
     die();
 }
 
-
-
-$args = array(
-    'post_type' => 'shop_order',   
+// get all orders by shipping FedEx
+$orders = wc_get_orders(array(    
     'limit' => -1,
-    'status' => array(STATUS_CREATE_ORDER, STATUS_CONFIRM_ORDER),
-);
-
-$orders = wc_get_orders( $args ); 
-
-
+    'shipping_method' => 'FedEx Express',
+    'orderby' => 'date',
+    'order' => 'DESC',
+));
 ?>
-
-
 <div class="container-xxl">
 
     <nav class="navbar bg-light">
@@ -75,16 +68,11 @@ $orders = wc_get_orders( $args );
                             </thead>
                             <tbody>
                                 <?php
-                                        $i = 1;
+                                $i = 1;
                                         foreach ($orders as $order) {
-
                                             // get name rate shipping
                                             $rate = $order->get_shipping_method();
-
-
-                                        if ($rate == 'FedEx Express' && ($order->get_status() == STATUS_CREATE_ORDER || $order->get_status() == STATUS_CONFIRM_ORDER)) {
-
-                                            ?>
+                                        if ($rate == 'FedEx Express') { ?>
                                 <tr>
                                     <td><?php echo '<span class="badge bg-light text-dark">'.$i.'</span>' ?>
                                     </td>
@@ -135,25 +123,18 @@ $orders = wc_get_orders( $args );
                                                 echo '<span class="badge bg-primary"><i class="fas fa-shipping-fast"></i> Procesando con FedEx</span>';                                               
                                             }elseif($order->get_status() == 'confirmado-fedex'){
                                                 echo '<span class="badge bg-success"><i class="fas fa-shipping-fast"></i> Enviado con FedEx</span>';
-                                            }
-                                            
-                                             ?>
-
-                                    </td>
+                                            }else{
+                                                echo '<span class="badge bg-success"><i class="fas fa-shipping-fast"></i>'.$order->get_status().'</span>';
+                                            }?>
+                                             </td>
                                     <td>
-
-                                            <?php
-
-                                                    if($order->get_status() == STATUS_CREATE_ORDER ){
-
-                                                    ?>
+                                            <?php if($order->get_status() == STATUS_CREATE_ORDER ){?>
 
                                         <div class="btn-group btn-group-sm" role="group" aria-label="...">
 
                                             <button type="button" class="btn btn-primary printOneLabel"
                                                 data-order="<?php echo $order->get_order_number(); ?>"><i
                                                     class="fas fa-print"></i></button>
-
 
                                             <button type="button" class="btn btn-danger delete_shipping"
                                                 data-order="<?php echo $order->get_order_number(); ?>"><i
@@ -180,41 +161,14 @@ $orders = wc_get_orders( $args );
 
                                                 </div>
                                             <?php } ?>
-
-
-
-                                            
                                         </div>
-
-
-
-
-
                                     </td>
-
-
                                 </tr>
-                                <?php
-                                            $i++;
-                                            }
-
-                                        }
-                                        
-                                        ?>
+                                <?php  $i++; }  } ?>
                             </tbody>
                         </table>
-
                     </div>
-
                 </div>
-
-
         </div>
-
-
     </div>
-
-
-
-
 </div>

@@ -39,6 +39,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
 
                 //save method shipping	
                 add_action( 'woocommerce_update_options_shipping_' . $this->id, array( $this, 'process_admin_options' ) );
+                
 
 
             }
@@ -187,7 +188,7 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     function filter_woocommerce_cart_shipping_method_full_label( $label, $method ) {
         if ( 'method_fedex_shipping' === $method->id ) {
             // add icon fasfa-truck
-            $label = '<span class="fas fa-truck"></span> ' . $label;
+            $label = $label;
         }
         return $label;
     }
@@ -197,3 +198,4 @@ if ( in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', g
     
 
 }
+?>

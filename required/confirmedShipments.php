@@ -1,5 +1,4 @@
 <?php
-
 class confirmedShipments{
 
     public function __construct(){
@@ -33,7 +32,6 @@ class confirmedShipments{
    
            );  
    
-   
        }        
 
     }else{
@@ -48,15 +46,10 @@ class confirmedShipments{
     }
     
 
- 
-
-
     return $retreats;
 
 
    }
 
-
-
-        
     }
+    ?>

@@ -1468,3 +1468,5 @@ public function unserializeForm($form){
 
 /*Instantiate class*/
 $GLOBALS['fedex_shipping_intra_Chile'] = new fedex_shipping_intra_Chile();
+
+?>

@@ -1,5 +1,4 @@
 <?php
-
 require_once PLUGIN_DIR_PATH . 'fedex_shipping_intra_Chile.php';
 
 class confirmShippingController extends fedex_shipping_intra_Chile{
@@ -231,3 +230,4 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
     }
 
 }
+?>
