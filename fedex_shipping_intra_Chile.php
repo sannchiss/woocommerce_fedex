@@ -28,6 +28,7 @@ defined('ABSPATH') || exit;
 define('PLUGIN_DIR_PATH', plugin_dir_path(__FILE__));
 
 
+
 class fedex_shipping_intra_Chile  {
 
 public function __construct() {
@@ -100,8 +101,6 @@ public function __construct() {
 
     add_action( 'wp_ajax_delete_logs', array($this, 'delete_logs' ));
 
-
-
     $this->required();
     $this->constants();
     $this->init();
@@ -111,12 +110,10 @@ public function __construct() {
 public function required() {
 
     require_once PLUGIN_DIR_PATH . 'lib/RestClient.php';
-
     require_once PLUGIN_DIR_PATH . 'required/credentialsAccount.php';
-
     require_once PLUGIN_DIR_PATH . 'includes/clearString.php';
     require_once PLUGIN_DIR_PATH . 'includes/admin_order.php';
-    //require_once PLUGIN_DIR_PATH . 'includes/rateService.php';
+    //require_once PLUGIN_DIR_PATH . 'includes/custom_actions_button.php';
     require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'includes/checkOut.php';
     require_once PLUGIN_DIR_PATH . 'includes/shipping_method.php';
@@ -169,6 +166,10 @@ public function constants() {
 
 public function init(){
 
+    // require woocommerce
+    if (!in_array('woocommerce/woocommerce.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+        throw new Exception('Fedex Shipping Intra Chile needs the WooCommerce plugin to be installed and active.');
+    }
     // require curl
     if (!function_exists('curl_init')) {
         throw new Exception('Fedex Shipping Intra Chile needs the CURL PHP extension.');
@@ -264,18 +265,11 @@ public function fedex_shipping_intra_Chile_page() {
 
     // redirect panel wordpress
     wp_redirect(admin_url('admin.php?page=fedex_shipping_intra_Chile'));
-
-    // mensaje de exito
-
 }
 
 public function fedex_shipping_intra_Chile_menu_page() {
-
-
     // open page in new tab
     echo '<script>window.open("https://www.fedex.com/es-cl/home.html", "_blank");</script>';
-
-  
 
 }
 
@@ -343,9 +337,6 @@ public function enqueue_scripts(){
     wp_enqueue_script('typeahead');
 
 
-  
-
-
     wp_enqueue_script(
         'loadConfiguration',
         plugins_url('resources/js/Load-injection.js', __FILE__),
@@ -385,26 +376,12 @@ public function enqueue_styles() {
     /**Libreria para iconos Fontawesome */
     wp_register_style( 'Font_Awesome', '//use.fontawesome.com/releases/v5.15.4/css/all.css' );
     wp_enqueue_style('Font_Awesome');
-
     /**Libreria para Bootstrap Css*/
-    wp_register_style( 'Bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css' );
+    wp_register_style( 'Bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css' );
     wp_enqueue_style('Bootstrap');
-
-    /**Libreria estilo DataTable */
-   /*  wp_register_style('DataTable', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css');
-    wp_enqueue_style('DataTable'); */
-
-    /**Libreria para DataTable */
-  /*   wp_register_style( 'DataTable', '//cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css' );
-    wp_enqueue_style('DataTable'); */
-
     /**Libreria para DataTable */
     wp_register_style( 'DataTableBootstrap', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css' );
     wp_enqueue_style('DataTableBootstrap');
-
-   /*  wp_register_style( 'stackpath', '//stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap-theme.min.css');
-    wp_enqueue_style('stackpath'); */
-
     
   }
 
@@ -440,10 +417,6 @@ public function enqueue_styles() {
 			'label_count'	=> _n_noop( 'Procesar con FedEx (%s)', 'Procesar con FedEx (%s)' )
 		)
 	);
-
-
-
-
  }
 
 
@@ -563,7 +536,6 @@ public function enqueue_styles() {
 /********************************************************************************************************** */
 // function to add the icon/background to the status
 public function add_action_admin_head(){
-
     global $pagenow, $post;
 
     if( $pagenow != 'edit.php') return; // Exit
@@ -573,53 +545,29 @@ public function add_action_admin_head(){
     $order_status_process = 'procesado-fedex'; 
     $order_status_sent = 'confirmado-fedex'; 
     ?>
-    <style>
-        .order-status.status-<?php echo sanitize_title( $order_status_process ); ?> {
-            background:rgb(134, 47, 222) !important;
-            font-weight: bold;
-            color: #FFFFFF;
-            border: 2px solid #000;
+<style>
+.order-status.status-<?php echo sanitize_title($order_status_process);
 
-           
-        }
-
-        .order-status.status-<?php echo sanitize_title( $order_status_sent ); ?>  {
-            background: rgb(134, 47, 222) !important ;
-            font-weight: bold;
-            color: #FFFFFF;
-            border: 2px solid #000;
-            
-
-        }
-
-        // add icon 
-       /*  .order-status.status-<?php echo sanitize_title( $order_status_process ); ?>::before {
-            content: "\f155";
-            font-family: "dashicons";
-            font-size: 20px;
-            font-weight: bold;
-            color: #FFFFFF;
-            border: 1px solid rgb(134, 47, 222) !important;
-            padding: 5px;
-            border-radius: 50%;
-            background: rgb(134, 47, 222);
-            margin-right: 5px;
-        } */
-
-       
-
-    </style>
-    <?php
-
+?> {
+    background: rgb(134, 47, 222) !important;
+    font-weight: bold;
+    color: #FFFFFF;
+    border: 2px solid #000;
 }
 
+.order-status.status-<?php echo sanitize_title($order_status_sent);
 
-
-/********************************************************************************************************** */
-
+?> {
+    background: rgb(134, 47, 222) !important;
+    font-weight: bold;
+    color: #FFFFFF;
+    border: 2px solid #000;
+}
+</style>
+<?php
+}
 // Define woocommerce_order_status_completed callback function
 public function action_woocommerce_order_status_changed( $order_id ) {
-
 
         //  obtains the status of the order according to the order ID
         $orderId = wc_get_order( $order_id );
@@ -656,13 +604,9 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
             }
 
-
-
          // Clear string of special characters  
         $clearString = new clearString;
         $comunaClear = $clearString->setString($clearCity);
-
-        
             // select like ciudad and code postal sql
             $cityAndCodeSql = $this->wpdb->get_results( "
             SELECT * FROM ".$this->table_name_locations." 
@@ -861,14 +805,10 @@ public function action_woocommerce_order_status_changed( $order_id ) {
 
             ?>
 
-        <script>
-        alert("Error en la solcitud: ".<?php $response['comments'] ?>);
-        </script>
-
-        <?php
-
-
-
+<script>
+alert("Error en la solcitud: ".<?php $response['comments'] ?>);
+</script>
+<?php
         } 
         
 
@@ -887,13 +827,8 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         $object = new confirmShippingController();
         $object->index($order_id_, $flt = false); 
 
-
-
       }
       
-      
-
-
 }
 
 
@@ -902,16 +837,9 @@ public function fedex_shipping_intra_Chile_get_order_detail($order_id)  {
 
     $order_id = sanitize_text_field($order_id);
 
-
-    //Bandera de consulta bulto estandar
-   // $flagInsurance = $params['flagInsurance'];
-
-
     $select = $this->wpdb->get_results("SELECT * FROM $this->table_name_orderDetail WHERE orderNumber = $order_id", ARRAY_A);
 
-
      if(count($select) > 0){
-
             
         foreach($select as $row){
 
@@ -955,7 +883,6 @@ public function fedex_shipping_intra_Chile_get_order_detail($order_id)  {
 
 public function get_total_weight_order( $order_id ) {
 
-    
     $order        = wc_get_order( $order_id );
 	$order_items  = $order->get_items();
 	$total_qty    = 0;
@@ -1040,9 +967,7 @@ public function save_configuration(){
 
      } 
  
-    
  }
-
 
 public function save_originShipper(){
 
@@ -1086,7 +1011,6 @@ public function save_originShipper(){
 // get order detail
 public function get_order_detail(){
 
-
     $order_id = sanitize_text_field($_POST['orderId']);
 
     // get list item order
@@ -1100,8 +1024,6 @@ public function get_order_detail(){
     }
 
     echo json_encode($orderItemsData, true);
-
- 
     die();
 
 }
@@ -1379,14 +1301,9 @@ public function fedex_shipping_intra_Chile_delete_order(){
         }
 
 
-    
-
     die();
 
 }
-
-
-
 
 
 // Deseralizar formulario
@@ -1452,21 +1369,12 @@ public function unserializeForm($form){
         fwrite( $file, '' );
         fclose( $file );
 
-
         die();
-
-
-
 
     }
 
 
-
-
 }
-
 
 /*Instantiate class*/
 $GLOBALS['fedex_shipping_intra_Chile'] = new fedex_shipping_intra_Chile();
-
-?>

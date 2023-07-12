@@ -81,5 +81,4 @@ function details_order($order)
 
 
 
-}?>
-
+}

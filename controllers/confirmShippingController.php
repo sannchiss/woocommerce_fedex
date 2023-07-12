@@ -217,9 +217,6 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
             true
         ));
 
-
-
-
         } 
 
 
@@ -230,4 +227,3 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
     }
 
 }
-?>

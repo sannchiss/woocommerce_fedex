@@ -160,7 +160,7 @@ class printLabelShippingController extends fedex_shipping_intra_Chile {
 
 
 
-        }elseif($params['labelType']== 'EPL'){             
+        }elseif( LABEL_TYPE == 'EPL' ){             
 
             $labelType = 'EPL';
 
@@ -173,4 +173,3 @@ class printLabelShippingController extends fedex_shipping_intra_Chile {
     }
 
 }
-?>
