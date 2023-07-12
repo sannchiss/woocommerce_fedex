@@ -125,8 +125,6 @@ function add_custom_order_data_to_admin_order_page($order)
 
     endif;
 
-    
-
 }
 
 
@@ -225,7 +223,6 @@ function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
 
 }
 
-
 function printAndDownloadLabel($pdf, $masterTrackingNumber){
 
     $file = 'etiqueta_fedex_'.$masterTrackingNumber.'.pdf';
@@ -233,5 +230,4 @@ function printAndDownloadLabel($pdf, $masterTrackingNumber){
     fwrite($fp, $pdf);
     fclose($fp);
 
-}
-?>    
+}  
