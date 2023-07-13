@@ -101,9 +101,9 @@ public function __construct() {
 
     add_action( 'wp_ajax_delete_logs', array($this, 'delete_logs' ));
 
+    $this->init();
     $this->required();
     $this->constants();
-    $this->init();
     
 }
 
