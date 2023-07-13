@@ -15,6 +15,8 @@ class credentialsAccount {
        
         $result = $wpdb->get_results($sql);
 
+        $params = array();
+
         foreach ($result as $key => $value) {
             
             $params['id'] = $value->id;
@@ -49,6 +51,8 @@ class credentialsAccount {
             $params['countryCodeShipper'] = $value->countryCodeShipper;
             $params['addressLine1Shipper'] = $value->addressLine1Shipper;
             $params['addressLine2Shipper'] = $value->addressLine2Shipper;
+            
+            
             $params['taxIdShipper'] = $value->taxIdShipper;
             $params['ieShipper'] = $value->ieShipper;
 

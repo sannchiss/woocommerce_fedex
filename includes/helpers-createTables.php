@@ -1,8 +1,6 @@
 <?php
 class createTables
 {
-
-
     public function __construct(){
 
         global $wpdb;
@@ -750,5 +748,3 @@ class createTables
 
 
 }
-
-
