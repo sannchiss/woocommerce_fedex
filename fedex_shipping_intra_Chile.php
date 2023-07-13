@@ -101,20 +101,20 @@ public function __construct() {
 
     add_action( 'wp_ajax_delete_logs', array($this, 'delete_logs' ));
 
-    $this->init();
     $this->required();
+    $this->init();
     $this->constants();
     
 }
 
 public function required() {
 
+    require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'lib/RestClient.php';
     require_once PLUGIN_DIR_PATH . 'required/credentialsAccount.php';
     require_once PLUGIN_DIR_PATH . 'includes/clearString.php';
     require_once PLUGIN_DIR_PATH . 'includes/admin_order.php';
     //require_once PLUGIN_DIR_PATH . 'includes/custom_actions_button.php';
-    require_once PLUGIN_DIR_PATH . 'includes/helpers-createTables.php';
     require_once PLUGIN_DIR_PATH . 'includes/checkOut.php';
     require_once PLUGIN_DIR_PATH . 'includes/shipping_method.php';
     require_once PLUGIN_DIR_PATH . 'controllers/printLabelShippingController.php';
