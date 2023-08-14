@@ -592,15 +592,19 @@ public function action_woocommerce_order_status_changed( $order_id ) {
         if(($order_details['billing']['address_1'] != $order_details['shipping']['address_1']) && $order_details['shipping']['city'] != null){
             $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order_id.'  | La dirección de facturación es diferente a la dirección de envío');
 
+            $person_name = substr($order_details['shipping']['first_name'].' '.$order_details['shipping']['last_name'], 0, 40);
+
             $clearCity  =  $order_details['shipping']['city'];
-            $address = $order_details['shipping']['address_1'];
+            $address = substr($order_details['shipping']['address_1'].' #'.$order_details['shipping']['address_2'], 0, 40 );
             
         }
         else {
             $this->register_log(date('Y-m-d H:i:s').'__Order: '.$order_id.'  | La dirección de facturación es igual a la dirección de envío');
 
+            $person_name = substr($order_details['billing']['first_name'].' '.$order_details['billing']['last_name'], 0, 40);
+
             $clearCity = $order_details['billing']['city'] != null ? $order_details['billing']['city'] : get_post_meta( $order_id, '_billing_comuna', true );
-            $address = substr( $order_details['billing']['address_1'], 0, 40 );
+            $address = substr( $order_details['billing']['address_1'].' #'. $order_details['billing']['address_2'] , 0, 40 );
 
             }
 
@@ -657,7 +661,7 @@ public function action_woocommerce_order_status_changed( $order_id ) {
             "recipient": {
                 "contact": {
                     "vatNumber": "1-9",
-                    "personName": "'. substr( $order_details['billing']['first_name'] . ' ' . $order_details['billing']['last_name'], 0, 40 ). '",
+                    "personName": "'. $person_name. '",
                     "phoneNumber": "'.str_replace("+", "", substr( $order_details['billing']['phone'] , 0, 15 ) ).'",
                     "email": "' . substr( str_replace(' ', '', $order_details['billing']['email'] ), 0, 40) . '"
                 },
