@@ -148,6 +148,7 @@ class createTables
                 orderDate DATETIME,
                 masterTrackingNumber VARCHAR(150),
                 status VARCHAR(150),
+                pickupNumber VARCHAR(150),
                 labelType VARCHAR(50),
                 labelBase64IMG longtext,
                 labelBase64PDF longtext,

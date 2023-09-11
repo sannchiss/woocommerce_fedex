@@ -377,7 +377,7 @@ public function enqueue_styles() {
     wp_register_style( 'Font_Awesome', '//use.fontawesome.com/releases/v5.15.4/css/all.css' );
     wp_enqueue_style('Font_Awesome');
     /**Libreria para Bootstrap Css*/
-    wp_register_style( 'Bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css' );
+    wp_register_style( 'Bootstrap', '//cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css' );
     wp_enqueue_style('Bootstrap');
     /**Libreria para DataTable */
     wp_register_style( 'DataTableBootstrap', '//cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css' );

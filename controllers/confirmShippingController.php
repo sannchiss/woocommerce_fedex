@@ -157,6 +157,20 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
                 );
 
 
+                /**Edito la OT con la #recogida */
+                 $this->wpdb->update(
+                    $this->table_name_responseshipping,
+                    array(
+                        'pickupNumber' => $response['pickupNumber'],
+                        'orderDate' => date('Y-m-d H:i:s')
+                    ),
+                    array(
+                        'orderNumber' => $orderNumber
+                    )
+                ); 
+
+
+
             }
 
 
@@ -176,6 +190,9 @@ class confirmShippingController extends fedex_shipping_intra_Chile{
                         'manifestDate' => date('Y-m-d H:i:s')
                     )
                 );
+
+                
+
 
             }
             else{

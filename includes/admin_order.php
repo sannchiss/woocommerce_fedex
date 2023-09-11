@@ -43,6 +43,7 @@ function add_custom_order_data_to_admin_order_page($order)
     foreach ($result as $row) {
         $order_post_status = $row->post_status;
         $masterTrackingNumber = $row->masterTrackingNumber;
+        $pickupNumber = $row->pickupNumber;
 
         if($row->labelBase64PDF != null){
             $labelBase64Byte = $row->labelBase64PDF;
@@ -69,6 +70,10 @@ function add_custom_order_data_to_admin_order_page($order)
      // get label shiping
     $label_shipping = get_label_shipping( $masterTrackingNumber, $labelBase64Byte ? $labelBase64Byte:null );
 
+    // get manifest document
+    $manifest_document_pdf = get_document_manifest( $pickupNumber );
+
+
     // label is null
     if($masterTrackingNumber == null){
         return;
@@ -79,7 +84,10 @@ function add_custom_order_data_to_admin_order_page($order)
     // parse code 64 bit
     $pdf = base64_decode($label_shipping['pdfMerge']);
 
-    echo '<div class="card" style="width: 100%; height: 80%;">
+    $pdfManifest = base64_decode($manifest_document_pdf['manifestPDF']);
+
+
+    echo '<div class="card" style="width: 18rem;">
 
     <div class="card-header"><i class="fa fa-truck"></i>
     Order #'.$masterTrackingNumber.'</div>
@@ -92,18 +100,24 @@ function add_custom_order_data_to_admin_order_page($order)
 
     <div class="d-flex justify-content-center">
     
+    
     <div class="ms-2 me-auto">
-        <div class="btn-group" role="group" aria-label="Default button group">';
+        <div class="btn-group btn-group-sm" role="group" aria-label="Default button group">';
 
         if($status_order == STATUS_CONFIRM_ORDER):
-        echo '<a href="https://gtstnt.tntchile.cl/gtstnt/pub/clielocserv.seam?expedicion='.$masterTrackingNumber.'&cliente='.ACCOUNT_NUMBER.'" target="_blank" class="btn btn-secondary btn-sm" type="application/pdf" >
-        <icon class="fa fa-car" aria-hidden="true"></icon> Traking</a>';
+        echo '<a href="https://gtstnt.tntchile.cl/gtstnt/pub/clielocserv.seam?expedicion='.$masterTrackingNumber.'&cliente='.ACCOUNT_NUMBER.'" target="_blank" class="btn btn-primary btn-sm" type="application/pdf" >
+        <icon class="fa fa-car" aria-hidden="true"></icon> Traking</a>
+
+        <a href="data:application/pdf;base64,'.base64_encode($pdfManifest).'" download="manifiesto_fedex_'.$pickupNumber.'.pdf"  target="_blank" class="btn btn-secondary btn-sm" type="application/pdf" width="100%" height="100%" >
+        <icon class="far fa-file-pdf" aria-hidden="true"></icon> Manifest</a>';
+
         endif;
         echo '
         <a href="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" target="_blank" class="btn btn-secondary btn-sm" type="application/pdf" >
-        <icon class="fa fa-print" aria-hidden="true"></icon> Printf</a>
+        <icon class="fa fa-print" aria-hidden="true"></icon> Label</a>
         <a href="data:application/pdf;base64,'.base64_encode($pdf).'" download="etiqueta_fedex_'.$masterTrackingNumber.'.pdf" class="btn btn-secondary btn-sm">
-        <i class="fa fa-download"></i> Download</a>
+        <i class="fa fa-download"></i> Label</a>
+      
 
         </div>
         </div>
@@ -169,7 +183,7 @@ function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
         CURLOPT_POSTFIELDS =>$request,
         CURLOPT_HTTPHEADER => array(
             'Content-Type: application/json',
-            'Cookie: _abck=8B703E59AB8F068FFC03F46AD1F9FC51~-1~YAAQHIkKuqM9F1N8AQAASkcwnwaeb5C2xCWK/aeeZP/QkpNcXGV1kNZx9886ivLLOJieyavy6mNGfwwVOz8fG9oEIXO8jQgMyaD5av5yyHaRnwIBqEfcA7ji8Q6ZA/UYsfw9i4890BvYr8mewLJJGf4Iw5WVg9mjvX4adSnXtkHr6xh0w0SrD175t8HPx6ihyv1SlMQAJArB2pqH6E0kSb5V9FXMlZRiA0uhoUR6sf/c8h6R9FKlWciNXcYrUxp4SROH3C4Gd7/6Gj8bcluBZe0RLoA+C3GVrCa7ragFMqDsjF6TShSvsUYm1f/vSs/SncnIxSEMgk9IkSXthF0UkDt1tSCja4pXZ9Zxt1yHFW16j++EvOrBGw==~-1~-1~-1; fdx_cbid=10880496071634758313009000438201; siteDC=wtc'
+            'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA=='        
         ),
         ));
 
@@ -222,6 +236,64 @@ function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
     }
 
 }
+
+function get_document_manifest($pickupNumber){
+
+    $request = '    
+    {
+        "MANIFIESTOS" : {
+            "MANIFIESTO" : [
+                {
+                    "CLIENTE": "' . ACCOUNT_NUMBER . '",
+                    "CENTRO": "01",
+                    "RECOGIDA": "' . $pickupNumber . '"
+                }
+            ]
+        }
+    }';
+
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+        CURLOPT_URL => END_POINT_PRINT_MANIFEST_PDF,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'POST',
+        CURLOPT_POSTFIELDS => $request,
+        CURLOPT_HTTPHEADER => array(
+            'Content-Type: application/json',
+            'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA=='
+        ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+
+        $manifest_document = json_decode($response, true);
+
+     
+
+   // var_dump($manifest_document[0]["respuestaImprimirManifiesto"]["manifiesto"]);
+
+
+        return array(
+                'manifestPDF' => $manifest_document[0]["respuestaImprimirManifiesto"]["manifiesto"],
+               ); 
+
+//$response['respuestaImprimirManifiesto']['MANIFIESTO'][0]['PDF'])
+
+
+
+}
+
+
 
 function printAndDownloadLabel($pdf, $masterTrackingNumber){
 
