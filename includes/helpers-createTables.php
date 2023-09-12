@@ -685,7 +685,7 @@ class createTables
         $this->wpdb->insert($nombreTabla, array('ciudad' => "PUYEHUE", 'codigo' => "5360000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "PURRANQUE", 'codigo' => "5380000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "RIO NEGRO", 'codigo' => "5390000"));
-        $this->wpdb->insert($nombreTabla, array('ciudad' => "SAN PABLO LA UNION", 'codigo' => "5220000"));
+        $this->wpdb->insert($nombreTabla, array('ciudad' => "SAN PABLO", 'codigo' => "5350000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "RIO BUENO", 'codigo' => "5220000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "LAGO RANCO", 'codigo' => "5250000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "LA UNION", 'codigo' => "5220000"));
@@ -694,7 +694,6 @@ class createTables
         $this->wpdb->insert($nombreTabla, array('ciudad' => "PUERTO OCTAY  CBST", 'codigo' => "5370000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "SAN JUAN DE LA COSTA  CBST", 'codigo' => "5400000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "ENTRE LAGOS  CBST", 'codigo' => "5368102"));
-        $this->wpdb->insert($nombreTabla, array('ciudad' => "SAN PABLO LA UNION  CBST", 'codigo' => "5220000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "LAGO RANCO  CBST", 'codigo' => "5250000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "PUERTO VARAS", 'codigo' => "5550000"));
         $this->wpdb->insert($nombreTabla, array('ciudad' => "FRESIA", 'codigo' => "5600000"));
