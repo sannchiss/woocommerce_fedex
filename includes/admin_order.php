@@ -228,11 +228,7 @@ function  get_label_shipping($masterTrackingNumber, $labelBase64Byte){
 
             return array(
                 'pdfMerge' => base64_encode($response),
-               ); 
-               
-               
-
-        
+               );         
     }
 
 }
@@ -267,7 +263,7 @@ function get_document_manifest($pickupNumber){
         CURLOPT_POSTFIELDS => $request,
         CURLOPT_HTTPHEADER => array(
             'Content-Type: application/json',
-            'Authorization: Basic U1BFUkVaOkhvbWUuMjAyMA=='
+            'Authorization: Basic Mzg5MzgwM3dzdGVzdDpGZWRleDIwMjM='
         ),
         ));
 
